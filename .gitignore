@@ -1,0 +1,7 @@
+*.csv
+*.txt
+*.png
+*.hpp
+*.o
+brenda_venv
+.DS_Store
