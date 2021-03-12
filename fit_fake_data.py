@@ -50,7 +50,7 @@ def main():
         )
     measurements = generate_fake_measurements(
         true_param_values, TRUE_MODEL_CONFIG, real_data
-    ).sample(100)
+    )
     fake_data_file = os.path.join(FAKE_DATA_DIR, f"fake_data-{study_name}.csv")
     print(f"Writing fake data to {fake_data_file}")
     measurements.to_csv(fake_data_file)
