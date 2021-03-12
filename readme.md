@@ -1,2 +1,4 @@
-# Brenda KM - infer km values from BRENDA!
+Statistical models of kinetic parameters from BRENDA
+==============================
 
+Comparison of various ways of modelling kinetic parameter data from BRENDA
