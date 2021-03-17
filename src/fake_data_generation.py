@@ -30,7 +30,10 @@ FAKE_DATA_X_STATS = {
     "x1": [-1, 0.2],
     "x2": [0.2, 1],
 }
-REAL_DATA_CSV = os.path.join("..", "data", "prepared", "data_prepared.csv")
+HERE = os.path.dirname(os.path.abspath(__file__))
+REAL_DATA_CSV = os.path.join(
+    HERE, "..", "data", "prepared", "data_prepared.csv"
+)
 
 
 def generate_fake_measurements() -> pd.DataFrame:

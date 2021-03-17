@@ -11,6 +11,7 @@ from .cmdstanpy_to_arviz import get_infd_kwargs
 # Location of this file
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+STAN_FILE_EC_MODEL = os.path.join(HERE, "stan", "ec_model.stan")
 # Configure cmdstanpy.CmdStanModel.sample
 SAMPLE_KWARGS = dict(
     show_progress=True,
@@ -38,7 +39,7 @@ X_COLS = ["temperature_m25", "dummy_col"]
 # Configuration with likelihood set to False
 TEMPERATURE_CONFIG_PRIOR = ModelConfiguration(
     name="temperature",
-    stan_file=os.path.join("stan", "ec_model.stan"),
+    stan_file=STAN_FILE_EC_MODEL,
     stan_input_function=lambda df: get_stan_input(
         df,
         x_cols=X_COLS,
@@ -52,7 +53,7 @@ TEMPERATURE_CONFIG_PRIOR = ModelConfiguration(
 # Configuration with likelihood set to True
 TEMPERATURE_CONFIG_POSTERIOR = ModelConfiguration(
     name="temperature",
-    stan_file=os.path.join("stan", "ec_model.stan"),
+    stan_file=STAN_FILE_EC_MODEL,
     stan_input_function=lambda df: get_stan_input(
         df,
         x_cols=X_COLS,
