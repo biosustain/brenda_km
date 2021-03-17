@@ -1,5 +1,6 @@
 """Provides a function prepare_data."""
 
+import os
 import numpy as np
 import pandas as pd
 
@@ -16,6 +17,16 @@ COLS_THAT_MUST_BE_NON_NULL = [
     "species",
 ]
 T_REGEX = r"(\d+) ?°[Cc]"  # extract temperature from comment
+
+# Where to find raw data and where to save prepared data: probably don't edit!
+HERE = os.path.dirname(os.path.abspath(__file__))
+RAW_DATA_DIR = os.path.join(HERE, "..", "data", "raw")
+PREPARED_DATA_DIR = os.path.join(HERE, "..", "data", "prepared")
+
+# Filenames of the input and output: edit these unless they are already what
+# you want
+RAW_DATA_CSV = os.path.join(RAW_DATA_DIR, "new_taxa.csv")
+PREPARED_DATA_CSV = os.path.join(RAW_DATA_DIR, "data_prepared.csv")
 
 
 def prepare_data(raw_data: pd.DataFrame) -> pd.DataFrame:

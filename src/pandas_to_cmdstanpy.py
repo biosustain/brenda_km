@@ -22,6 +22,8 @@ def get_stan_input(
     return {
         **priors,
         **{
+            "N": measurements.shape[0],
+            "K": len(x_cols),
             "N_ec4": measurements["ec4"].nunique(),
             "N_ec3": measurements["ec3"].nunique(),
             "N_ec2": measurements["ec2"].nunique(),

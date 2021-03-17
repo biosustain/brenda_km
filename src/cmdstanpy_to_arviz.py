@@ -22,7 +22,7 @@ def get_infd_kwargs(
     """
     return dict(
         log_likelihood="llik",
-        observed_data={"y": measurements["y"].values},
+        observed_data={"y": measurements["log_km"].values},
         posterior_predictive="yrep",
         coords={
             "covariate": x_cols,
