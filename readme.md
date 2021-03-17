@@ -1,4 +1,4 @@
-Statistical models of kinetic parameters from BRENDA
+brenda km
 ==============================
 
-Comparison of various ways of modelling kinetic parameter data from BRENDA
+Statistical models of kinetic parameter data from BRENDA
