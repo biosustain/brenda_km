@@ -26,7 +26,7 @@ PREPARED_DATA_DIR = os.path.join(HERE, "..", "data", "prepared")
 # Filenames of the input and output: edit these unless they are already what
 # you want
 RAW_DATA_CSV = os.path.join(RAW_DATA_DIR, "new_taxa.csv")
-PREPARED_DATA_CSV = os.path.join(RAW_DATA_DIR, "data_prepared.csv")
+PREPARED_DATA_CSV = os.path.join(PREPARED_DATA_DIR, "data_prepared.csv")
 
 
 def prepare_data(raw_data: pd.DataFrame) -> pd.DataFrame:
@@ -49,5 +49,4 @@ def prepare_data(raw_data: pd.DataFrame) -> pd.DataFrame:
     out["ec3"] = [".".join(ecs.split(".")[:3]) for ecs in out["ec4"]]
     out["ec2"] = [".".join(ecs.split(".")[:2]) for ecs in out["ec4"]]
     out["log_km"] = np.log(out["km"])
-    out = out.dropna(subset=["temperature"]).reset_index(drop=True)
     return out
