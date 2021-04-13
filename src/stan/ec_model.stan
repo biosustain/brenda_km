@@ -28,7 +28,7 @@ model {
   a_ec3 ~ normal(0, tau[2]);
   a_ec2 ~ normal(0, tau[3]);
   if (likelihood){
-    vector[N] yhat = x_std * b + a_ec2[ec2] + a_ec3[ec3] + a_ec4[ec4];
+    vector[N] yhat = a_ec2[ec2] + a_ec3[ec3] + a_ec4[ec4];
     y ~ student_t(nu, yhat, sigma);
   }
 }
@@ -36,7 +36,7 @@ generated quantities {
   vector[N] llik;
   vector[N] yrep;
   for (n in 1:N){
-    real yhat = x_std[n] * b + a_ec2[ec2[n]] + a_ec3[ec3[n]] + a_ec4[ec4[n]];
+    real yhat = a_ec2[ec2[n]] + a_ec3[ec3[n]] + a_ec4[ec4[n]];
     llik[n] = student_t_lpdf(y[n] | nu,  yhat, sigma);
     yrep[n] = student_t_rng(nu, yhat, sigma);
   }
