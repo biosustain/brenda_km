@@ -9,7 +9,6 @@ data {
   vector[N] y;
   int<lower=0,upper=1> likelihood;
   vector[2] prior_nu;
-  matrix[K, 2] prior_b;
   vector[2] prior_sigma;
   matrix[3,2] prior_tau;
 }
