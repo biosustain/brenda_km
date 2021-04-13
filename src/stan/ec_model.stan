@@ -1,13 +1,11 @@
 data {
   int<lower=1> N;
-  int<lower=1> K;
   int<lower=1> N_ec4;
   int<lower=1> N_ec3;
   int<lower=1> N_ec2;
   int<lower=1,upper=N_ec4> ec4[N];
   int<lower=1,upper=N_ec3> ec3[N];
   int<lower=1,upper=N_ec2> ec2[N];
-  matrix[N, K] x;
   vector[N] y;
   int<lower=0,upper=1> likelihood;
   vector[2] prior_nu;
@@ -15,14 +13,9 @@ data {
   vector[2] prior_sigma;
   matrix[3,2] prior_tau;
 }
-transformed data {
-  matrix[N, K] x_std;
-  for (k in 1:K) x_std[,k] = (x[,k] - mean(x[,k])) - sd(x[,k]);
-}
 parameters {
   real<lower=1> nu;
   real<lower=0> sigma;
-  vector[K] b;
   vector<lower=0>[3] tau;
   vector<multiplier=tau[1]>[N_ec4] a_ec4;
   vector<multiplier=tau[2]>[N_ec3] a_ec3;
@@ -32,7 +25,6 @@ model {
   nu ~ gamma(prior_nu[1], prior_nu[2]);
   sigma ~ lognormal(prior_sigma[1], prior_sigma[2]);
   tau ~ lognormal(prior_tau[,1], prior_tau[,2]);
-  b ~ normal(prior_b[,1], prior_b[,2]);
   a_ec4 ~ normal(0, tau[1]);
   a_ec3 ~ normal(0, tau[2]);
   a_ec2 ~ normal(0, tau[3]);

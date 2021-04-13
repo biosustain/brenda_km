@@ -55,7 +55,9 @@ def generate_samples(
         print(f"Writing inference data to {infd_file}")
         infd.to_netcdf(infd_file)
         print(f"Writing psis-loo results to {loo_file}\n")
-        az.loo(infd, pointwise=True).to_pickle(loo_file)
+        loo = az.loo(infd, pointwise=True)
+        print(loo)
+        loo.to_pickle(loo_file)
     if len(infds) > 1:
         comparison = az.compare(infds)
         print(f"Loo comparison:\n{comparison}")
