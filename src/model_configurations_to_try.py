@@ -19,7 +19,7 @@ SAMPLE_KWARGS = dict(
     save_warmup=False,
     iter_warmup=500,
     iter_sampling=500,
-    adapt_delta=0.9,
+    adapt_delta=0.95,
     chains=2,
     refresh=1,
 )
@@ -51,7 +51,7 @@ PRIORS_EC_MODEL_3 = {
 }
 
 # Configuration with likelihood set to False
-EC_MODEL_CONFIG = ModelConfiguration(
+BASIC = ModelConfiguration(
     name="ec_model",
     stan_file=STAN_FILE_EC_MODEL,
     stan_input_function=lambda df: get_stan_input(df, PRIORS_EC_MODEL, True),
@@ -60,7 +60,7 @@ EC_MODEL_CONFIG = ModelConfiguration(
 )
 
 # Configuration with likelihood set to True
-EC_MODEL_3_CONFIG = ModelConfiguration(
+RICH = ModelConfiguration(
     name="ec_model_3",
     stan_file=STAN_FILE_EC_MODEL_3,
     stan_input_function=lambda df: get_stan_input(df, PRIORS_EC_MODEL_3, True),
@@ -70,4 +70,4 @@ EC_MODEL_3_CONFIG = ModelConfiguration(
 
 
 # A list of model configurations to test
-MODEL_CONFIGURATIONS = [EC_MODEL_3_CONFIG, EC_MODEL_CONFIG]
+MODEL_CONFIGURATIONS = [BASIC, RICH]
