@@ -19,7 +19,7 @@ SAMPLE_KWARGS = dict(
     save_warmup=False,
     iter_warmup=500,
     iter_sampling=500,
-    adapt_delta=0.95,
+    # adapt_delta=0.95,
     chains=2,
     refresh=1,
 )
@@ -27,11 +27,8 @@ SAMPLE_KWARGS = dict(
 PRIORS_EC_MODEL = {
     "prior_nu": np.array([2, 0.1]),
     "prior_mu": get_99_pct_params_n(-2, 2),
-    "prior_tau": [
-        get_99_pct_params_ln(0.03, 2),
-        get_99_pct_params_ln(0.03, 2),
-        get_99_pct_params_ln(0.03, 1),
-    ],
+    "prior_tau_ec3": get_99_pct_params_ln(0.4, 2.5),
+    "prior_tau_ec4": get_99_pct_params_ln(0.02, 3),
     "prior_sigma": get_99_pct_params_ln(0.4, 5.2),
 }
 PRIORS_EC_MODEL_3 = {
@@ -70,4 +67,4 @@ RICH = ModelConfiguration(
 
 
 # A list of model configurations to test
-MODEL_CONFIGURATIONS = [BASIC, RICH]
+MODEL_CONFIGURATIONS = [BASIC]

@@ -4,6 +4,8 @@ from typing import List, Dict
 import numpy as np
 import pandas as pd
 
+from .util import one_encode
+
 
 def get_infd_kwargs(measurements: pd.DataFrame, sample_kwargs: Dict) -> Dict:
     """Get a dictionary of keyword arguments to arviz.from_cmdstanpy.
@@ -41,6 +43,7 @@ def get_infd_kwargs(measurements: pd.DataFrame, sample_kwargs: Dict) -> Dict:
             "a_ec4": ["ec4"],
             "a_ec3": ["ec3"],
             "a_ec2": ["ec2"],
+            "tau_ec4": ["ec3"],
             "a_subs": ["substrate"],
             "a_superking": ["superkingdom"],
             "a_family": ["family"],

@@ -24,7 +24,6 @@ data {
   matrix[8,2] prior_tau;
 }
 parameters {
-  real<lower=1> nu;
   real mu;
   real<lower=0> sigma;
   real<lower=0> tau[8];
@@ -39,7 +38,6 @@ parameters {
 }
 model {
   mu ~ normal(prior_mu[1], prior_mu[2]);
-  nu ~ gamma(prior_nu[1], prior_nu[2]);
   sigma ~ lognormal(prior_sigma[1], prior_sigma[2]);
   tau ~ lognormal(prior_tau[,1], prior_tau[,2]);
   a_ec4 ~ normal(0, tau[1]);

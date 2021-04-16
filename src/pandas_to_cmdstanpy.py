@@ -18,6 +18,11 @@ def get_stan_input(
     "x_cols".
 
     """
+    ec3_to_ec4 = (
+        one_encode(measurements["ec3"])
+        .groupby(one_encode(measurements["ec4"]))
+        .first()
+    )
     return {
         **priors,
         **{
@@ -33,6 +38,7 @@ def get_stan_input(
             "ec4": one_encode(measurements["ec4"]).values,
             "ec3": one_encode(measurements["ec3"]).values,
             "ec2": one_encode(measurements["ec2"]).values,
+            "ec3_to_ec4": ec3_to_ec4.values,
             "subs": one_encode(measurements["substrate"]).values,
             "superking": one_encode(measurements["superkingdom"]).values,
             "family": one_encode(measurements["family"]).values,
