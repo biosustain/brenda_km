@@ -6,16 +6,16 @@ from cmdstanpy import CmdStanModel
 import numpy as np
 import pandas as pd
 
-from .model_configurations_to_try import EC_MODEL_3_CONFIG as TRUE_MODEL_CONFIG
+from .model_configurations_to_try import BASIC as TRUE_MODEL_CONFIG
 
 
 # True values for each variable in your program's `parameters` block. Make sure
 # that the dimensions agree with `TRUE_MODEL_FILE`!
 TRUE_PARAM_VALUES = {
-    "mu": 0.1,
-    "nu": 5,
+    "mu": -2,
     "sigma": 1.5,
-    "tau": [0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+    "tau": 1.2,
+    "tau_ec3": [],
 }
 HIERARCHICAL_COLUMNS = [
     "ec4",

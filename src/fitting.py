@@ -6,7 +6,7 @@ import arviz as az
 from cmdstanpy import CmdStanModel
 from cmdstanpy.utils import jsondump
 import pandas as pd
-from .model_configuration import ModelConfiguration
+from .data_model import ModelConfiguration
 
 # Location of this file
 HERE = os.path.dirname(os.path.abspath(__file__))
