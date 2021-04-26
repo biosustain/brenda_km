@@ -1,3 +1,11 @@
+"""Script for fetching data directly from BRENDA using their SOAP API.
+
+NB Make sure that you have registered with BRENDA and that the environment
+variables BRENDA_EMAIL and BRENDA_PASSWORD are set correctly.
+
+"""
+
+
 import zeep
 import hashlib
 import os
