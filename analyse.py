@@ -1,13 +1,14 @@
 """Draw some plots to analyse the model results."""
 
 import os
+
 import arviz as az
-from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 
 NCDF_FILE = os.path.join(
-    "results", "infd", "infd_real_study-20210416153148-ec_model.ncdf"
+    "results", "infd", "infd_real_study-20210428112251-natural_model.ncdf"
 )
 CSV_FILE = os.path.join("data", "prepared", "data_prepared.csv")
 PLOT_DIR = os.path.join("results", "plots")
