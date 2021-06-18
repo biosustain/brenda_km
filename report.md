@@ -20,41 +20,36 @@ database we use a multilevel Bayesian regression model with a nested
 structure. In this model the response variables are km values, which we assume
 are measured such that
 
-$$
 \begin{align*}
 y = \ln km &\sim student-t(4, \hat{y}, \sigma) \\
-\hat{y}_{jk} &= baseline + ec3\;effect_{j} + ec4\;effect_jk
+\hat{y}_{jk} &= \mu + \alpha^{EC3}_{j} + \alpha^{EC4}_{jk}
 \end{align*}
-$$
 
 where $\hat{y}_{jk}$ is the estimated true km value on natural logarithmic
-scale for an enzyme with ec3 number $j$ and ec4 number $k$. $\sigma$ and
-$baseline$ are single unknown real numbers and $ec3\;effect$ and $ec4\;effect$
-are vectors of unknown real numbers.
+scale for an enzyme with EC3 number $j$ and ec4 number $k$. The symbols
+$\sigma$ and $\mu$ represent single unknown real numbers, $\alpha^{EC3}$ a
+vector of unknown real numbers and and $\alpha^{EC4}$ a matrix of unknown real
+numbers.
 
-The prior distributions for $ec3\;effect$ and $ec4\;effect$ are as follows
+The prior distributions for $\alpha^{EC3}$ and $\alpha^{EC4}$ are as follows:
 
-$$
 \begin{align*}
-ec3\;effect_j \sim student-t(0, sd\;ec3);
-ec4\;effect_jk \sim student-t(0, sd\;ec4_j);
+\alpha^{EC3}_j \sim student\;t(0, sd^{EC3}) \\
+\alpha^{EC4}_{jk} \sim student\;t(0, sd^{EC4}_j) \\
 \end{align*}
-$$
 
-where $sd\;ec3$ is an unknown positive real number and $sd\;ec4$ is a vector of
-unknown real numbers (one for each ec3 number).
+where $sd^{EC3}$ is an unknown positive real number and $sd^{EC4}$ is a vector of
+unknown real numbers (one for each EC3 number).
 
 To complete our model we use informative priors for the remaining unknown model
 parameters:
 
-$$
 \begin{align*}
-baseline \sim normal(0,2) \\
-\sigma \sim lognormal() % 99% prior mass between 0.4 and 5.2
-\sd\;ec3 \sim lognormal() % 99% prior mass between 0.4 and 2.5
-\sd\;ec4 \sim lognormal() % 99% prior mass between 0.02 and 3
+\mu &\sim normal(0,2) \\
+\sigma &\sim lognormal() \\ 
+sd^{EC3} &\sim lognormal() \\
+sd^{EC4} &\sim lognormal()
 \end{align*}
-$$
 
 
 ### Reasoning behind modelling choices
