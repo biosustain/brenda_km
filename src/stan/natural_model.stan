@@ -3,16 +3,16 @@
 
 data {
   int<lower=1> N;
-  int<lower=1> N_predictor_class;
+  int<lower=1> N_predictor;
   int<lower=1> N_ec4;
   int<lower=1> N_ec3;
   int<lower=1> N_non_singleton_ec3;
   int<lower=1> N_ec4_free;
-  int<lower=1,upper=N_ec4> ec4[N_predictor_class];  // NB: implicitly ordered so that the free ones are first
-  int<lower=1,upper=N_ec3> ec3[N_predictor_class];  // NB: implicitly ordered so that the free ones are first
+  int<lower=1,upper=N_ec4> ec4[N_predictor];  // NB: ordered so that free ones are first
+  int<lower=1,upper=N_ec3> ec3[N_predictor];  // NB: ordered so that free ones are first
   int<lower=1,upper=N_ec3> ec4_to_ec3[N_ec4];
-  vector<lower=0,upper=1>[N_predictor_class] is_natural;
-  int<lower=1,upper=N_predictor_class> predictor_class[N];
+  vector<lower=0,upper=1>[N_predictor] is_natural;
+  int<lower=1,upper=N_predictor> predictor[N];
   vector[N] y;
   int<lower=0,upper=1> likelihood;
   vector[2] prior_sigma;
@@ -31,7 +31,7 @@ parameters {
 }
 transformed parameters {
   vector[N_ec4] a_ec4 = append_row(a_ec4_free, rep_vector(0, N_ec4-N_ec4_free));
-  vector[N_predictor_class] yhat =
+  vector[N_predictor] yhat =
     baseline + a_ec3[ec3] + a_ec4[ec4] + b_natural * is_natural;
 }
 model {
@@ -43,14 +43,14 @@ model {
   a_ec3 ~ student_t(4, 0, tau);
   a_ec4_free ~ student_t(4, 0, tau_ec3[ec4_to_ec3[1:N_ec4_free]]);
   if (likelihood){
-    y ~ student_t(4, yhat[predictor_class], sigma);
+    y ~ student_t(4, yhat[predictor], sigma);
   }
 }
 generated quantities {
   vector[N] llik;
   vector[N] yrep;
   for (n in 1:N){
-    llik[n] = student_t_lpdf(y[n] | 4, yhat[predictor_class[n]], sigma);
-    yrep[n] = student_t_rng(4, yhat[predictor_class[n]], sigma);
+    llik[n] = student_t_lpdf(y[n] | 4, yhat[predictor[n]], sigma);
+    yrep[n] = student_t_rng(4, yhat[predictor[n]], sigma);
   }
 }

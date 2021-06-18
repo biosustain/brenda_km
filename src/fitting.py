@@ -32,7 +32,7 @@ def generate_samples(
         fit_name = f"{study_name}-{model_config.name}"
         print(f"Fitting model {fit_name}...")
         loo_file = os.path.join(LOO_DIR, f"loo_{fit_name}.pkl")
-        infd_file = os.path.join(INFD_DIR, f"infd_{fit_name}.ncdf")
+        infd_file = os.path.join(INFD_DIR, f"infd_{fit_name}.nc")
         json_file = os.path.join(JSON_DIR, f"input_data_{fit_name}.json")
         stan_input = model_config.stan_input_function(measurements)
         print(f"Writing input data to {json_file}")
