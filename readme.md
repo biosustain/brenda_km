@@ -16,3 +16,34 @@ environment variables `BRENDA_EMAIL` and `BRENDA_PASSWORD` appropriately. You
 will also need to install the python packages
 [zeep](https://docs.python-zeep.org/en/master/) and
 [tqdm](https://github.com/tqdm/tqdm).
+
+
+Requirements
+============
+
+To install python dependencies run this terminal command in a suitable environment (python 3.7 or higher should work)
+
+```sh
+pip install -r requirements.txt
+```
+
+
+Fitting the model
+=================
+
+To fit the model run the following terminal command:
+
+```sh
+python fit_real_data.py
+```
+
+Investigating the results
+=========================
+
+To investigate the results of a pre-existing model run (it is an arviz
+`InferenceData` object saved in netcdf format at `results/infd/app_infd.nc`),
+start our webapp with the following command:
+
+```sh
+streamlit run app.py
+```
