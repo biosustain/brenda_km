@@ -7,15 +7,13 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-NCDF_FILE = os.path.join(
-    "results", "infd", "infd_real_study-20210428112251-natural_model.ncdf"
-)
+NC_FILE = os.path.join("results", "infd", "app_infd.nc")
 CSV_FILE = os.path.join("data", "prepared", "data_prepared.csv")
 PLOT_DIR = os.path.join("results", "plots")
 
 
 def main():
-    infd = az.from_netcdf(NCDF_FILE)
+    infd = az.from_netcdf(NC_FILE)
     m = pd.read_csv(CSV_FILE)
     loo = az.loo(infd, pointwise=True)
     khats = loo.pareto_k
@@ -39,9 +37,9 @@ def main():
         x,
         p["log_km"].values,
         cmap="viridis",
-        s=6,
+        s=5,
         alpha=0.5,
-        color="black",
+        c=p["khat"].values,
         label="BRENDA",
     )
     ax.vlines(
@@ -57,11 +55,8 @@ def main():
     ax.legend(frameon=False)
     f.savefig(os.path.join(PLOT_DIR, "predictions.png"), bbox_inches="tight")
 
-    ax = az.plot_forest(infd, var_names=["a_ec3"])
-    plt.gcf().savefig(os.path.join(PLOT_DIR, "a_ec3.png"), bbox_inches="tight")
-    ax = az.plot_forest(infd, var_names=["tau_ec4"], transform=np.log)
-    plt.gcf().savefig(os.path.join(PLOT_DIR, "a_ec4.png"), bbox_inches="tight")
-
+    ax = az.plot_forest(infd, var_names=["tau_predictor"], transform=np.log)
+    plt.gcf().savefig(os.path.join(PLOT_DIR, "tau_predictor.png"), bbox_inches="tight")
 
 if __name__ == "__main__":
     main()

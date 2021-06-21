@@ -6,6 +6,11 @@ import pandas as pd
 
 from .util import one_encode
 
+def get_organism_codes(df: pd.DataFrame):
+    return dict(zip(
+        df["organism"].unique(), range(1, df["organism"].nunique() + 2)
+    ))
+
 
 def get_ec3_codes(df: pd.DataFrame):
     order = df.groupby("ec3")["ec4"].nunique().sort_values(ascending=False)
@@ -47,6 +52,7 @@ def get_cmdstanpy_input(
     "x_cols".
 
     """
+    organism_codes = get_organism_codes(measurements)
     ec3_codes = get_ec3_codes(measurements)
     ec4_codes = get_ec4_codes(measurements)
     predictors = get_all_predictors(measurements)
@@ -68,15 +74,13 @@ def get_cmdstanpy_input(
         **priors,
         **{
             "N": measurements.shape[0],
+            "N_organism": measurements["organism"].nunique(),
             "N_ec4": measurements["ec4"].nunique(),
             "N_ec3": measurements["ec3"].nunique(),
-            "N_ec2": measurements["ec2"].nunique(),
             "N_ec4_free": n_ec4_free,
             "N_non_singleton_ec3": n_non_singleton_ec3,
             "N_predictor": len(predictors),
-            "N_substrate": measurements["substrate"].nunique(),
-            "N_subs": measurements["substrate"].nunique(),
-            "N_species": measurements["organism"].nunique(),
+            "organism": predictors["organism"].map(organism_codes).values,
             "ec4": predictors["ec4"].map(ec4_codes).values,
             "ec3": predictors["ec3"].map(ec3_codes).values,
             "predictor": measurement_to_predictor_code.values,
@@ -119,8 +123,8 @@ def get_infd_kwargs(measurements: pd.DataFrame, sample_kwargs: Dict) -> Dict:
             "ec3_non_singleton": list(get_ec3_codes(measurements).keys())[
                 :n_non_singleton_ec3
             ],
-            "substrate": pd.factorize(measurements["substrate"])[1].values,
-            "organism": pd.factorize(measurements["organism"])[1].values,
+            "substrate": pd.factorize(measurements["substrate"])[1],
+            "organism": pd.factorize(measurements["organism"])[1],
             "predictor_ix": predictors.index,
         },
         dims={
@@ -132,6 +136,7 @@ def get_infd_kwargs(measurements: pd.DataFrame, sample_kwargs: Dict) -> Dict:
             "a_ec2": ["ec2"],
             "a_substrate": ["substrate"],
             "tau_ec3": ["ec3_non_singleton"],
+            "tau_predictor": ["organism"],
         },
         save_warmup=sample_kwargs["save_warmup"],
     )

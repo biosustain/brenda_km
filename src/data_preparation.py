@@ -16,6 +16,7 @@ COLS_THAT_MUST_BE_NON_NULL = [
     "organism",
     "substrate",
 ]
+ORGANISMS = ["Escherichia coli", "Homo sapiens", "Saccharomyces cerevisiae"]
 BRENDA_NULLS = ["more", -999]
 T_REGEX = r"(\d+) ?°[Cc]"  # extract temperature from comment
 
@@ -37,7 +38,7 @@ def prepare_data(
         .dropna(subset=COLS_THAT_MUST_BE_NON_NULL)
         .drop_duplicates()
         .loc[lambda df: (df["km"] > 0) & (df["ligand_structure_id"] != 0)]
-        .loc[lambda df: df["organism"] == "Escherichia coli"]
+        .loc[lambda df: df["organism"].isin(ORGANISMS)]
         .reset_index(drop=True)
     )
     out["natural_ligands"] = (
