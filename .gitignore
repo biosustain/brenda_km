@@ -3,6 +3,8 @@
 *.png
 *.hpp
 *.o
+*.nc
+!results/infd/app_infd.nc
 brenda_venv
 .DS_Store
 *pycache*
