@@ -6,27 +6,18 @@ from cmdstanpy import CmdStanModel
 import numpy as np
 import pandas as pd
 
-from .model_configurations_to_try import BASIC as TRUE_MODEL_CONFIG
+from .model_configurations_to_try import NATURAL as TRUE_MODEL_CONFIG
+from .stan_io import get_ec3_codes
 
 
 # True values for each variable in your program's `parameters` block. Make sure
 # that the dimensions agree with `TRUE_MODEL_FILE`!
 TRUE_PARAM_VALUES = {
-    "mu": -2,
-    "sigma": 1.5,
+    "baseline": -2,
+    "b_natural": 0.3,
+    "sigma": 2.4,
     "tau": 1.2,
-    "tau_ec3": [],
 }
-HIERARCHICAL_COLUMNS = [
-    "ec4",
-    "ec3",
-    "ec2",
-    "substrate",
-    "superkingdom",
-    "family",
-    "genus",
-    "species",
-]
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REAL_DATA_CSV = os.path.join(
@@ -46,10 +37,24 @@ def generate_fake_measurements() -> pd.DataFrame:
     model = CmdStanModel(stan_file=TRUE_MODEL_CONFIG.stan_file)
     stan_input = TRUE_MODEL_CONFIG.stan_input_function(fake_data)
     true_param_values = TRUE_PARAM_VALUES.copy()
-    for i, colname in enumerate(HIERARCHICAL_COLUMNS):
-        true_param_values[f"a_{colname}"] = np.random.normal(
-            0, true_param_values["tau"][i], fake_data[colname].nunique()
-        )
+    true_param_values["tau_ec3"] = np.random.lognormal(
+        stan_input["prior_tau_ec3"][0],
+        stan_input["prior_tau_ec3"][1],
+        stan_input["N_non_singleton_ec3"]
+    ).tolist()
+    true_param_values["a_ec3"] = (
+        np.random.standard_t(4, stan_input["N_ec3"])
+        * TRUE_PARAM_VALUES["tau"]
+    ).tolist()
+    ec4_free_to_ec3 = (
+        np.array(stan_input["ec4_to_ec3"])
+        [:int(stan_input["N_ec4_free"])]
+        - 1
+    )
+    true_param_values["a_ec4_free"] = (
+        np.random.standard_t(4, stan_input["N_ec4_free"])
+        * np.array(true_param_values["tau_ec3"])[ec4_free_to_ec3]
+    )
     mcmc = model.sample(
         stan_input, inits=true_param_values, fixed_param=True, iter_sampling=1
     )
