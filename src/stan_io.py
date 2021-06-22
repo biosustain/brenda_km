@@ -130,13 +130,14 @@ def get_infd_kwargs(measurements: pd.DataFrame, sample_kwargs: Dict) -> Dict:
         dims={
             "yrep": ["measurement"],
             "yhat": ["predictor_ix"],
+            "epsilon": ["predictor_ix"],
             "llik": ["measurement"],
             "a_ec4": ["ec4"],
             "a_ec3": ["ec3"],
             "a_ec2": ["ec2"],
             "a_substrate": ["substrate"],
             "tau_ec3": ["ec3_non_singleton"],
-            "tau_predictor": ["organism"],
+            "tau_epsilon": ["organism"],
         },
         save_warmup=sample_kwargs["save_warmup"],
     )

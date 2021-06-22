@@ -39,7 +39,7 @@ PRIORS_NATURAL = {
 }
 PRIORS_ORGANISM = {
     **PRIORS_NATURAL,
-    **{"prior_tau_organism": get_99_pct_params_ln(0.2, 0.9)}
+    **{"prior_tau_epsilon": get_99_pct_params_ln(0.2, 0.9)}
 }
 
 # Configurations
