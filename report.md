@@ -4,9 +4,11 @@ This paper presents a range of multilevel Bayesian linear models describing
 kinetic parameter data from the online database BRENDA. We assess the models'
 qualitative fit to the available data and quantitatively compare their
 out-of-sample predictive performance. The best model is shown to compare
-favourably with the current state of the art, without needing to use costly
-external features such as chemical fingerprints. We discuss how the results of
-our analysis can be integrated into a kinetic modelling framework.
+favourably with the current state of the art while covering a wide range of
+enzymes, substrates and organisms of interest to the biological community.
+
+We discuss how the results of our analysis can be integrated into a kinetic
+modelling framework.
 
 ## Methods
 
@@ -20,8 +22,10 @@ instructions for reproducing our analysis, can be found at
 
 We used the SOAP API provided by BRENDA to fetch a table of all available Km
 parameter measurements, as well as a table with information about natural
-substrates. We then discared rows where the organism, EC4 number, substrate
-were not recorded.
+substrates. We then discarded rows where the organism, EC4 number, substrate
+were not recorded. We then excluded organisms other than _Homo Sapiens_,
+_Escherichia coli_ and _Saccharamyces Cerevisiae_. The final dataset comprised
+34283 measurements.
 
 ### Statistical model
 
@@ -30,9 +34,11 @@ database we use a multilevel Bayesian regression model with a nested
 structure. In this model the response variables are km values, which we assume
 are measured such that for enzyme $j$, substrate $k$ and organism $l$
 
+$$
 \begin{equation}
 y_{jkl} = \ln km_{jkl} \sim T4(\hat{y_{jkl}}, \sigma)
 \end{equation}
+$$
 
 where $\hat{y_{jkl}}$ is the estemated true km value on natural logarithmic
 scale and $\sigma$ is an unknown positive number. $T4$ represents the student t
@@ -41,9 +47,11 @@ distribution with four degrees of freedom.
 We assume that the true log km has the following structural dependency on
 latent variables:
 
+$$
 \begin{equation}
 \hat{y}_{jkl} = \mu + \alpha^{EC3}_{j} + \alpha^{EC4}_{j} + \beta^{nat} * nat(j,k,l) + \epsilon_{jkl}
 \end{equation}
+$$
 
 In this equation:
 - $\mu$ is a single number representing the global average
@@ -58,10 +66,12 @@ In this equation:
 The prior distributions for the latent parameters $\alpha^{EC3}$ and
 $\alpha^{EC4}$ have the following nested hierarchical structure:
 
+$$
 \begin{align}
 \alpha^{EC3} &\sim T4(0, \tau) \\
-\alpha^{EC4}_j &\sim T4(0, \tau^{EC3}_{EC3(j)}
+\alpha^{EC4}_j &\sim T4(0, \tau^{EC3}_{EC3(j)})
 \end{align}
+$$
 
 where $\tau$ is a single number representing the variation of EC3 effects and
 $\tau^{EC3}$ is an EC3-specific number representing the variation of EC4
@@ -69,9 +79,11 @@ effects within each EC3 group.
 
 The parameters $\epsilon$ have hierarchical priors at the organism level:
 
+$$
 \begin{equation}
 \epsilon_{jkl} \sim T4(0, \tau^{\epsilon}_{l})
 \end{equation}
+$$
 
 To complete our model we use informative priors for the remaining unknown model
 parameters:

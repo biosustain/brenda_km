@@ -14,6 +14,7 @@ LOOS = $(shell find results/loo -type f -not -name "*.md" | $(QUOTE_LINES))
 JSONS = $(shell find results/input_data_json -type f -not -name "*.md" | $(QUOTE_LINES))
 MARKDOWN_FILE = report.md
 PDF_FILE = report.pdf
+DOCX_FILE = report.docx
 PANDOCFLAGS =                         \
   --from=markdown                     \
   --highlight-style=pygments          \
@@ -22,6 +23,9 @@ PANDOCFLAGS =                         \
 
 $(PDF_FILE): $(MARKDOWN_FILE) $(BIBLIOGRAPHY)
 	pandoc $< -o $@ $(PANDOCFLAGS)
+
+$(DOCX_FILE): $(MARKDOWN_FILE) $(BIBLIOGRAPHY)
+	pandoc $< -o $@ --from=markdown --bibliography=$(BIBLIOGRAPHY)
 
 clean_all: clean_stan clean_results clean_pdf clean_data
 
