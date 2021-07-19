@@ -1,1 +1,1 @@
-Saved arviz `InferenceData` objects go here in `.ncdf` format.
+Saved arviz `InferenceData` objects go here in netcdf format.
