@@ -1,0 +1,14 @@
+name = "natural_model"
+stan_file = "src/stan/natural_model.stan"
+data_file = "data/prepared/data_prepared.csv"
+priors_file = "data/priors/priors.csv"
+likelihood = true
+
+[sample_kwargs]
+show_progress = true
+save_warmup = false
+iter_warmup = 1000
+iter_sampling = 1000
+max_treedepth = 12
+chains = 2
+refresh = 1
