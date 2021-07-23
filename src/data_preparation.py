@@ -16,6 +16,11 @@ COLS_THAT_MUST_BE_NON_NULL = [
     "organism",
     "substrate",
 ]
+DEFAULT_TEMPERATURE = {
+    "Escherichia coli": 25,
+    "Homo sapiens": 36,
+    "Saccharomyces cerevisiae": 25
+}
 ORGANISMS = ["Escherichia coli", "Homo sapiens", "Saccharomyces cerevisiae"]
 BRENDA_NULLS = ["more", -999]
 T_REGEX = r"(\d+) ?°[Cc]"  # extract temperature from comment
@@ -53,7 +58,13 @@ def prepare_data(
             out.loc[i, "is_natural"] = r["ligand_structure_id"] in r["natural_ligands"]
     out["dummy_col"] = 1
     out["temperature"] = out["commentary"].str.extract(T_REGEX)[0].astype(float)
-    out["temperature_m25"] = out["temperature"] - 25.01
+    out["default_temperature"] = out["organism"].map(DEFAULT_TEMPERATURE)
+    out["temperature_imputed"] = np.where(
+        out["temperature"].notnull(), out["temperature"], out["default_temperature"]
+    )
+    out["temperature_change"] = (
+        out["temperature_imputed"] - out["default_temperature"]
+    ).abs()
     out["ec3"] = [".".join(ecs.split(".")[:3]) for ecs in out["ec4"]]
     out["ec2"] = [".".join(ecs.split(".")[:2]) for ecs in out["ec4"]]
     out["log_km"] = np.log(out["km"])
