@@ -19,7 +19,7 @@ COLS_THAT_MUST_BE_NON_NULL = [
 DEFAULT_TEMPERATURE = {
     "Escherichia coli": 25,
     "Homo sapiens": 36,
-    "Saccharomyces cerevisiae": 25
+    "Saccharomyces cerevisiae": 25,
 }
 ORGANISMS = ["Escherichia coli", "Homo sapiens", "Saccharomyces cerevisiae"]
 BRENDA_NULLS = ["more", -999]
@@ -69,3 +69,10 @@ def prepare_data(
     out["ec2"] = [".".join(ecs.split(".")[:2]) for ecs in out["ec4"]]
     out["log_km"] = np.log(out["km"])
     return out
+
+
+def prepare_data_natural_substrates_only(
+    raw_km_measurements: pd.DataFrame, natural_substrates: pd.DataFrame
+) -> pd.DataFrame:
+    all = prepare_data(raw_km_measurements, natural_substrates)
+    return all.loc[lambda df: df["is_natural"]].reset_index(drop=True)
