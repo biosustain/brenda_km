@@ -24,6 +24,15 @@ DEFAULT_TEMPERATURE = {
 ORGANISMS = ["Escherichia coli", "Homo sapiens", "Saccharomyces cerevisiae"]
 BRENDA_NULLS = ["more", -999]
 T_REGEX = r"(\d+) ?°[Cc]"  # extract temperature from comment
+SUBSTRATE_TYPES = [
+    "ATP",
+    "NADH",
+    "NAD+",
+    "NADPH",
+    "acetyl-CoA",
+    "NADP+",
+    "ADP",
+]
 
 
 def prepare_data(
@@ -68,6 +77,9 @@ def prepare_data(
     out["ec3"] = [".".join(ecs.split(".")[:3]) for ecs in out["ec4"]]
     out["ec2"] = [".".join(ecs.split(".")[:2]) for ecs in out["ec4"]]
     out["log_km"] = np.log(out["km"])
+    out["substrate_type"] = (
+        out["substrate"].where(lambda s: s.isin(SUBSTRATE_TYPES)).fillna("other")
+    )
     return out
 
 
