@@ -55,6 +55,7 @@ def sample(mc: ModelConfiguration):
             "a_cat": ["cat"],
             "a_substrate": ["substrate"],
             "tau_ec4": ["ec3"],
+            "yhat": ["cat"],
         },
     )
     print(az.summary(idata))

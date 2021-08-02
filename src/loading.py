@@ -6,7 +6,7 @@ from typing import List, Dict
 
 from src.util import get_99_pct_params_ln, get_99_pct_params_n
 
-CAT_COLS = ["ec3", "ec4", "organism"]
+CAT_COLS = ["ec3", "ec4", "organism", "substrate", "substrate_type"]
 
 
 def load_model_configuration(path) -> ModelConfiguration:
@@ -75,6 +75,7 @@ def load_measurements(path, cat_cols: List[str]) -> dict:
     return {
         "N": m.shape[0],
         "N_cat": cats.shape[0],
+        "N_substrate_type": cats["substrate_type"].nunique(),
         "N_ec4": m["ec4"].nunique(),
         "N_ec3": m["ec3"].nunique(),
         "N_nonzero_a_org": len(ix_nonzero_a_org),
@@ -84,9 +85,37 @@ def load_measurements(path, cat_cols: List[str]) -> dict:
         "ec3_to_nonzero_ec4": ec3_to_nonzero_ec4.values,
         "ec4": cats["ec4_stan"].values,
         "ec3": cats["ec3_stan"].values,
+        "substrate_type": cats["substrate_type_stan"].values,
         "is_natural": m["is_natural"].astype(int).values,
         "cat": cats.reset_index().merge(m, on=cat_cols)["index"].values,
         "y": m["log_km"].values,
+    }
+
+
+def load_measurements_new(path, cat_cols: List[str]) -> dict:
+    """Get a dataframe of measurements from a measurements csv path."""
+    m = pd.read_csv(path)
+    cats = get_cats(m, cat_cols)
+    ec3_orgs = cats.groupby(["ec3", "organism"]).groups.keys()
+    ec3_org_codes = dict(zip(ec3_orgs, range(1, len(ec3_orgs) + 1)))
+    cats["ec3_org_stan"] = cats[["ec3", "organism"]].apply(
+        lambda r: ec3_org_codes[tuple(r.values)], axis=1
+    )
+    m["cat"] = cats.reset_index().merge(m, on=cat_cols)["index"].values
+    return {
+        "N": m.shape[0],
+        "y": m["log_km"].values,
+        "N_substrate_type": m["substrate_type"].nunique(),
+        "N_cat": cats.shape[0],
+        "N_enz": m["ec4"].nunique(),
+        "N_ec3": m["ec3"].nunique(),
+        "N_ec3_org": cats["ec3_org_stan"].nunique(),
+        "enz": cats["ec4_stan"].values,
+        "ec3": cats.groupby("ec4")["ec3_stan"].first().values,
+        "substrate_type": cats["substrate_type_stan"].values,
+        "ec3_org": cats["ec3_org_stan"].values,
+        "is_natural": m.groupby("cat")["is_natural"].first().astype(int).values,
+        "cat": m["cat"].values,
     }
 
 
@@ -94,7 +123,7 @@ def load_stan_input(mc: ModelConfiguration) -> dict:
     here = os.path.dirname(os.path.abspath(__file__))
     return {
         **load_priors(os.path.join(here, "..", mc.priors_file)),
-        **load_measurements(os.path.join(here, "..", mc.data_file), CAT_COLS),
+        **load_measurements_new(os.path.join(here, "..", mc.data_file), CAT_COLS),
         **{"likelihood": int(mc.likelihood)},
     }
 
