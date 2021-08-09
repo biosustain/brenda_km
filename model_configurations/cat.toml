@@ -1,0 +1,15 @@
+name = "cat_model_likelihood"
+stan_file = "src/stan/cat.stan"
+data_file = "data/stan_input/cat_model_likelihood.json"
+coords_file = "data/coords/cat_model_likelihood.json"
+dims_file = "data/dims/cat_model_likelihood.json"
+# do_not_run = true
+
+[sample_kwargs]
+show_progress = true
+save_warmup = true
+iter_warmup = 2000
+iter_sampling = 2000
+max_treedepth = 13
+chains = 4
+refresh = 1

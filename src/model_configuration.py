@@ -19,12 +19,12 @@ class ModelConfiguration:
 
     :param data_file: Path to a data file, with "/" even on windows
 
-    :param priors_file: Path to a file of priors, with "/" even on windows
+    :param coords_file: Path to a file of coords, with "/" even on windows
+
+    :param dims_file: Path to a file of dims, with "/" even on windows
 
     :param sample_kwargs: dictionary of keyword arguments to
     cmdstanpy.CmdStanModel.sample.
-
-    :param likelihood: whether or not to take measurements into account
 
     :param do_not_run: whether or not to run this model configuration
 
@@ -33,13 +33,14 @@ class ModelConfiguration:
     name: str
     stan_file: str
     data_file: str
-    priors_file: str
+    coords_file: str
+    dims_file: str
     sample_kwargs: dict
-    likelihood: bool
     do_not_run: bool = False
 
     def __post_init__(self) -> None:
         """Handle windows paths correctly"""
         self.stan_file = os.path.join(*self.stan_file.split("/"))
         self.data_file = os.path.join(*self.data_file.split("/"))
-        self.priors_file = os.path.join(*self.priors_file.split("/"))
+        self.coords_file = os.path.join(*self.coords_file.split("/"))
+        self.dims_file = os.path.join(*self.dims_file.split("/"))

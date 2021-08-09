@@ -1,15 +1,17 @@
 """Functions for fitting models using cmdstanpy."""
 
+import json
 import os
 import arviz as az
 from cmdstanpy import CmdStanModel
 from cmdstanpy.utils import jsondump
 
-from .loading import load_stan_input, load_coords, load_model_configuration
+from .loading import load_coords, load_model_configuration
 from .model_configuration import ModelConfiguration
 
 # Location of this file
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.join(HERE, "..")
 
 # Where to save files
 LOO_DIR = os.path.join(HERE, "..", "results", "loo")
@@ -28,12 +30,13 @@ def sample(mc: ModelConfiguration):
     print(f"\n***Fitting model {mc.name}...***\n")
     loo_file = os.path.join(LOO_DIR, f"loo_{mc.name}.pkl")
     idata_file = os.path.join(IDATA_DIR, f"idata_{mc.name}.nc")
-    json_file = os.path.join(JSON_DIR, f"input_data_{mc.name}.json")
-    stan_file = os.path.join(HERE, "..", mc.stan_file)
-    stan_input = load_stan_input(mc)
-    coords = load_coords(os.path.join(HERE, "..", mc.data_file))
-    print(f"\n***Writing input data to {json_file}***\n")
-    jsondump(json_file, stan_input)
+    stan_file = os.path.join(ROOT, mc.stan_file)
+    with open(os.path.join(ROOT, mc.data_file), "r") as f:
+        stan_input = json.load(f)
+    with open(os.path.join(ROOT, mc.coords_file), "r") as f:
+        coords = json.load(f)
+    with open(os.path.join(ROOT, mc.dims_file), "r") as f:
+        dims = json.load(f)
     model = CmdStanModel(model_name=mc.name, stan_file=stan_file)
     print(f"\n***Writing csv files to {SAMPLES_DIR}...***\n")
     mcmc = model.sample(
@@ -42,21 +45,12 @@ def sample(mc: ModelConfiguration):
         **mc.sample_kwargs,
     )
     print(mcmc.diagnose().replace("\n\n", "\n"))
-    idata = az.from_cmdstan(
-        posterior=mcmc.runset.csv_files,
+    idata = az.from_cmdstanpy(
+        posterior=mcmc,
         log_likelihood="llik",
+        observed_data={"y": stan_input["y"]},
         coords=coords,
-        dims={
-            "yrep": ["measurement"],
-            "llik": ["measurement"],
-            "a_ec4": ["ec4"],
-            "a_ec3": ["ec3"],
-            "a_ec2": ["ec2"],
-            "a_cat": ["cat"],
-            "a_substrate": ["substrate"],
-            "tau_ec4": ["ec3"],
-            "yhat": ["cat"],
-        },
+        dims=dims,
     )
     print(az.summary(idata))
     print(f"\n***Writing inference data to {idata_file}***\n")

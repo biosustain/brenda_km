@@ -3,8 +3,9 @@
 import os
 
 import pandas as pd
+from cmdstanpy.utils import jsondump
 
-from src.data_preparation import prepare_data, prepare_data_natural_substrates_only
+from src.data_preparation import process_raw_data, prepare_data_cat_model
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW_DATA_DIR = os.path.join(HERE, "data", "raw")
@@ -17,6 +18,10 @@ PREPARED_DATA_CSV = os.path.join(PREPARED_DATA_DIR, "data_prepared.csv")
 NATURAL_ONLY_CSV = os.path.join(
     PREPARED_DATA_DIR, "data_prepared_natural_substrates_only.csv"
 )
+STAN_INPUT_DIR = os.path.join(HERE, "data", "stan_input")
+COORDS_DIR = os.path.join(HERE, "data", "coords")
+DIMS_DIR = os.path.join(HERE, "data", "dims")
+PRIORS_CSV = os.path.join(HERE, "data", "priors", "priors.csv")
 
 
 def main():
@@ -24,12 +29,19 @@ def main():
     print(f"Reading raw data from {KM_MEASUREMENTS_CSV}")
     km_measurements = pd.read_csv(KM_MEASUREMENTS_CSV)
     natural_substrates = pd.read_csv(NATURAL_SUBSTRATES_CSV)
-    out = prepare_data(km_measurements, natural_substrates)
+    processed = process_raw_data(km_measurements, natural_substrates)
     print(f"Writing prepared data to {PREPARED_DATA_CSV}")
-    out.to_csv(PREPARED_DATA_CSV)
-    nso = prepare_data_natural_substrates_only(km_measurements, natural_substrates)
-    print(f"Writing natural substrates only data to {NATURAL_ONLY_CSV}")
-    nso.to_csv(NATURAL_ONLY_CSV)
+    processed.to_csv(PREPARED_DATA_CSV)
+    print("Preparing Stan input files...")
+    prior_df = pd.read_csv(PRIORS_CSV)
+    for f, likelihood, name in [
+        (prepare_data_cat_model, True, "cat_model_likelihood"),
+        (prepare_data_cat_model, False, "cat_model_prior"),
+    ]:
+        stan_input, coords, dims = f(processed, prior_df, likelihood)
+        jsondump(os.path.join(STAN_INPUT_DIR, name + ".json"), stan_input)
+        jsondump(os.path.join(COORDS_DIR, name + ".json"), coords)
+        jsondump(os.path.join(DIMS_DIR, name + ".json"), dims)
 
 
 if __name__ == "__main__":
