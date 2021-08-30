@@ -5,3 +5,5 @@ pandas
 scipy
 streamlit
 altair
+toml
+tqdm
