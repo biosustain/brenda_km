@@ -1,62 +1,65 @@
-"""Draw some plots to analyse the model results."""
-
 import os
+import warnings
 
 import arviz as az
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-NC_FILE = os.path.join("results", "infd", "app_infd.nc")
-CSV_FILE = os.path.join("data", "prepared", "data_prepared.csv")
-PLOT_DIR = os.path.join("results", "plots")
-
-
-def main():
-    infd = az.from_netcdf(NC_FILE)
-    m = pd.read_csv(CSV_FILE)
-    loo = az.loo(infd, pointwise=True)
-    khats = loo.pareto_k
-    yrep_qs = (
-        infd.posterior_predictive["yrep"]
-        .quantile([0.025, 0.5, 0.975], dim=["chain", "draw"])
-        .to_series()
-        .unstack("quantile")
+idata_cat, idata_simple = (
+    az.from_netcdf(os.path.join("results", "infd", f)) for f in (
+        "idata_cat_model_likelihood_natural_only.nc",
+        "idata_simple_model_likelihood.nc"
     )
+)
 
-    m["khat"] = khats
-    m["yrep_low"] = yrep_qs[0.025]
-    m["yrep_med"] = yrep_qs[0.5]
-    m["yrep_high"] = yrep_qs[0.975]
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    loo_cat = az.loo(idata_cat, pointwise=True)
+    loo_simple = az.loo(idata_simple, pointwise=True)
+    comparison = az.compare({"cat": idata_cat, "simple": idata_simple})
 
-    p = m.copy().sort_values(["yrep_med"])
-    x = np.linspace(0, 1, len(p))
+khat = {"cat": loo_cat.pareto_k, "simple": loo_simple.pareto_k}
+min_khat = min(khat["cat"].min(), khat["simple"].min())
+max_khat = max(khat["cat"].max(), khat["simple"].max())
+bins = np.linspace(min_khat - 0.1, max_khat + 0.1, 40)
+f, ax = plt.subplots()
+for model, khats in khat.items():
+    hist = ax.hist(khats, bins=bins, label=model, alpha=0.7)
+xlabel = ax.set_xlabel("khat value")
+ylabel = ax.set_ylabel("Number of observations")
+leg = ax.legend(frameon=False)
 
-    f, ax = plt.subplots()
-    ax.scatter(
-        x,
-        p["log_km"].values,
-        cmap="viridis",
-        s=5,
-        alpha=0.5,
-        c=p["khat"].values,
-        label="BRENDA",
-    )
+q_cat, q_simple = (
+    idata
+    .posterior["log_km"]
+    .quantile([0.01, 0.5, 0.99], dim=["chain", "draw"])
+    .to_series()
+    .unstack("quantile")
+    .add_prefix(pref + "_")
+    for idata, pref in ((idata_cat, "cat"), (idata_simple, "simple"))
+)
+q = (
+    q_cat
+    .join(q_simple)
+    .assign(y=idata_cat.observed_data["y"].values)
+    .sort_values("y")
+)
+
+f, ax = plt.subplots()
+
+x = np.linspace(*ax.get_xlim(), len(q))
+
+for pref, color in (("cat_", "tab:blue"), ("simple_", "tab:orange")):
     ax.vlines(
         x,
-        p["yrep_low"],
-        p["yrep_high"],
-        zorder=0,
-        color="gainsboro",
-        label="95% CI",
+        q[pref + "0.01"],
+        q[pref + "0.99"],
+        color=color,
+        label=pref[:-1],
+        alpha=0.7
     )
-    ax.set_xticks([], [])
-    ax.set_ylabel("log_km")
-    ax.legend(frameon=False)
-    f.savefig(os.path.join(PLOT_DIR, "predictions.png"), bbox_inches="tight")
-
-    ax = az.plot_forest(infd, var_names=["tau_predictor"], transform=np.log)
-    plt.gcf().savefig(os.path.join(PLOT_DIR, "tau_predictor.png"), bbox_inches="tight")
-
-if __name__ == "__main__":
-    main()
+ax.scatter(x, q["y"], color="black", zorder=3, label="average measurement")
+ax.set_ylabel("log km")
+ax.set_xticks([])
+ax.legend(frameon=False)
