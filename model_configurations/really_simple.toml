@@ -1,5 +1,5 @@
-name = "simple"
-stan_file = "src/stan/simple.stan"
+name = "really_simple"
+stan_file = "src/stan/really_simple.stan"
 data_file = "data/stan_input/lit_lik_nat.json"
 coords_file = "data/coords/lit_lik_nat.json"
 dims_file = "data/dims/lit_lik_nat.json"
