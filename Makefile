@@ -1,4 +1,4 @@
-.phony = clean_all clean_stan clean_results clean_pdf clean_data
+.phony = clean-all clean-stan clean-results clean-pdf clean-data
 
 QUOTE_LINES = sed "s/^/'/;s/$$/'/"  # pipe this to make sure filenames are quoted
 BIBLIOGRAPHY = bibliography.bib
@@ -27,16 +27,16 @@ $(PDF_FILE): $(MARKDOWN_FILE) $(BIBLIOGRAPHY)
 $(DOCX_FILE): $(MARKDOWN_FILE) $(BIBLIOGRAPHY)
 	pandoc $< -o $@ --from=markdown --bibliography=$(BIBLIOGRAPHY)
 
-clean_all: clean_stan clean_results clean_pdf clean_data
+clean-all: clean_stan clean_results clean_pdf clean_data
 
-clean_data:
+clean-data:
 	$(RM) $(FAKE_DATA) $(PREPARED_DATA)
 
-clean_stan:
+clean-stan:
 	$(RM) $(CMDSTAN_LOGS) $(STAN_OBJECT_CODE)
 
-clean_results:
+clean-results:
 	$(RM) $(SAMPLES) $(INFDS) $(LOOS) $(PLOTS) $(JSONS) $(CMDSTAN_LOGS)
 
-clean_pdf:
+clean-pdf:
 	$(RM) $(PDF_FILE)
