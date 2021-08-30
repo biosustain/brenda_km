@@ -7,11 +7,11 @@ The code in this document shows how to analyse a model fit.
 * Preliminaries
 
 First make sure you have already run some models. If you have, there should be
-some files in the folder ~results/infd~ with the extension ~.nc~. We can check
+some files in the folder ~results/idata~ with the extension ~.nc~. We can check
 this from the command line as follows:
 
 #+begin_src sh :results drawer :display raw
-ls results/infd
+ls results/idata
 #+end_src
 
 #+RESULTS:
@@ -385,7 +385,7 @@ objects.
 #+begin_src jupyter-python :session py :exports both :results none :async yes
   idatas = {
       f: az.from_netcdf(
-          os.path.join("results", "infd", f"idata_{f}.nc")
+          os.path.join("results", "idata", f"idata_{f}.nc")
       ) for f in ("really_simple", "one")
   }
 #+end_src

@@ -14,7 +14,7 @@ from src.data_preparation import CAT_COLS_CAT_MODEL, SUBSTRATE_TYPES
 from src.model_configuration import ModelConfiguration
 
 SUMMARY_CSV_FILE = os.path.join("results", "app_summary.csv")
-IDATA_FILE = os.path.join("results", "infd", "app_infd.nc")
+IDATA_FILE = os.path.join("results", "idata", "app_idata.nc")
 
 
 def get_lit_link(e: str, l: str) -> str:

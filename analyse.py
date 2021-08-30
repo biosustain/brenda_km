@@ -7,7 +7,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 idata_cat, idata_simple = (
-    az.from_netcdf(os.path.join("results", "infd", f))
+    az.from_netcdf(os.path.join("results", "idata", f))
     for f in (
         "idata_cat_model_likelihood_natural_only.nc",
         "idata_simple_model_likelihood.nc",

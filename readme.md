@@ -41,7 +41,7 @@ Investigating the results
 =========================
 
 To investigate the results of a pre-existing model run (it is an arviz
-`InferenceData` object saved in netcdf format at `results/infd/app_infd.nc`),
+`InferenceData` object saved in netcdf format at `results/idata/app_idata.nc`),
 start our webapp with the following command:
 
 ```sh

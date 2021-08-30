@@ -22,7 +22,7 @@ class ModelConfiguration:
     measurements and returning a dictionary that can be used as input to
     cmdstanpy.CmdStanModel.sample.
 
-    :param infd_kwargs_function: Function taking in a pd.DataFrame of
+    :param idata_kwargs_function: Function taking in a pd.DataFrame of
     measurements and returning a dictionary of keyword arguments to
     arviz.from_cmdstanpy.
 
@@ -34,5 +34,5 @@ class ModelConfiguration:
     name: str
     stan_file: str
     stan_input_function: Callable[[pd.DataFrame], Dict]
-    infd_kwargs_function: Callable[[pd.DataFrame], Dict]
+    idata_kwargs_function: Callable[[pd.DataFrame], Dict]
     sample_kwargs: Dict

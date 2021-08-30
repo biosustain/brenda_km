@@ -17,7 +17,7 @@ ROOT = os.path.join(HERE, "..")
 # Where to save files
 LOO_DIR = os.path.join(HERE, "..", "results", "loo")
 SAMPLES_DIR = os.path.join(HERE, "..", "results", "samples")
-IDATA_DIR = os.path.join(HERE, "..", "results", "infd")
+IDATA_DIR = os.path.join(HERE, "..", "results", "idata")
 JSON_DIR = os.path.join(HERE, "..", "results", "input_data_json")
 
 
@@ -26,8 +26,6 @@ def sample(mc: ModelConfiguration):
 
     :param study_name: a string
     """
-    # infds = {}
-    # for model_config in model_configurations:
     print(f"\n***Fitting model {mc.name}...***\n")
     loo_file = os.path.join(LOO_DIR, f"loo_{mc.name}.pkl")
     idata_file = os.path.join(IDATA_DIR, f"idata_{mc.name}.nc")

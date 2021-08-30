@@ -9,7 +9,7 @@ STAN_OBJECT_CODE = \
 SAMPLES = $(shell find results/samples -name "*.csv" | $(QUOTE_LINES))
 FAKE_DATA = $(shell find data/fake -type f -name "*.csv" | $(QUOTE_LINES))
 PREPARED_DATA = $(shell find data/prepared -name "*.csv" | $(QUOTE_LINES))
-INFDS = $(shell find results/infd -type f -not -name "infd*.nc" | $(QUOTE_LINES))
+IDATAS = $(shell find results/idata -type f -not -name "idata*.nc" | $(QUOTE_LINES))
 LOOS = $(shell find results/loo -type f -not -name "*.md" | $(QUOTE_LINES))
 JSONS = $(shell find results/input_data_json -type f -not -name "*.md" | $(QUOTE_LINES))
 MARKDOWN_FILE = report.md
@@ -36,7 +36,7 @@ clean-stan:
 	$(RM) $(CMDSTAN_LOGS) $(STAN_OBJECT_CODE)
 
 clean-results:
-	$(RM) $(SAMPLES) $(INFDS) $(LOOS) $(PLOTS) $(JSONS) $(CMDSTAN_LOGS)
+	$(RM) $(SAMPLES) $(IDATAS) $(LOOS) $(PLOTS) $(JSONS) $(CMDSTAN_LOGS)
 
 clean-pdf:
 	$(RM) $(PDF_FILE)
