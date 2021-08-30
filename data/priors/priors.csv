@@ -1,8 +1,8 @@
 parameter,distribution,pct_1,pct_99
-tau_ec3,lognormal,0.4,2.5
-tau_ec4,lognormal,0.02,4
-tau_organism,lognormal,0.2,0.9
+tau_ec3,normal,0.4,2.5
+tau_ec4,normal,0.02,4
+tau_organism,normal,0.2,1.5
 mu,normal,-3,1
-sigma,lognormal,0.4,3
+sigma,normal,0.4,3
 b_natural,normal,-1,0
 log_km,normal,-10,5
