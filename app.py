@@ -57,7 +57,7 @@ def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
 # non-choice-dependent data
 msmts = (
     pd.read_csv(os.path.join("data", "prepared", "data_prepared.csv"))
-    .loc[lambda df: (df["organism"].eq("Escherichia coli"))]
+    # .loc[lambda df: (df["organism"].eq("Escherichia coli"))]
     .reset_index()
 )
 idata = az.from_netcdf(IDATA_FILE).stack(chain_draw=["chain", "draw"])
