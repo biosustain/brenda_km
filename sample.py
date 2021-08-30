@@ -1,7 +1,7 @@
 import os
+
 from src.fitting import sample
 from src.loading import load_model_configuration
-
 
 MODEL_CONFIGURATION_DIR = "model_configurations"
 

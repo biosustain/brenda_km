@@ -1,9 +1,10 @@
 import os
-from src.model_configuration import ModelConfiguration
+from typing import Dict, List
+
 import pandas as pd
 import toml
-from typing import List, Dict
 
+from src.model_configuration import ModelConfiguration
 from src.util import get_99_pct_params_ln, get_99_pct_params_n
 
 CAT_COLS = ["ec3", "ec4", "organism", "substrate", "substrate_type"]
@@ -58,12 +59,14 @@ def load_measurements(path, cat_cols: List[str]) -> dict:
     m = pd.read_csv(path)
     cats = get_cats(m, cat_cols)
     ix_nonzero_a_ec4 = cats.loc[
-        lambda df: df.groupby("ec3")["ec4"].transform("nunique").gt(1), "ec4_stan"
+        lambda df: df.groupby("ec3")["ec4"].transform("nunique").gt(1),
+        "ec4_stan",
     ].unique()
     ix_nonzero_a_org = (
         cats.reset_index()
         .loc[
-            lambda df: df.groupby("ec4")["organism"].transform("nunique").gt(1), "index"
+            lambda df: df.groupby("ec4")["organism"].transform("nunique").gt(1),
+            "index",
         ]
         .unique()
     )
@@ -123,7 +126,9 @@ def load_stan_input(mc: ModelConfiguration) -> dict:
     here = os.path.dirname(os.path.abspath(__file__))
     return {
         **load_priors(os.path.join(here, "..", mc.priors_file)),
-        **load_measurements_new(os.path.join(here, "..", mc.data_file), CAT_COLS),
+        **load_measurements_new(
+            os.path.join(here, "..", mc.data_file), CAT_COLS
+        ),
         **{"likelihood": int(mc.likelihood)},
     }
 

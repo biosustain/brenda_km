@@ -1,15 +1,17 @@
-from typing import List
-import os
 import base64
-from altair.vegalite.v4.schema.channels import Opacity
-from scipy.stats.kde import gaussian_kde
-import streamlit as st
+import os
+from typing import List
+
+import altair as alt
+import arviz as az
 import numpy as np
 import pandas as pd
-import arviz as az
-import altair as alt
-from src.model_configuration import ModelConfiguration
+import streamlit as st
+from altair.vegalite.v4.schema.channels import Opacity
+from scipy.stats.kde import gaussian_kde
+
 from src.data_preparation import CAT_COLS_CAT_MODEL, SUBSTRATE_TYPES
+from src.model_configuration import ModelConfiguration
 
 SUMMARY_CSV_FILE = os.path.join("results", "app_summary.csv")
 IDATA_FILE = os.path.join("results", "infd", "app_infd.nc")
@@ -51,7 +53,9 @@ def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
     """Generates a link allowing a csv of a dataframe to be downloaded."""
     csv = df.to_csv(index=False)
     b64 = base64.b64encode(csv.encode()).decode()
-    return f'<a href="data:file/csv;base64,{b64}" download="{filename}">{text}</a>'
+    return (
+        f'<a href="data:file/csv;base64,{b64}" download="{filename}">{text}</a>'
+    )
 
 
 # non-choice-dependent data
@@ -90,7 +94,9 @@ st.write(
     "The graph shows the posterior distribution (blue) and experimental measurements (red)."
 )
 
-st.sidebar.write("Choose which marginal posterior distribution you'd like to see!")
+st.sidebar.write(
+    "Choose which marginal posterior distribution you'd like to see!"
+)
 
 
 # Get required data
@@ -100,7 +106,9 @@ ec4 = st.sidebar.selectbox(
 )
 substrate = st.sidebar.selectbox(
     "Substrate",
-    msmts.groupby(["organism", "ec4"])["substrate"].unique().loc[(organism, ec4)],
+    msmts.groupby(["organism", "ec4"])["substrate"]
+    .unique()
+    .loc[(organism, ec4)],
 )
 
 st.sidebar.markdown(
@@ -130,7 +138,9 @@ is_natural = check_if_natural(msmts, organism, ec4, substrate)
 ec3 = msmts.groupby("ec4")["ec3"].first().loc[ec4]
 ec2 = msmts.groupby("ec3")["ec2"].first().loc[ec3]
 ec1 = msmts.groupby("ec2")["ec1"].first().loc[ec2]
-cat = "|".join(map(str, [ec1, ec2, ec3, ec4, organism, substrate, substrate_type]))
+cat = "|".join(
+    map(str, [ec1, ec2, ec3, ec4, organism, substrate, substrate_type])
+)
 
 # b_natural = idata.posterior["b_natural"]
 yhat = idata.posterior["log_km"].sel({"cat": cat})
@@ -145,11 +155,15 @@ x = np.linspace(yhat.min() - 0.1, yhat.max() + 0.1, 100)
 is_bulk = (x > low) & (x < high)
 y = kde(x)
 kde_df = pd.DataFrame({"log km": x, "Posterior density": y})
-kde_df_bulk = kde_df.copy().assign(**{"log km": kde_df["log km"].where(is_bulk)})
+kde_df_bulk = kde_df.copy().assign(
+    **{"log km": kde_df["log km"].where(is_bulk)}
+)
 median_df = pd.DataFrame({"log km": median}, index=[0])
 
 kde_chart = (
-    alt.Chart(kde_df).mark_area(opacity=0.2).encode(x="log km", y="Posterior density")
+    alt.Chart(kde_df)
+    .mark_area(opacity=0.2)
+    .encode(x="log km", y="Posterior density")
 )
 kde_chart_bulk = (
     alt.Chart(kde_df_bulk).mark_area().encode(x="log km", y="Posterior density")

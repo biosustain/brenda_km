@@ -17,9 +17,15 @@ from tqdm import tqdm
 from zeep.exceptions import Error as ZeepError
 
 OUTPUT_FILEPATHS = {
-    "natural_substrates": os.path.join("data", "raw", "brenda_natural_substrates.csv"),
-    "temperature_optima": os.path.join("data", "raw", "brenda_temperature_optima.csv"),
-    "km_measurements": os.path.join("data", "raw", "brenda_km_measurements.csv"),
+    "natural_substrates": os.path.join(
+        "data", "raw", "brenda_natural_substrates.csv"
+    ),
+    "temperature_optima": os.path.join(
+        "data", "raw", "brenda_temperature_optima.csv"
+    ),
+    "km_measurements": os.path.join(
+        "data", "raw", "brenda_km_measurements.csv"
+    ),
 }
 WSDL = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
 CHUNKSIZE = 300
@@ -36,7 +42,8 @@ def _fetch_temperature_optima(
     out = pd.DataFrame()
     chunksize = 40
     chunks = [
-        ec_numbers[i : i + chunksize] for i in range(0, len(ec_numbers), chunksize)
+        ec_numbers[i : i + chunksize]
+        for i in range(0, len(ec_numbers), chunksize)
     ]
     out = pd.DataFrame()
     for chunk in tqdm(chunks):
@@ -96,10 +103,14 @@ def _fetch_natural_substrates(
 
 
 def _fetch_km_measurements(
-    email: str, password_hex: str, ec_numbers: List[str], chunksize: int = CHUNKSIZE
+    email: str,
+    password_hex: str,
+    ec_numbers: List[str],
+    chunksize: int = CHUNKSIZE,
 ):
     chunks = [
-        ec_numbers[i : i + chunksize] for i in range(0, len(ec_numbers), chunksize)
+        ec_numbers[i : i + chunksize]
+        for i in range(0, len(ec_numbers), chunksize)
     ]
     out = pd.DataFrame()
     for i, chunk in enumerate(chunks):

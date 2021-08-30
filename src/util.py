@@ -1,7 +1,8 @@
 """Some handy python functions."""
 
 
-from typing import Tuple, Dict
+from typing import Dict, Tuple
+
 import numpy as np
 import pandas as pd
 from scipy.stats import norm

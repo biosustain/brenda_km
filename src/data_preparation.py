@@ -1,14 +1,23 @@
 """Provides a function prepare_data."""
 
-import numpy as np
-import pandas as pd
-from typing import Dict, Any, Callable
 import os
 from dataclasses import dataclass
+from typing import Any, Callable, Dict
 
-from src.util import make_columns_lower_case, get_99_pct_params_n, get_99_pct_params_ln
+import numpy as np
+import pandas as pd
 
-ORGANISMS_TO_INCLUDE = ["Escherichia coli", "Homo sapiens", "Saccharomyces cerevisiae"]
+from src.util import (
+    get_99_pct_params_ln,
+    get_99_pct_params_n,
+    make_columns_lower_case,
+)
+
+ORGANISMS_TO_INCLUDE = [
+    "Escherichia coli",
+    "Homo sapiens",
+    "Saccharomyces cerevisiae",
+]
 NEW_COLNAMES = {
     "ecNumber": "ec4",
     "kmValue": "km",
@@ -17,7 +26,9 @@ NEW_COLNAMES = {
 NON_NULL_COLS = ["ec4", "km", "organism", "substrate"]
 EXTRA_NULL_VALUES = ["more", -999]
 NUMBER_REGEX = r"\d*\.?\d+"
-TEMP_REGEX = fr"({NUMBER_REGEX}-{NUMBER_REGEX}|{NUMBER_REGEX}) ?(&ordm;|&deg;)[Cc]"
+TEMP_REGEX = (
+    fr"({NUMBER_REGEX}-{NUMBER_REGEX}|{NUMBER_REGEX}) ?(&ordm;|&deg;)[Cc]"
+)
 PH_REGEX = fr"[pP][hH] ({NUMBER_REGEX})"
 MOL_REGEX = fr".* ({NUMBER_REGEX}) ?[mM]"
 COFACTORS = [
@@ -43,7 +54,9 @@ class PrepareDataOutput:
 
 @dataclass
 class PrepareDataInput:
-    prepare_func: Callable[[pd.DataFrame, pd.DataFrame, bool, bool], PrepareDataOutput]
+    prepare_func: Callable[
+        [pd.DataFrame, pd.DataFrame, bool, bool], PrepareDataOutput
+    ]
     pp: pd.DataFrame
     priors: pd.DataFrame
     likelihood: bool
@@ -69,7 +82,9 @@ def preprocess(km: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
         .pipe(make_columns_lower_case)
     )
     out["natural_ligands"] = out.join(
-        nat.groupby(["ecNumber", "organism"])["ligandStructureId"].apply(frozenset),
+        nat.groupby(["ecNumber", "organism"])["ligandStructureId"].apply(
+            frozenset
+        ),
         on=["ec4", "organism"],
     )["ligandStructureId"].pipe(replace_nulls_with_empty_set)
     out["is_natural"] = out.apply(
@@ -156,7 +171,9 @@ def lump_biologies(df: pd.DataFrame, n: int = 4) -> pd.Series:
         ["ec4"],
         ["ec3"],
     ]:
-        print(f"\n...lumping {n_sparse} sparse biologies based on {', '.join(cols)}.")
+        print(
+            f"\n...lumping {n_sparse} sparse biologies based on {', '.join(cols)}."
+        )
         out = pd.Series(
             np.where(
                 df.groupby(out)["y"].transform("size").ge(n),
@@ -166,7 +183,9 @@ def lump_biologies(df: pd.DataFrame, n: int = 4) -> pd.Series:
             index=out.index,
         )
         n_sparse = out.groupby(out).size().lt(n).sum()
-        print(f"...{out.nunique()} biologies remaining of which {n_sparse} are sparse")
+        print(
+            f"...{out.nunique()} biologies remaining of which {n_sparse} are sparse"
+        )
     return out
 
 

@@ -1,8 +1,8 @@
 """Definition of the ModelConfiguration class."""
 
-from typing import List
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
+from typing import List
 
 
 @dataclass

@@ -7,9 +7,10 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 idata_cat, idata_simple = (
-    az.from_netcdf(os.path.join("results", "infd", f)) for f in (
+    az.from_netcdf(os.path.join("results", "infd", f))
+    for f in (
         "idata_cat_model_likelihood_natural_only.nc",
-        "idata_simple_model_likelihood.nc"
+        "idata_simple_model_likelihood.nc",
     )
 )
 
@@ -31,8 +32,7 @@ ylabel = ax.set_ylabel("Number of observations")
 leg = ax.legend(frameon=False)
 
 q_cat, q_simple = (
-    idata
-    .posterior["log_km"]
+    idata.posterior["log_km"]
     .quantile([0.01, 0.5, 0.99], dim=["chain", "draw"])
     .to_series()
     .unstack("quantile")
@@ -40,8 +40,7 @@ q_cat, q_simple = (
     for idata, pref in ((idata_cat, "cat"), (idata_simple, "simple"))
 )
 q = (
-    q_cat
-    .join(q_simple)
+    q_cat.join(q_simple)
     .assign(y=idata_cat.observed_data["y"].values)
     .sort_values("y")
 )
@@ -57,7 +56,7 @@ for pref, color in (("cat_", "tab:blue"), ("simple_", "tab:orange")):
         q[pref + "0.99"],
         color=color,
         label=pref[:-1],
-        alpha=0.7
+        alpha=0.7,
     )
 ax.scatter(x, q["y"], color="black", zorder=3, label="average measurement")
 ax.set_ylabel("log km")

@@ -5,17 +5,15 @@ import os
 import pandas as pd
 from cmdstanpy.utils import jsondump
 
-from src.data_preparation import (
-    PrepareDataInput,
-    preprocess,
-    prepare_data_lit,
-)
+from src.data_preparation import PrepareDataInput, prepare_data_lit, preprocess
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW_DATA_DIR = os.path.join(HERE, "data", "raw")
 PREPARED_DATA_DIR = os.path.join(HERE, "data", "prepared")
 KM_MEASUREMENTS_CSV = os.path.join(RAW_DATA_DIR, "brenda_km_measurements.csv")
-NATURAL_SUBSTRATES_CSV = os.path.join(RAW_DATA_DIR, "brenda_natural_substrates.csv")
+NATURAL_SUBSTRATES_CSV = os.path.join(
+    RAW_DATA_DIR, "brenda_natural_substrates.csv"
+)
 PREPROCESSED_CSV = os.path.join(PREPARED_DATA_DIR, "km_preprocessed.csv")
 
 NATURAL_ONLY_CSV = os.path.join(
@@ -43,8 +41,12 @@ def main():
     print("Preparing Stan input files...")
     priors = pd.read_csv(PRIORS_CSV)
     prep_inputs = [
-        PrepareDataInput(prepare_data_lit, pp, priors, True, True, "lit_lik_nat"),
-        PrepareDataInput(prepare_data_lit, pp, priors, False, True, "lit_prior_nat"),
+        PrepareDataInput(
+            prepare_data_lit, pp, priors, True, True, "lit_lik_nat"
+        ),
+        PrepareDataInput(
+            prepare_data_lit, pp, priors, False, True, "lit_prior_nat"
+        ),
     ]
     for pi in prep_inputs:
         name = pi.name

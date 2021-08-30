@@ -2,13 +2,13 @@
 
 
 import os
-from cmdstanpy import CmdStanModel
+
 import numpy as np
 import pandas as pd
+from cmdstanpy import CmdStanModel
 
 from .model_configurations_to_try import NATURAL as TRUE_MODEL_CONFIG
 from .stan_io import get_ec3_codes
-
 
 # True values for each variable in your program's `parameters` block. Make sure
 # that the dimensions agree with `TRUE_MODEL_FILE`!
@@ -40,16 +40,13 @@ def generate_fake_measurements() -> pd.DataFrame:
     true_param_values["tau_ec3"] = np.random.lognormal(
         stan_input["prior_tau_ec3"][0],
         stan_input["prior_tau_ec3"][1],
-        stan_input["N_non_singleton_ec3"]
+        stan_input["N_non_singleton_ec3"],
     ).tolist()
     true_param_values["a_ec3"] = (
-        np.random.standard_t(4, stan_input["N_ec3"])
-        * TRUE_PARAM_VALUES["tau"]
+        np.random.standard_t(4, stan_input["N_ec3"]) * TRUE_PARAM_VALUES["tau"]
     ).tolist()
     ec4_free_to_ec3 = (
-        np.array(stan_input["ec4_to_ec3"])
-        [:int(stan_input["N_ec4_free"])]
-        - 1
+        np.array(stan_input["ec4_to_ec3"])[: int(stan_input["N_ec4_free"])] - 1
     )
     true_param_values["a_ec4_free"] = (
         np.random.standard_t(4, stan_input["N_ec4_free"])
