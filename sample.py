@@ -1,8 +1,4 @@
 import os
-import arviz as az
-from cmdstanpy import CmdStanModel
-from cmdstanpy.utils import jsondump
-import pandas as pd
 from src.fitting import sample
 from src.loading import load_model_configuration
 

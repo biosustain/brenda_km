@@ -48,7 +48,7 @@ def sample(mc: ModelConfiguration):
     idata = az.from_cmdstanpy(
         posterior=mcmc,
         log_likelihood="llik",
-        observed_data={"y": stan_input["y"]},
+        observed_data=stan_input,
         coords=coords,
         dims=dims,
     )
