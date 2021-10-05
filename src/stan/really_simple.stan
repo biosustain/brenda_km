@@ -4,7 +4,7 @@ data {
   int<lower=1> N;             // number of measurements
   int<lower=1> N_biology;     // biologically meaningful categories
   int<lower=1> N_natural;
-  int<lower=1> N_substrate_type;
+  int<lower=1> N_sub_type;
   int<lower=1> N_ec4;
   int<lower=1> N_ec3;
   int<lower=1> N_ec2;
@@ -12,7 +12,7 @@ data {
   vector[N] y;
   vector[N] is_natural;
   array[N] int<lower=1,upper=N_biology> biology;
-  array[N_biology] int<lower=1,upper=N_substrate_type> substrate_type;
+  array[N_biology] int<lower=1,upper=N_sub_type> sub_type;
   array[N_ec2] int<lower=1,upper=N_ec1> ec1;
   array[N_ec3] int<lower=1,upper=N_ec2> ec2;
   array[N_ec4] int<lower=1,upper=N_ec3> ec3;

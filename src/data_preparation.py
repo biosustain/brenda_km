@@ -2,7 +2,7 @@
 
 import os
 from dataclasses import dataclass
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -70,11 +70,7 @@ def replace_nulls_with_empty_set(s: pd.Series) -> pd.Series:
 
 
 def preprocess(km: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
-    """Add extra columns to the raw data and tidy some names.
-
-    No deleting!
-
-    """
+    """Add extra columns to the raw data and tidy some names."""
     out = (
         km.copy()
         .rename(columns=NEW_COLNAMES)
@@ -96,7 +92,7 @@ def preprocess(km: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
     for ec in [1, 2, 3]:
         out["ec" + str(ec)] = [".".join(s.split(".")[:ec]) for s in out["ec4"]]
     out["log_km"] = np.log(out["km"])
-    out["substrate_type"] = (
+    out["sub_type"] = (
         out["substrate"].where(lambda s: s.isin(COFACTORS)).fillna("other")
     )
     out["biology"] = out[BIOLOGY_FCTS].astype(str).apply("|".join, axis=1)
@@ -147,46 +143,51 @@ def get_prior_dict(prior_df) -> dict:
     return out
 
 
-def lump_biologies(df: pd.DataFrame, n: int = 4) -> pd.Series:
+def lump_biologies(df: pd.DataFrame, n: int = 4) -> Tuple[pd.Series, pd.Series]:
     """Put biologies together so that there are none with fewer than n rows.
 
     If there are fewer than n rows for a given biology, the "biology" column is
     replaced by a coarser category. The fallback order is follows:
 
-      ["ec4", "organism", "substrate_type"],
-      ["ec4", "organism"],
-      ["ec4"],
-      ["ec3"],
+    1. replace substrate with "any substrate"
+    2. replace organism with "any organism"
+    3. replace ec4 with ec3
+    3. replace ec4 with ec2
+    3. replace ec4 with ec1
 
     """
-    out = df["biology"].copy()
-    print(
-        f"Starting with {out.nunique()} biologies,"
-        f" lumping those with fewer than {n} occurences..."
+    lump_df = df[BIOLOGY_FCTS + ["sub_type"]].copy()
+    lump_df["dummy_substrate"] = "any substrate"
+    lump_df["dummy_organism"] = "any organism"
+    lump_df["ec4_lump"] = df["ec3"].copy()
+    lump_df["ec4_lump_2"] = df["ec2"].copy()
+    lump_df["ec4_lump_3"] = df["ec1"].copy()
+    lump_df["lump_level"] = 1
+    replacements = [
+        ("substrate", lump_df["dummy_substrate"].copy()),
+        ("organism", lump_df["dummy_organism"].copy()),
+        ("ec4", lump_df["ec4_lump"].copy()),
+        ("ec4", lump_df["ec4_lump_2"].copy()),
+        ("ec4", lump_df["ec4_lump_3"].copy()),
+    ]
+    for i, (original_col, replacement) in enumerate(replacements):
+        replace = (
+            lump_df.groupby(BIOLOGY_FCTS)["substrate"].transform("size").lt(n)
+        )
+        print(
+            f"Replacing {original_col} with {replacement.name}"
+            f" in {replace.sum()} cases."
+        )
+        lump_df[original_col] = np.where(
+            replace, replacement, lump_df[original_col]
+        )
+        lump_df.loc[replace, "lump_level"] = i + 2
+    n_sparse = lump_df.groupby(BIOLOGY_FCTS).size().lt(n).sum()
+    print(f"{n_sparse} sparse biologies remain after lumping.")
+    bio_lumps = pd.Series(
+        lump_df[BIOLOGY_FCTS].apply(lambda row: "|".join(row.values), axis=1)
     )
-    n_sparse = out.groupby(out).size().lt(n).sum()
-    for cols in [
-        ["ec4", "organism", "substrate_type"],
-        ["ec4", "organism"],
-        ["ec4"],
-        ["ec3"],
-    ]:
-        print(
-            f"\n...lumping {n_sparse} sparse biologies based on {', '.join(cols)}."
-        )
-        out = pd.Series(
-            np.where(
-                df.groupby(out)["y"].transform("size").ge(n),
-                out,
-                df[cols].astype(str).apply("|".join, axis=1) + "|other",
-            ),
-            index=out.index,
-        )
-        n_sparse = out.groupby(out).size().lt(n).sum()
-        print(
-            f"...{out.nunique()} biologies remaining of which {n_sparse} are sparse"
-        )
-    return out
+    return bio_lumps, lump_df["lump_level"]
 
 
 def process_temperature_column(t: pd.Series) -> pd.Series:
@@ -219,9 +220,9 @@ def get_lits(pp: pd.DataFrame, natural_only: bool) -> pd.DataFrame:
         "ec2",
         "ec1",
         "is_natural",
-        "substrate_type",
+        "sub_type",
     ]
-    output_fcts = input_fcts + ["biology_lump"]
+    output_fcts = input_fcts + ["bio_lump"]
 
     r = pp.copy()
 
@@ -243,15 +244,67 @@ def get_lits(pp: pd.DataFrame, natural_only: bool) -> pd.DataFrame:
             **{"y": g["log_km"].mean(), "n": g.size(), "sd": g["log_km"].std()},
         }
     ).reset_index(drop=True)
-    lits["biology_lump"] = lump_biologies(lits, n=2)
+    lits["bio_lump"], lits["lump_level"] = lump_biologies(lits, n=2)
 
     # second filter: drop rows whose lumped biologies have too few observations
     lits = lits.loc[
-        lambda df: df.groupby("biology_lump")["y"].transform("size").ge(2),
+        lambda df: df.groupby("bio_lump")["y"].transform("size").ge(2),
     ]
 
     # add 1-indexed factor columns for Stan
     for fct in output_fcts:
+        lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
+
+    return lits
+
+
+def get_lits_blk(pp: pd.DataFrame, natural_only: bool) -> pd.DataFrame:
+    """Get a dataframe of literature/biology groups.
+
+    Uses the Borger, Liebermeister and Klipp framework.
+
+    :param pp: A dataframe of preprocessed reports
+
+    :param natural_only: A bool indicating whether to exclude measurements of
+    non-natural substrates
+
+    """
+    fcts = BIOLOGY_FCTS + [
+        "substrate",
+        "organism",
+        "biology",
+        "ec_sub",
+        "org_sub",
+        "literature",
+        "is_natural",
+    ]
+
+    r = pp.copy()
+
+    # correct dtypes if necessary
+    r["temperature"] = process_temperature_column(r["temperature"])
+    r["ph"] = r["ph"].astype(float)
+    r["mols"] = r["mols"].astype(float)
+    r["km"] = r["km"].astype(float)
+
+    r["ec_sub"] = r["ec4"].astype(str).str.cat(r["substrate"], sep="|")
+    r["org_sub"] = r["organism"].str.cat(r["substrate"], sep="|")
+
+    # filter
+    cond = filter_reports(r, natural_only=natural_only)
+    r = r.loc[cond]
+
+    # group
+    g = r.groupby(["biology", "literature"])
+    lits = pd.DataFrame(
+        {
+            **{c: g[c].first() for c in fcts},
+            **{"y": g["log_km"].mean(), "n": g.size(), "sd": g["log_km"].std()},
+        }
+    ).reset_index(drop=True)
+
+    # add 1-indexed factor columns for Stan
+    for fct in fcts:
         lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
 
     return lits
@@ -278,13 +331,13 @@ def prepare_data_lit(
     prior_dict = get_prior_dict(priors)
     stan_input_no_priors = {
         "N": len(lits),
-        "N_biology": lits["biology_lump"].nunique(),
-        "N_cat": lits["literature"].nunique(),
-        "biology": lits["biology_lump_stan"].values,
+        "N_biology": lits["bio_lump"].nunique(),
+        "biology": lits["bio_lump_stan"].values,
         "lit": lits["literature_stan"].values,
         "N_natural": lits["is_natural"].sum().astype(int),
+        "N_lump_level": lits["lump_level"].nunique(),
         "y": lits["y"].values,
-        "N_substrate_type": lits["substrate_type"].nunique(),
+        "N_sub_type": lits["sub_type"].nunique(),
         "N_ec4": lits["ec4"].nunique(),
         "N_ec3": lits["ec3"].nunique(),
         "N_ec2": lits["ec2"].nunique(),
@@ -292,10 +345,9 @@ def prepare_data_lit(
         "ec1": lits.groupby("ec2")["ec1_stan"].first().values,
         "ec2": lits.groupby("ec3")["ec2_stan"].first().values,
         "ec3": lits.groupby("ec4")["ec3_stan"].first().values,
-        "ec4": lits.groupby("biology_lump")["ec4_stan"].first().values,
-        "substrate_type": lits.groupby("biology_lump")["substrate_type_stan"]
-        .first()
-        .values,
+        "ec4": lits.groupby("bio_lump")["ec4_stan"].first().values,
+        "sub_type": lits.groupby("bio_lump")["sub_type_stan"].first().values,
+        "lump_level": lits.groupby("bio_lump")["lump_level"].first().values,
         "is_natural": lits["is_natural"].astype(int).values,
         "likelihood": int(likelihood),
     }
@@ -303,16 +355,58 @@ def prepare_data_lit(
     coords = {c: pd.factorize(lits[c])[1].tolist() for c in fcts}
     dims = {
         "a_ec2": ["ec2"],
-        "a_sub": ["substrate_type"],
+        "a_sub": ["sub_type"],
         "a_ec3": ["ec3"],
         "a_ec4": ["ec4"],
-        "a_biology": ["biology_lump"],
+        "a_biology": ["bio_lump"],
         "tau_ec4": ["ec3"],
-        "tau_ec3": ["ec2"],
         "a_ec2_tau_log_km": ["ec2"],
         "a_ec3_tau_log_km": ["ec3"],
         "a_ec4_tau_log_km": ["ec4"],
-        "yhat": ["cat"],
-        "log_km": ["cat"],
+        "yhat": ["bio_lump"],
+        "log_km": ["bio_lump"],
+    }
+    return PrepareDataOutput(stan_input, coords, dims, lits)
+
+
+def prepare_data_blk(
+    pp: pd.DataFrame, priors: pd.DataFrame, likelihood: bool, natural_only: bool
+) -> PrepareDataOutput:
+    """Prepare data at the level of study x org x substrate x ec number.
+
+    :param pp: A dataframe of preprocessed reports
+
+    :param priors: A dataframe of priors
+
+    :param likelihood: A bool corresponding to the (integer-valued)
+    "likelihood" field in the Stan input.
+
+    :param natural_only: A bool indicating whether to exclude measurements of
+    non-natural substrates
+
+    """
+    lits = get_lits_blk(pp, natural_only)
+    fcts = [c for c in lits.columns if c + "_stan" in lits.columns]
+    stan_input = {
+        "N": len(lits),
+        "N_biology": lits["biology"].nunique(),
+        "biology": lits["biology_stan"].values,
+        "N_natural": lits["is_natural"].sum().astype(int),
+        "N_sub": lits["substrate"].nunique(),
+        "N_ec_sub": lits["ec_sub"].nunique(),
+        "N_org_sub": lits["org_sub"].nunique(),
+        "substrate": lits.groupby("biology")["substrate_stan"].first().values,
+        "ec_sub": lits.groupby("biology")["ec_sub_stan"].first().values,
+        "org_sub": lits.groupby("biology")["org_sub_stan"].first().values,
+        "y": lits["y"].values,
+        "is_natural": lits["is_natural"].astype(int).values,
+        "likelihood": int(likelihood),
+    }
+    coords = {c: pd.factorize(lits[c])[1].tolist() for c in fcts}
+    dims = {
+        "a_sub": ["substrate"],
+        "a_ec_sub": ["ec_sub"],
+        "a_org_sub": ["org_sub"],
+        "log_km": ["biology"],
     }
     return PrepareDataOutput(stan_input, coords, dims, lits)

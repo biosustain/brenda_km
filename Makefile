@@ -13,18 +13,20 @@ IDATAS = $(shell find results/idata -type f -not -name "idata*.nc" | $(QUOTE_LIN
 LOOS = $(shell find results/loo -type f -not -name "*.md" | $(QUOTE_LINES))
 JSONS = $(shell find results/input_data_json -type f -not -name "*.md" | $(QUOTE_LINES))
 MARKDOWN_FILE = report.md
+ORG_FILE = report.org
 PDF_FILE = report.pdf
 DOCX_FILE = report.docx
 PANDOCFLAGS =                         \
-  --from=markdown                     \
+  --from=org                          \
   --highlight-style=pygments          \
   --pdf-engine=xelatex                \
+  --citeproc                          \
   --bibliography=$(BIBLIOGRAPHY)      
 
-$(PDF_FILE): $(MARKDOWN_FILE) $(BIBLIOGRAPHY)
+$(PDF_FILE): $(ORG_FILE) $(BIBLIOGRAPHY)
 	pandoc $< -o $@ $(PANDOCFLAGS)
 
-$(DOCX_FILE): $(MARKDOWN_FILE) $(BIBLIOGRAPHY)
+$(DOCX_FILE): $(ORG_FILE) $(BIBLIOGRAPHY)
 	pandoc $< -o $@ --from=markdown --bibliography=$(BIBLIOGRAPHY)
 
 clean-all: clean_stan clean_results clean_pdf clean_data

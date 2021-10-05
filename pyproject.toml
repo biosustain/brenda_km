@@ -38,7 +38,11 @@ max-line-length = "80"
 
 [tool.pyright]
 reportMissingImports = true
-reportMissingTypeStubs = true
+reportMissingTypeStubs = false
 disableOrganizeImports = false
+python.analysis.useLibraryCodeForTypes = true
 python.pythonPath = "/Users/tedgro/.pyenv/shims/python3"
+python.venvPath = ".venv_brenda"
+python.venv = ".venv_brenda"
+python.pythonVersion = "3.8"
 useLibraryCodeForTypes = true
