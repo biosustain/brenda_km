@@ -1,0 +1,14 @@
+name = "blk"
+stan_file = "src/stan/blk.stan"
+data_file = "data/stan_input/blk_lik_nat.json"
+coords_file = "data/coords/blk_lik_nat.json"
+dims_file = "data/dims/blk_lik_nat.json"
+
+[sample_kwargs]
+show_progress = true
+save_warmup = true
+iter_warmup = 1000
+iter_sampling = 1000
+max_treedepth = 13
+chains = 4
+refresh = 1
