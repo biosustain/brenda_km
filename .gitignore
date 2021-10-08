@@ -8,3 +8,4 @@
 brenda_venv
 .DS_Store
 *pycache*
+.venv*
