@@ -21,28 +21,27 @@ data {
   int<lower=0,upper=1> likelihood;
 }
 parameters {
-  vector[N_sub] a_sub;
-  vector[N_ec_sub] a_ec_sub;
-  vector[N_org_sub] a_org_sub;
   real<lower=1> nu;
   real<lower=0> sigma;
   real<lower=0> tau_ec_sub;
   real<lower=0> tau_org_sub;
-  real<lower=0> tau_log_km;
-  vector[N_biology] log_km;
+  vector[N_sub] a_sub;
+  vector<multiplier=tau_ec_sub>[N_ec_sub] a_ec_sub;
+  vector<multiplier=tau_org_sub>[N_org_sub] a_org_sub;
+}
+transformed parameters {
+  vector[N_biology] log_km =
+    a_sub[substrate] + a_ec_sub[ec_sub] + a_org_sub[org_sub];
 }
 model {
   if (likelihood){
     y ~ student_t(nu, log_km[biology], sigma);
   }
-  log_km ~ normal(a_sub[substrate]
-                  + a_ec_sub[ec_sub]
-                  + a_org_sub[org_sub], tau_log_km);
   nu ~ gamma(2, 0.1);
+  sigma ~ normal(0, 2);
   a_sub ~ normal(-1, 2);
   a_ec_sub ~ normal(0, tau_ec_sub);
   a_org_sub ~ normal(0, tau_org_sub);
-  tau_log_km ~ normal(0, 2);
   tau_org_sub ~ normal(0, 2);
   tau_ec_sub ~ normal(0, 2);
 }

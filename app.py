@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+from typing import Any
 
 import altair as alt
 import arviz as az
@@ -17,9 +18,9 @@ PREPARED_DATA_FILE = os.path.join("data", "prepared", "lit_lik_nat.csv")
 COORDS_FILE = os.path.join("data", "coords", "lit_lik_nat.json")
 
 
-def get_lit_link(e: str, l: str) -> str:
-    lit = l.replace("[", "").replace("]", "")
-    url = f"https://www.brenda-enzymes.org/literature.php?e={e}&r={lit}"
+def get_lit_link(e: Any, l: Any) -> str:
+    lit = str(l).replace("[", "").replace("]", "")
+    url = f"https://www.brenda-enzymes.org/literature.php?e={str(e)}&r={lit}"
     return f'<a href = "{url}">{lit}</a>'
 
 
@@ -27,7 +28,7 @@ def get_obs(
     msmts: pd.DataFrame, organism: str, ec4: str, substrate: str
 ) -> pd.DataFrame:
     biology = "|".join([ec4, organism, substrate])
-    obs = msmts.loc[lambda df: df["biology"] == biology].rename(
+    obs = msmts.loc[msmts["biology"] == biology].rename(
         columns={"log_km": "log km"}
     )
     obs["Posterior density"] = 0
@@ -43,7 +44,7 @@ def get_obs(
 def check_if_natural(
     msmts: pd.DataFrame, organism: str, ec4: str, substrate: str
 ) -> bool:
-    return (
+    return bool(
         msmts.groupby(["organism", "ec4", "substrate"])["is_natural"]
         .first()
         .loc[(organism, ec4, substrate)]
