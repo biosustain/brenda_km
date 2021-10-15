@@ -27,22 +27,25 @@ To install python dependencies run this terminal command in a suitable environme
 pip install -r requirements.txt
 ```
 
+Note that this repository depends on [cmdstanpy](cmdstanpy.readthedocs.io/), which in turn has non-python dependencies. See [here](https://cmdstanpy.readthedocs.io/en/v0.9.77/installation.html#installing-cmdstan) for details about how to install these.
 
-Fitting the model
-=================
+Reproducing our results
+=======================
 
-To fit the model run the following terminal command:
+Our results can be reproduced by running python scripts from the project's root directory. 
 
 ```sh
-python fit_real_data.py
+python prepare_data.py
+python generate_fake_data.py
+python sample.py
 ```
 
 Investigating the results
 =========================
 
-To investigate the results of a pre-existing model run (it is an arviz
-`InferenceData` object saved in netcdf format at `results/idata/app_idata.nc`),
-start our webapp with the following command:
+To investigate the results of a the `blk` model run, ensure that the file
+`results/runs/blk/posterior/idata.nc` exists and then start our webapp with the
+following command:
 
 ```sh
 streamlit run app.py
