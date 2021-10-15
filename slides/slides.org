@@ -1,0 +1,191 @@
+#+TITLE: Analysing enzyme databases with Stan and Arviz
+#+AUTHOR: Teddy Groves
+#+DATE: %date
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [aspectratio=169]
+#+LATEX_HEADER: \input{preamble.tex}
+#+LATEX_HEADER: \setdepartment{DTU Biosustain}
+#+LATEX_HEADER: \setcolor{blue}
+#+LATEX_HEADER: \makeatletter \beamer@ignorenonframefalse \makeatother
+#+BIBLIOGRAPHY: ../bibliography.bib
+#+OPTIONS: H:2
+#+STARTUP: overview
+
+* Notes                                                            :noexport:
+
+#+begin_src emacs-lisp
+(setq-local org-image-actual-width '(500))
+#+end_src
+ 
+* Introduction
+** The good news
+#+begin_columns
+
+#+attr_html: :width 65%
+#+begin_column
+
+Since ~1920 we can parameterise enzyme-catalysed reactions:
+
+$$
+v=E\cdot\frac{k_{+}^{cat}\frac{GLC}{k_{GLC}^{M}}\frac{ATP}{k_{ATP}^{M}}
+             -k_{-}^{cat}\frac{G6P}{k_{G6P}^{M}}\frac{ADP}{k_{ADP}^{M}}}
+             {(1+\frac{GLC}{k_{GLC}^{M}})(1+\frac{ATP}{k_{ATP}^{M}})
+               +(1+\frac{G6P}{k_{G6P}^{M}})(1+\frac{ADP}{k_{ADP}^{M}}) - 1}
+$$
+
+#+end_column
+
+#+attr_html: :width 35%
+#+begin_column
+[[./img/mechanism.png]]
+#+end_column
+
+#+end_columns
+
+** More good news
+#+begin_columns
+
+#+attr_html: :width 35%
+#+begin_column
+
+Kinetic parameters measurements are available online.
+
+#+end_column
+
+#+attr_html: :width 65%
+#+begin_column
+[[./img/brenda.png]]
+#+end_column
+
+#+end_columns
+
+** The bad news
+- Disagreement between studies
+- Relevant information can be inaccessible
+- Many parameters have not been measured
+
+Result: systems biology step zero
+1. Manually trawl the database
+2. Read the actual papers
+3. Decide how to resolve disagreements
+
+This is annoying!
+
+** Our plan
+
+1. Summarise the km information in BRENDA with a statistical model.
+2. Make the results easy to access
+
+* What we did
+** Fetch and process some data
+#+begin_columns
+
+#+attr_html: :width 50%
+#+begin_column
+- One 'observation' per study
+- Three organisms (Human, yeast, E. coli)
+- Natural enzyme/substrate combinations only
+#+end_column
+
+#+attr_html: :width 60%
+#+begin_column
+[[../results/plots/input_data.svg]]
+#+end_column
+
+#+end_columns
+
+** Try out some models
+We settled on this measurement model from @borgerPredictionEnzymeKinetic2006:
+
+$$
+\hat{\ln km_{ijk}} = \mu + \alpha^{sub}_{k} + \alpha^{org:sub}_{jk} + \alpha^{ec:sub}_{ik}
+$$
+
+** Write the model in Stan
+#+begin_example
+model {
+  if (likelihood){
+    y_train ~ student_t(nu, log_km[biology_train], sigma);
+  }
+  nu ~ gamma(2, 0.1);
+  sigma ~ normal(0, 2);
+  mu ~ normal(-2, 1);
+  a_sub ~ normal(0, tau_sub);
+  a_ec_sub ~ normal(0, tau_ec_sub);
+  a_org_sub ~ normal(0, tau_org_sub);
+  tau_org_sub ~ normal(0, 1);
+  tau_ec_sub ~ normal(0, 1);
+  tau_sub ~ normal(0, 1);
+}
+#+end_example
+
+* Results
+** Fake data 
+
+[[../results/plots/ppc_fake.svg]]
+
+** Real data
+
+[[../results/plots/ppc.svg]]
+
+** Approximate cross-validation
+
+#+begin_example
+           Estimate       SE
+  elpd_loo -12549.28    86.78
+  p_loo     2681.82        -
+
+  There has been a warning during the calculation. Please check the results.
+  ------
+
+  Pareto k diagnostic values:
+                           Count   Pct.
+  (-Inf, 0.5]   (good)     5914   92.6%
+   (0.5, 0.7]   (ok)        407    6.4%
+     (0.7, 1]   (bad)        65    1.0%
+     (1, Inf)   (very bad)    3    0.0%
+
+#+end_example
+
+** Exact cross-validation
+#+begin_example
+: calculating out of sample log likelihoods for model blk...
+: 	split_4: -1477.2729990849998
+: 	split_3: -1481.00882687375
+: 	split_2: -1441.2448831225
+: 	split_5: -1477.1304594875
+: 	split_0: -1467.7910366725
+: 	split_7: -1480.53716923375
+: 	split_9: -1504.9884546787503
+: 	split_8: -1502.4060516825002
+: 	split_6: -1483.4119273775
+: 	split_1: -1515.77739092
+: 	total out of sample log likelihood: -14831.569199133752
+#+end_example
+
+** Webapp
+
+#+attr_html: :width 400
+[[./img/app.png]]
+
+* Final thoughts
+- This data is hard to model
+- File-based cmdstanpy workflow is great!
+- ~llik~ + ~yrep~ = long io
+  
+* Thanks for listening!
+
+Our emails:
+- ~tedgro AT biosustain.dtu.dk~
+- ~aretsi AT biosustain.dtu.dk~
+ 
+The project on github:
+_~https://github.com/biosustain/brenda_km~_
+
+[[./img/novo.png]]
+
+* References
+:PROPERTIES:
+:allowframebreaks:
+:END:
+.
