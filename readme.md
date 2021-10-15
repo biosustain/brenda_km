@@ -7,7 +7,7 @@ Statistical models of kinetic parameter data from BRENDA
 Fetching data
 =============
 
-Raw km data from BRENDA can be found in the file `data/raw/raw_brenda_kms.csv`.
+Raw km data from BRENDA can be found in the file `data/raw/brenda_km_measurements.csv`.
 
 This data was fetched using the script `fetch_brenda_data.py`. In order to run
 this script, you will need to
