@@ -1,893 +1,430 @@
 #+TITLE: Analysing some results
-#+PROPERTY: header-args:jupyter-python :tangle analyse.py
+#+PROPERTY: header-args:jupyter-python :async yes :exports both
 #+STARTUP: overview
 
-The code in this document shows how to analyse a model fit.
+This notebook analyses the results of a model of some BRENDA km data. To generate the results yourself, first make sure you have installed all the dependencies, then run these python scripts:
+
+#+begin_example sh
+python prepare_data.py
+python generate_fake_data.py
+python sample.py
+#+end_example
+
+* Notes                                                            :noexport:
+
+#+begin_src emacs-lisp
+(setq-local org-image-actual-width '(500))
+#+end_src
+
+#+RESULTS:
+| 500 |
+
 
 * Preliminaries
 
 First make sure you have already run some models. If you have, there should be
-some files in the folder ~results/idata~ with the extension ~.nc~. We can check
-this from the command line as follows:
+some subfolders in the folder ~results/runs~. We check this with the following
+shell command:
 
 #+begin_src sh :results drawer :display raw
-ls results/idata
+ls results/runs
 #+end_src
 
 #+RESULTS:
 :results:
-idata_dist.nc
-idata_simple.nc
+blk
+readme.md
+really_simple
+simple
 :end:
 
-
-There are two files so we are good!
+There are some folders there so we are good!
 
 * Imports
 
 Now we start writing python code for analysis. First some imports
 
 #+begin_src jupyter-python :session py :exports both :results none :async yes 
+  import json
   import os
   import warnings
-  
+
   import arviz as az
   import numpy as np
   import pandas as pd
   from matplotlib import pyplot as plt
+  from matplotlib.axes._axes import Axes as MplAxes
 #+end_src
 
 * Loading the input data
 
-Load some csv tables (~m~, the prepared measurements and ~d~, the table of
-model inputs).
+Load a csv table ~m~ of prepared measurements.
 
 #+begin_src jupyter-python :session py :exports both :results none :async yes :display plain
-  m = pd.read_csv("data/prepared/km_preprocessed.csv")
-  d = pd.read_csv("data/prepared/lit_lik_nat.csv")
+  DATA_DIR = os.path.join("data", "prepared", "tenfold")
+  m = pd.read_csv(os.path.join(DATA_DIR, "input_df.csv"))
 #+end_src
 
+The table's rows report the mean reported value for each study/km combination
+we retrieved from the BRENDA database, for the organisms Escherichia coli, Homo
+Sapiens and Saccharomyces cerevisiae.
 
-Check the first row of the model inputs table
+Here is what the first row looks like:
+
 #+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :display plain
-d.iloc[0]
+  m.iloc[0]
 #+end_src
 #+RESULTS:
 :results:
 #+begin_example
-  Unnamed: 0                                            0
-  ec4                                           1.1.1.100
-  organism                               Escherichia coli
-  substrate                                         NADPH
-  biology                1.1.1.100|Escherichia coli|NADPH
-  literature                                     [704337]
-  ec3                                               1.1.1
-  ec2                                                 1.1
-  ec1                                                   1
-  is_natural                                         True
-  substrate_type                                    NADPH
-  y                                              -4.60517
-  n                                                     1
-  sd                                                  NaN
-  biology_lump                                1.1.1|other
-  ec4_stan                                              1
-  organism_stan                                         1
-  substrate_stan                                        1
-  biology_stan                                          1
-  literature_stan                                       1
-  ec3_stan                                              1
-  ec2_stan                                              1
-  ec1_stan                                              1
-  is_natural_stan                                       1
-  substrate_type_stan                                   1
-  biology_lump_stan                                     1
+  Unnamed: 0                                        0
+  ec4                                       1.1.1.100
+  organism                           Escherichia coli
+  substrate                                     NADPH
+  ec_sub                              1.1.1.100|NADPH
+  org_sub                      Escherichia coli|NADPH
+  literature                                 [704337]
+  biology            1.1.1.100|Escherichia coli|NADPH
+  y                                          -4.60517
+  n                                                 1
+  sd                                              NaN
+  ec4_stan                                          1
+  organism_stan                                     1
+  substrate_stan                                    1
+  ec_sub_stan                                       1
+  org_sub_stan                                      1
+  literature_stan                                   1
+  biology_stan                                      1
   Name: 0, dtype: object
 #+end_example
 :end:
 
-Check the first row of the measurements table without a null in the ~km~ column.
+Here are the y values in order:
 
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :display plain
-  m.dropna(subset=["km"]).iloc[0]
-#+end_src
-#+RESULTS:
-:results:
-#+begin_example
-  literature                                                 [701322]
-  substrate                                   1-formyl-8-methylpyrene
-  km                                                         0.000035
-  kmvaluemaximum                                                  NaN
-  commentary                             isozyme ADH4, at 21-23&deg;C
-  organism                                               Homo sapiens
-  ec4                                                         1.1.1.1
-  ligand_structure_id                                            6971
-  natural_ligands               frozenset({0, 2339, 69, 7, 556, 847})
-  is_natural                                                    False
-  ph                                                              NaN
-  mols                                                            NaN
-  temperature                                                   21-23
-  ec1                                                               1
-  ec2                                                             1.1
-  ec3                                                           1.1.1
-  log_km                                                   -10.260162
-  substrate_type                                                other
-  biology                1.1.1.1|Homo sapiens|1-formyl-8-methylpyrene
-  Name: 25, dtype: object
-#+end_example
-:end:
+#+begin_src jupyter-python :session py :exports both :results drawer :async yes
+  def plot_data(ax: MplAxes, m: pd.DataFrame, obs_col="y"):
+      x = np.arange(len(m))
+      y = m.sort_values(obs_col)[obs_col]
+      ax.scatter(x, y, color="black", s=5, label="Observed")
+      ax.get_xaxis().set_ticks([])
+      ax.set(xlabel="Ec/substrate/organism in a study",
+             ylabel="km ($\ln$ scale)")
+      leg = ax.legend(frameon=False)
+      return ax
 
-* Investigating the input data
-** Heterogeneity at EC number level
-
-I thought it would be interesting to plot the EC number vs the average log-km
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes
-  t = d.groupby("ec4").agg({
-      "ec3": "first",
-      "ec2": "first",
-      "ec1": "first",
-      "y": "mean"
-  }).reset_index()
-  ec4_fct, ec4_order = pd.factorize(t["ec4"])
-  ec1_fct, ec1_order = pd.factorize(t["ec1"])
-  ec1_to_fct = dict(zip(ec1_order, range(len(ec1_order))))
-  ec4_to_x = dict(zip(ec4_order, ec4_fct))
-  
-  f, ax = plt.subplots(figsize=[8, 4])
-  cmap = plt.get_cmap("tab10")
-  for ec, alpha in [("ec1", 1), ("ec2", 0.7), ("ec3", 0.4)]:
-      m = d.groupby(ec).agg({"y": "mean", "ec4": ["min", "max"], "ec1": "first"})
-      m["x_low"] = m[("ec4", "min")].map(ec4_to_x)
-      m["x_high"] = m[("ec4", "max")].map(ec4_to_x)
-      ax.hlines(
-          m[("y", "mean")],
-          m["x_low"],
-          m["x_high"],
-          colors=cmap(m[("ec1", "first")].map(ec1_to_fct)),
-          alpha=alpha,
-          label=ec,
-      )
-  ax.scatter(
-      ec4_fct,
-      t["y"],
-      s=3,
-      c=cmap(t["ec1"].map(ec1_to_fct)),
-      cmap="tab10",
-      alpha=0.125,
-      label="ec4"
+  f, ax = plt.subplots()
+  ax = plot_data(ax, m)
+  f.savefig(
+      os.path.join("results", "plots", "input_data.svg"),
+      bbox_inches="tight"
   )
-  ax.legend(frameon=False)
-  ax.set(
-      title="EC number vs log km mean",
-      xlabel="EC number",
-      ylabel="log km mean"
-  )
-  ticks = ax.xaxis.set_ticks([])
-  plt.savefig("results/plots/log_km_means_by_ec.svg")
 #+end_src
 
 #+RESULTS:
 :results:
-[[file:./.ob-jupyter/50bd99ee86bc5d038198e0aae3bfc7ed83c081ae.png]]
-:end:
-:end:
-
-The same graph but for standard deviations (should give a hint as to the distributional information in the EC categories):
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes
-  t = d.groupby("ec4").agg({
-      "ec3": "first",
-      "ec2": "first",
-      "ec1": "first",
-      "y": "std"
-  }).reset_index()
-  ec4_fct, ec4_order = pd.factorize(t["ec4"])
-  ec1_fct, ec1_order = pd.factorize(t["ec1"])
-  ec1_to_fct = dict(zip(ec1_order, range(len(ec1_order))))
-  ec4_to_x = dict(zip(ec4_order, ec4_fct))
-  
-  f, ax = plt.subplots(figsize=[8, 4])
-  cmap = plt.get_cmap("tab10")
-  for ec, alpha in [("ec1", 1), ("ec2", 0.7), ("ec3", 0.4)]:
-      m = d.groupby(ec).agg({"y": "std", "ec4": ["min", "max"], "ec1": "first"})
-      m["x_low"] = m[("ec4", "min")].map(ec4_to_x)
-      m["x_high"] = m[("ec4", "max")].map(ec4_to_x)
-      ax.hlines(
-          m[("y", "std")],
-          m["x_low"],
-          m["x_high"],
-          colors=cmap(m[("ec1", "first")].map(ec1_to_fct)),
-          alpha=alpha,
-          label=ec,
-      )
-  ax.scatter(
-      ec4_fct,
-      t["y"],
-      s=3,
-      c=cmap(t["ec1"].map(ec1_to_fct)),
-      cmap="tab10",
-      alpha=0.125,
-      label="ec4"
-  )
-  ax.legend(frameon=False)
-  ax.set(
-      title="EC number vs log km standard deviation",
-      xlabel="EC number",
-      ylabel="log km standard deviation"
-  )
-  ticks = ax.xaxis.set_ticks([])
-  plt.savefig("results/plots/log_km_sds_by_ec.svg")
-#+end_src
-
-#+RESULTS:
-[[file:./.ob-jupyter/392a5988572d0f76191098bbe32cde4ff09c2aa5.png]]
-:results:
-:end:
-:results:
-:end:
 :RESULTS:
-: 
-: NameErrorTraceback (most recent call last)
-: <ipython-input-47-69eacabe7ebd> in <module>
-:      34 )
-:      35 ax.legend(frameon=False)
-: ---> 36 x.set(
-:      37     title="EC number vs log km standard deviation",
-:      38     xlabel="EC number",
-: 
-: NameError: name 'x' is not defined
-[[file:./.ob-jupyter/3af8ede7f9a25ab370b3dcd0c6c83cb3040b0851.png]]
+#+attr_org: :width 394
+[[file:./.ob-jupyter/7cf6715bf9152509a368ec51b6b0561c30df07f3.png]]
 :END:
-:RESULTS:
-# [goto error]
-:END:
-:results:
 :end:
-:results:
 :end:
-:results:
 :end:
 
-
-
-
-** Between-organism heterogeneity
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :display plain
-  t = (
-      d
-      .loc[lambda df: df["organism"].isin(["Homo sapiens", "Escherichia coli"])]
-      .groupby(["ec4", "organism"])
-      ["y"]
-      .mean()
-      .unstack("organism")
-      .dropna(how="any")
-  )
-  f, ax = plt.subplots
-#+end_src
-
-#+RESULTS:
-:results:
-#+begin_example
-  organism        ec4  Escherichia coli  Homo sapiens
-  0         1.1.1.205         -3.049748     -4.306953
-  1          1.1.1.22         -0.329361     -2.080813
-  2          1.1.1.38         -1.766074      1.922942
-  3          1.1.1.40         -0.977675     -2.906260
-  4          1.1.1.41         -0.382536     -0.443327
-  ..              ...               ...           ...
-  113         6.3.5.2         -1.684535     -2.398463
-  114         6.3.5.4         -0.969913     -0.398007
-  115         6.4.1.4         -2.513306     -2.852391
-  116         6.5.1.4         -3.912023     -5.587945
-  117         7.4.2.5         -1.792611     -1.467861
-
-  [118 rows x 3 columns]
-#+end_example
-:end:
-
-
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :display plain
-  from pprint import pprint
-  
-  d["biology_lump"] = d["biology"].copy()
-  for cols in [
-      ["ec4", "organism", "substrate_type"],
-      ["ec4", "organism"],
-      ["ec4"],
-      ["ec3"],
-  #   ["ec2"],
-  ]:
-      d["biology_lump"] = np.where(
-          d.groupby("biology_lump")["y"].transform("size").ge(4),
-          d["biology_lump"],
-          d[cols].astype(str).apply("|".join, axis=1) + "|other"
-      )
-  pprint(
-      {
-          str(f): d.groupby(f).size().lt(4).sum()
-          for f in [
-              "ec1",
-              "ec2",
-              "ec3",
-              "ec4",
-              "ec2_lump",
-              "ec3_lump",
-              "ec4_lump",
-              "biology",
-              "biology_lump",
-              ["ec4_lump", "substrate", "organism"],
-              ["ec4_lump", "substrate"],
-              ["ec4_lump", "substrate_type"],
-              ["ec4", "substrate", "organism"],
-              ["ec4", "substrate"],
-              ["ec4", "substrate_type"],
-  
-          ]
-      }
-  )
-#+end_src
-
-#+RESULTS:
-:results:
-#+begin_example
-  {"['ec4', 'substrate', 'organism']": 2262,
-   "['ec4', 'substrate']": 1765,
-   "['ec4', 'substrate_type']": 916,
-   "['ec4_lump', 'substrate', 'organism']": 2121,
-   "['ec4_lump', 'substrate']": 1577,
-   "['ec4_lump', 'substrate_type']": 339,
-   'biology': 2262,
-   'biology_lump': 65,
-   'ec1': 0,
-   'ec2': 4,
-   'ec2_lump': 1,
-   'ec3': 37,
-   'ec3_lump': 23,
-   'ec4': 600,
-   'ec4_lump': 71}
-#+end_example
-:end:
+I thought it might be interesting to see how the input data varies as a function of the organism. The plot below plots kms in our dataset that have measurements for all three organisms:
 
 #+begin_src jupyter-python :session py :exports both :results raw drawer :async yes
-d.groupby("biology_lump").size().sort_values()
+
+  def plot_organism_heterogeneity(m: pd.DataFrame):
+      groupcols = ["ec4", "substrate", "organism"]
+      t = (
+          m.groupby(groupcols)["y"].mean()
+          .unstack("organism")
+          .dropna(how="any")
+          .sort_values("Escherichia coli")
+      )
+      f, ax = plt.subplots(figsize=[8,4])
+      for col in t.columns:
+          ax.scatter(range(len(t)), t[col].values, label=col)
+      ax.get_xaxis().set_ticks([])
+      ax.legend(frameon=False)
+      ax.set(
+          title="Between organism variation",
+          xlabel="Ec/substrate/organism in a study",
+          ylabel="Average km ($\ln$ scale)"
+      )
+      return f, ax
+  f, ax = plot_organism_heterogeneity(m)
+
+  f.savefig(
+      os.path.join("results", "plots", "heterogeneity.svg"),
+      bbox_inches="tight"
+  )
 #+end_src
 
 #+RESULTS:
-:results:
-#+begin_example
-  biology_lump
-  1.12|other       1
-  4.6|other        1
-  2.9|other        1
-  2.1|other        1
-  1.97|other       1
-                ... 
-  2.4.1|other     50
-  2.7.7|other     51
-  2.3.1|other     83
-  2.7.1|other     97
-  1.1.1|other    106
-  Length: 943, dtype: int64
-#+end_example
-:end:
+[[file:./.ob-jupyter/d6f0a13737b739e435b21d0ed422b75b8be6833e.png]]
 :results:
 :end:
-:results:
 :end:
 
-* Loading some arviz data
-
+* Checking model results
 Now we choose some files to analyse and load them into arviz [[https://arviz-devs.github.io/arviz/api/inference_data.html][InferenceData]]
 objects.
 
-#+begin_src jupyter-python :session py :exports both :results none :async yes
-  idatas = {
-      f: az.from_netcdf(
-          os.path.join("results", "idata", f"idata_{f}.nc")
-      ) for f in ("really_simple", "one")
-  }
-#+end_src
-
-* Loo analysis
-
-The next block uses arviz to do approximate leave-one-out cross validation
-analysis on the two model outputs.
-
-
-#+begin_src jupyter-python :session py :exports both :results none :async yes
-  with warnings.catch_warnings():
-      warnings.simplefilter("ignore")
-      loos = {k: az.loo(v, pointwise=True) for k, v in idatas.items()}
-      comparison = az.compare(idatas)
-#+end_src
-
-The comparison shows that the ~cat~ model was much more accurate, though with more effective parameters (~1800 vs ~700). Both models had warnings due to high ~khat~ diagnostic statistics.
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :tangle no :display plain
-  comparison.T
+#+begin_src jupyter-python :session py :exports both :results drawer :display plain :async yes
+  RESULTS_DIR = os.path.join("results", "runs", "blk")
+  idata = az.from_netcdf(os.path.join(RESULTS_DIR, "posterior", "idata.nc"))
+  prior = az.from_netcdf(os.path.join(RESULTS_DIR, "prior", "idata.nc"))
+  fake = az.from_netcdf(os.path.join(RESULTS_DIR, "fake", "idata.nc"))
+  idata.add_groups({
+     "prior": prior.posterior,
+     "fake": fake.posterior,
+     "observed_data_fake": fake.observed_data,
+     "sample_stats_prior": prior.sample_stats
+  })
+  idata
 #+end_src
 
 #+RESULTS:
 :results:
-:                     one really_simple
-: rank                  0             1
-: loo       -14576.340303 -14645.678836
-: p_loo         39.916108       5.20104
-: d_loo               0.0     69.338532
-: weight         0.715509      0.284491
-: se             74.35186     69.470051
-: dse                 0.0     18.956103
-: warning            True         False
-: loo_scale           log           log
+: /Users/tedgro/.pyenv/versions/3.8.6/lib/python3.8/site-packages/arviz/data/inference_data.py:1317: UserWarning: The group fake is not defined in the InferenceData scheme
+:   warnings.warn(
+: /Users/tedgro/.pyenv/versions/3.8.6/lib/python3.8/site-packages/arviz/data/inference_data.py:1317: UserWarning: The group observed_data_fake is not defined in the InferenceData scheme
+:   warnings.warn(
+: Inference data with groups:
+: 	> posterior
+: 	> log_likelihood
+: 	> sample_stats
+: 	> observed_data
+: 	> prior
+: 	> fake
+: 	> observed_data_fake
+: 	> sample_stats_prior
 :end:
 
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :display plain
-  for k, loo in loos.items():
-      d["loo_" + k] = loo.loo_i
-      d["khat_" + k] = loo.pareto_k
-  
-  d.groupby("ec1_sub").agg({"y": ["mean", "std", "size"], "khat_one": "mean"})
-#+end_src
-
-#+RESULTS:
-:results:
-#+begin_example
-                       y                  khat_one
-                    mean       std  size      mean
-  ec1_sub                                         
-  1|NAD+       -2.555786  2.192235   159 -0.016843
-  1|NADH       -3.768376  1.914132    58 -0.072876
-  1|NADP+      -3.456418  2.388261    61 -0.007209
-  1|NADPH      -4.411487  1.774141   136 -0.040990
-  1|other      -3.184957  2.959545  1180 -0.050601
-  2|ADP        -1.676555  0.627796    15  0.062366
-  2|ATP        -1.969925  1.956654   305  0.032470
-  2|NAD+       -1.290008  0.984421     9  0.028001
-  2|NADPH      -2.931632  0.672744     3  0.014208
-  2|acetyl-CoA -3.229290  2.126523    96  0.021387
-  2|other      -2.642523  2.746373  1660  0.028698
-  3|ATP        -2.529799  2.493693    39  0.081439
-  3|NAD+       -2.545430  1.237283     4  0.379249
-  3|other      -2.631711  3.002754   861  0.035085
-  4|ADP        -2.501447  0.641549     6  0.073484
-  4|ATP        -1.460183  1.626230    11  0.098364
-  4|other      -1.684763  2.773285   430  0.022234
-  5|ATP        -3.113507  2.175027    25  0.200475
-  5|other      -1.018373  2.634970   152  0.113151
-  6|ATP        -2.166078  2.146551   217 -0.020243
-  6|other      -3.116304  3.200304   448  0.016299
-  7|ATP        -1.965794  2.077754    59 -0.063787
-  7|NADH       -4.090777  1.406250     7  0.136977
-  7|NADPH      -3.917913  0.726628     3  0.311058
-  7|other      -5.016188  2.584119    23  0.105844
-#+end_example
-:end:
-
-
-* Checking the Results
-
-Now we look at the results.
-
-** log kms
-The main parameter we are interested in is ~log_km~ - this block collects its quantiles for both models in a dataframe called ~q~.
-
-
-#+begin_src jupyter-python :session py :exports both :results none :async yes
-  q_cat, q_simple = (
-      idata
-      .posterior["log_km"]
-      .quantile([0.01, 0.5, 0.99], dim=["chain", "draw"])
+#+begin_src jupyter-python :session py :exports both :results drawer :display plain :async yes
+  ppq_prior, ppq_posterior, ppq_fake = (
+      idata.get(g)["yrep"]
+      .quantile([0.025, 0.5, 0.975], dim=["chain", "draw"])
       .to_series()
       .unstack("quantile")
-      .add_prefix(pref + "_")
-      for idata, pref in ((idata_cat, "cat"), (idata_simple, "simple"))
+      .add_prefix(f"{g}_")
+      .rename_axis("", axis=1)
+      for g in ("prior", "posterior", "fake")
   )
-  q = (
-      q_cat
-      .join(q_simple)
-      .assign(y=idata_cat.observed_data["y"].values)
-      .sort_values("y")
-  )
-#+end_src
-
-Here is the first row of ~q~
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :tangle no :display plain
-  q.iloc[0]
+  ppq = ppq_prior.join(ppq_posterior).join(ppq_fake)
+  ppq["obs"] = idata.observed_data["y_test"].values
+  ppq["obs_fake"] = idata.observed_data_fake["y_test"].values
+  ppq = ppq.sort_values("obs")
+  ppq
 #+end_src
 
 #+RESULTS:
 :results:
-:RESULTS:
-# [goto error]
-: 
-: NameErrorTraceback (most recent call last)
-: <ipython-input-123-535c242da471> in <module>
-: ----> 1 q.iloc[0]
-: 
-: NameError: name 'q' is not defined
-:END:
-:end:
-:end:
-:END:
-:end:
-:end:
-:end:
+#+begin_example
+              prior_0.025  prior_0.5  prior_0.975  posterior_0.025  \
+  yrep_dim_0                                                         
+  1165          -7.847306  -2.001490     4.176406       -13.393017   
+  135           -7.782696  -2.018565     3.902972        -6.582813   
+  4031          -7.787102  -1.982730     3.821657       -16.086117   
+  4353          -8.103219  -2.064030     4.028205       -11.915835   
+  3028          -7.791763  -1.966985     3.845696       -12.640320   
+  ...                 ...        ...          ...              ...   
+  5262          -8.062909  -2.015935     4.032168        -6.012040   
+  5691          -8.200756  -2.026690     4.004418        -5.219667   
+  299           -7.903204  -1.958700     4.182943        -3.605605   
+  5648          -7.958700  -2.016490     4.143261         1.439340   
+  5143          -7.899296  -1.979665     3.928554        -4.157994   
+
+              posterior_0.5  posterior_0.975  fake_0.025  fake_0.5  fake_0.975  \
+  yrep_dim_0                                                                     
+  1165            -9.893235        -6.424276   -6.279775 -3.906175   -1.592293   
+  135             -3.463750        -0.101759   -5.991642 -3.783785   -1.630591   
+  4031            -7.743000         3.197087   -4.725760 -1.926205    0.647097   
+  4353            -8.289100        -3.854086   -2.135240  0.343630    2.713712   
+  3028            -5.245645         1.228611   -6.759330 -4.060620   -0.884686   
+  ...                   ...              ...         ...       ...         ...   
+  5262             1.625280         7.477105   -5.246686 -2.507475    0.309686   
+  5691            -1.842900         1.685722   -3.634911 -1.439110    0.726355   
+  299              0.770304         4.699433   -5.198901 -2.901570   -0.589103   
+  5648             4.711475         8.232254   -6.388566 -4.136915   -1.837142   
+  5143            -0.656408         2.828056   -5.626431 -3.240725   -0.802943   
+
+                    obs  obs_fake  
+  yrep_dim_0                       
+  1165       -17.777735 -4.224110  
+  135        -16.436196 -4.141880  
+  4031       -15.855731  0.043783  
+  4353       -15.476242  0.265162  
+  3028       -14.865333 -4.528010  
+  ...               ...       ...  
+  5262         6.040255 -2.620180  
+  5691         6.492240 -1.913510  
+  299          6.522093 -2.565750  
+  5648         6.620919 -4.305300  
+  5143         7.176002 -3.377470  
+
+  [6389 rows x 11 columns]
+#+end_example
 :end:
 
-Next we can draw a graph of the log km quantiles.
+This code plots the predictive distributions for the prior and posterior against the real observations:
 
 #+begin_src jupyter-python :session py :exports both :results raw drawer :async yes
-  f, ax = plt.subplots()
-  
-  x = np.linspace(*ax.get_xlim(), len(q))
-  
-  for pref, color in (("cat_", "tab:blue"), ("simple_", "tab:orange")):
+  f, axes = plt.subplots(1, 2, sharey=True, figsize=[15, 5])
+  axes = axes.ravel()
+  d = ppq.sort_values("obs")
+  x = np.arange(len(d))
+  for g, ax in zip(["prior", "posterior"], axes):
+      ax = plot_data(ax, d, obs_col="obs")
       ax.vlines(
-          x,
-          q[pref + "0.01"],
-          q[pref + "0.99"],
-          color=color,
-          label=pref[:-1],
-          alpha=0.7
+          x, d[f"{g}_0.025"], d[f"{g}_0.975"],
+          color="tab:blue", zorder=0, label="2.5%-97.5% interval"
       )
-  ax.scatter(x, q["y"], color="black", zorder=3, label="average measurement")
-  ax.set_ylabel("log km")
-  ax.set_xticks([])
-  ax.legend(frameon=False)
+      leg = ax.legend(frameon=False)
+      ax.set_title(g.capitalize())
+  
+  f.savefig(
+      os.path.join("results", "plots", "ppc.svg"),
+      bbox_inches="tight"
+  )
 #+end_src
 
 #+RESULTS:
-:RESULTS:
-: 
-: NameErrorTraceback (most recent call last)
-: <ipython-input-124-8c940327c27b> in <module>
-:       1 f, ax = plt.subplots()
-:       2 
-: ----> 3 x = np.linspace(*ax.get_xlim(), len(q))
-:       4 
-:       5 for pref, color in (("cat_", "tab:blue"), ("simple_", "tab:orange")):
-: 
-: NameError: name 'q' is not defined
-[[file:./.ob-jupyter/d16b45e0b425c95c1895aaa9941017610fe7adea.png]]
-:END:
-:RESULTS:
-# [goto error]
-:END:
 :results:
+[[file:./.ob-jupyter/6cf630bb77131d709a5c9663c691ad1b4b09ecd4.png]]
 :end:
-:end:
-:RESULTS:
-: 
-: NameErrorTraceback (most recent call last)
-: <ipython-input-35-8c940327c27b> in <module>
-:       1 f, ax = plt.subplots()
-:       2 
-: ----> 3 x = np.linspace(*ax.get_xlim(), len(q))
-:       4 
-:       5 for pref, color in (("cat_", "tab:blue"), ("simple_", "tab:orange")):
-: 
-: NameError: name 'q' is not defined
-[[file:./.ob-jupyter/d16b45e0b425c95c1895aaa9941017610fe7adea.png]]
-:END:
-:RESULTS:
-# [goto error]
-:END:
-:RESULTS:
-# [goto error]
-: 
-: NameErrorTraceback (most recent call last)
-: <ipython-input-22-8c940327c27b> in <module>
-:       1 f, ax = plt.subplots()
-:       2 
-: ----> 3 x = np.linspace(*ax.get_xlim(), len(q))
-:       4 
-:       5 for pref, color in (("cat_", "tab:blue"), ("simple_", "tab:orange")):
-: 
-: NameError: name 'q' is not defined
-[[file:./.ob-jupyter/d16b45e0b425c95c1895aaa9941017610fe7adea.png]]
-:END:
-:results:
-:end:
-:results:
-:end:
-:RESULTS:
-: 
-: NameErrorTraceback (most recent call last)
-: <ipython-input-8-8c940327c27b> in <module>
-:       1 f, ax = plt.subplots()
-:       2 
-: ----> 3 x = np.linspace(*ax.get_xlim(), len(q))
-:       4 
-:       5 for pref, color in (("cat_", "tab:blue"), ("simple_", "tab:orange")):
-: 
-: NameError: name 'q' is not defined
-[[file:./.ob-jupyter/d16b45e0b425c95c1895aaa9941017610fe7adea.png]]
-:END:
-:RESULTS:
-# [goto error]
-:END:
-:results:
 :end:
 
 
-** Cofactor effects
-
-We were interested to see whether it was worth including an effect on the
-hierarchical standard deviation due to cofactors. The next block shows these
-effects.
+This code does the same for the fake data:
 
 #+begin_src jupyter-python :session py :exports both :results raw drawer :async yes
-gsp = az.plot_forest(idata_cat.posterior["a_sub"], combined=True)
+  f, ax = plt.subplots(figsize=[8,4])
+  d = ppq.sort_values("obs_fake")
+  x = np.arange(len(d))
+  ax = plot_data(ax, d, obs_col="obs_fake")
+  ax.vlines(
+      x, d["fake_0.025"], d["fake_0.975"],
+      color="tab:blue", zorder=0, label="2.5%-97.5% interval"
+  )
+  leg = ax.legend(frameon=False)
+  ax.set_title("Fake data posterior predictive distribution")
+  f.savefig(
+      os.path.join("results", "plots", "ppc_fake.svg"),
+      bbox_inches="tight"
+  )
+  
 #+end_src
 
 #+RESULTS:
+[[file:./.ob-jupyter/2d3d56b14ac506c98fd9d5e4c41c7602d1dd794c.png]]
 :results:
-[[file:./.ob-jupyter/2f41d4c41ee11bc9c16f29dabe75f733aa717189.png]]
 :end:
-:end:
-
-
-** EC2 effects
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes
-gsp = az.plot_forest(idata_cat.posterior["a_ec2_tau_log_km"], combined=True)
-#+end_src
-
-#+RESULTS:
 :results:
-:RESULTS:
-# [goto error]
-#+begin_example
-
-  KeyErrorTraceback (most recent call last)
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _construct_dataarray(self, name)
-     1369         try:
-  -> 1370             variable = self._variables[name]
-     1371         except KeyError:
-
-  KeyError: 'a_ec2_tau_log_km'
-
-  During handling of the above exception, another exception occurred:
-
-  KeyErrorTraceback (most recent call last)
-  <ipython-input-126-d0d37b453289> in <module>
-  ----> 1 gsp = az.plot_forest(idata_cat.posterior["a_ec2_tau_log_km"], combined=True)
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in __getitem__(self, key)
-     1472 
-     1473         if hashable(key):
-  -> 1474             return self._construct_dataarray(key)
-     1475         else:
-     1476             return self._copy_listed(np.asarray(key))
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _construct_dataarray(self, name)
-     1370             variable = self._variables[name]
-     1371         except KeyError:
-  -> 1372             _, name, variable = _get_virtual_variable(
-     1373                 self._variables, name, self._level_coords, self.dims
-     1374             )
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _get_virtual_variable(variables, key, level_vars, dim_sizes)
-      166         ref_var = dim_var.to_index_variable().get_level_variable(ref_name)
-      167     else:
-  --> 168         ref_var = variables[ref_name]
-      169 
-      170     if var_name is None:
-
-  KeyError: 'a_ec2_tau_log_km'
-#+end_example
-:END:
-:end:
-:end:
-:END:
 :end:
 :end:
 
+* Cross validation
 
-** EC3 effects
+We can try to evaluate the model's predictive performance using approximate
+leave-one-out cross validation.
 
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes
-gsp = az.plot_forest(idata_cat.posterior["a_ec3_tau_log_km"], combined=True)
-#+end_src
-
-#+RESULTS:
-:results:
-:RESULTS:
-# [goto error]
-#+begin_example
-
-  KeyErrorTraceback (most recent call last)
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _construct_dataarray(self, name)
-     1369         try:
-  -> 1370             variable = self._variables[name]
-     1371         except KeyError:
-
-  KeyError: 'a_ec3_tau_log_km'
-
-  During handling of the above exception, another exception occurred:
-
-  KeyErrorTraceback (most recent call last)
-  <ipython-input-127-898bdd57dc87> in <module>
-  ----> 1 gsp = az.plot_forest(idata_cat.posterior["a_ec3_tau_log_km"], combined=True)
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in __getitem__(self, key)
-     1472 
-     1473         if hashable(key):
-  -> 1474             return self._construct_dataarray(key)
-     1475         else:
-     1476             return self._copy_listed(np.asarray(key))
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _construct_dataarray(self, name)
-     1370             variable = self._variables[name]
-     1371         except KeyError:
-  -> 1372             _, name, variable = _get_virtual_variable(
-     1373                 self._variables, name, self._level_coords, self.dims
-     1374             )
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _get_virtual_variable(variables, key, level_vars, dim_sizes)
-      166         ref_var = dim_var.to_index_variable().get_level_variable(ref_name)
-      167     else:
-  --> 168         ref_var = variables[ref_name]
-      169 
-      170     if var_name is None:
-
-  KeyError: 'a_ec3_tau_log_km'
-#+end_example
-:END:
-:end:
-:end:
-:END:
-:end:
-:end:
-
-
-** Other effects
 #+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :display plain
-  az.summary(idata_cat, var_names = ["a_sub"]).sort_values("mean")
+  az.loo(idata, pointwise=True)
 #+end_src
 
 #+RESULTS:
 :results:
+: /Users/tedgro/.pyenv/versions/3.8.6/lib/python3.8/site-packages/arviz/stats/stats.py:655: UserWarning: Estimated shape parameter of Pareto distribution is greater than 0.7 for one or more samples. You should consider using a more robust model, this is because importance sampling is less likely to work well if the marginal posterior and LOO posterior are very different. This is more likely to happen with a non-robust model and highly influential observations.
+:   warnings.warn(
 #+begin_example
-              mean     sd  hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  \
-  a_sub[16] -0.877  0.780  -2.345    0.623      0.020    0.014    1459.0   
-  a_sub[21] -0.679  0.724  -1.981    0.762      0.021    0.015    1185.0   
-  a_sub[18] -0.611  0.765  -2.117    0.715      0.031    0.022     603.0   
-  a_sub[5]  -0.590  0.813  -2.162    0.869      0.024    0.017    1148.0   
-  a_sub[12] -0.555  0.882  -2.064    1.290      0.018    0.016    2328.0   
-  a_sub[32] -0.484  0.846  -2.066    1.080      0.018    0.016    2303.0   
-  a_sub[26] -0.465  0.856  -2.082    1.161      0.021    0.017    1612.0   
-  a_sub[11] -0.381  0.473  -1.271    0.475      0.017    0.012     747.0   
-  a_sub[15] -0.285  0.816  -1.956    1.088      0.023    0.016    1296.0   
-  a_sub[8]  -0.240  0.559  -1.270    0.808      0.018    0.013     964.0   
-  a_sub[29] -0.226  0.782  -1.706    1.229      0.015    0.017    2578.0   
-  a_sub[17] -0.224  0.798  -1.848    1.183      0.026    0.018     948.0   
-  a_sub[20]  0.039  0.438  -0.790    0.873      0.019    0.013     548.0   
-  a_sub[23]  0.079  0.368  -0.611    0.771      0.015    0.011     575.0   
-  a_sub[28]  0.126  0.569  -0.922    1.188      0.018    0.013     990.0   
-  a_sub[31]  0.146  0.289  -0.413    0.685      0.016    0.011     341.0   
-  a_sub[24]  0.184  0.236  -0.278    0.616      0.016    0.011     221.0   
-  a_sub[10]  0.212  0.231  -0.216    0.659      0.016    0.011     222.0   
-  a_sub[4]   0.250  0.273  -0.263    0.719      0.016    0.011     300.0   
-  a_sub[6]   0.260  0.220  -0.158    0.678      0.016    0.011     187.0   
-  a_sub[25]  0.264  0.239  -0.179    0.710      0.016    0.011     231.0   
-  a_sub[27]  0.325  0.664  -0.853    1.665      0.016    0.014    1672.0   
-  a_sub[0]   0.329  0.244  -0.132    0.786      0.016    0.012     225.0   
-  a_sub[13]  0.332  0.220  -0.092    0.728      0.016    0.011     196.0   
-  a_sub[2]   0.348  0.272  -0.129    0.879      0.016    0.011     291.0   
-  a_sub[1]   0.365  0.221  -0.038    0.805      0.017    0.012     167.0   
-  a_sub[9]   0.371  0.570  -0.736    1.419      0.016    0.011    1311.0   
-  a_sub[19]  0.385  0.237  -0.069    0.820      0.017    0.012     208.0   
-  a_sub[3]   0.400  0.241  -0.042    0.859      0.017    0.012     203.0   
-  a_sub[22]  0.401  0.253  -0.028    0.907      0.017    0.012     228.0   
-  a_sub[30]  0.420  0.336  -0.185    1.061      0.017    0.012     379.0   
-  a_sub[14]  0.442  0.340  -0.194    1.063      0.016    0.011     465.0   
-  a_sub[7]   0.499  0.259   0.010    0.980      0.016    0.011     268.0   
+  Computed from 3200 by 6389 log-likelihood matrix
 
-             ess_tail  r_hat  
-  a_sub[16]    1518.0   1.00  
-  a_sub[21]    1196.0   1.00  
-  a_sub[18]    1158.0   1.00  
-  a_sub[5]     1336.0   1.00  
-  a_sub[12]    1601.0   1.00  
-  a_sub[32]    1344.0   1.00  
-  a_sub[26]    1360.0   1.00  
-  a_sub[11]    1189.0   1.00  
-  a_sub[15]    1491.0   1.00  
-  a_sub[8]     1298.0   1.00  
-  a_sub[29]    1182.0   1.00  
-  a_sub[17]    1333.0   1.00  
-  a_sub[20]    1277.0   1.01  
-  a_sub[23]    1202.0   1.01  
-  a_sub[28]    1359.0   1.00  
-  a_sub[31]     726.0   1.01  
-  a_sub[24]     509.0   1.02  
-  a_sub[10]     479.0   1.02  
-  a_sub[4]      578.0   1.01  
-  a_sub[6]      366.0   1.02  
-  a_sub[25]     406.0   1.02  
-  a_sub[27]    1154.0   1.00  
-  a_sub[0]      572.0   1.02  
-  a_sub[13]     464.0   1.02  
-  a_sub[2]      657.0   1.02  
-  a_sub[1]      469.0   1.03  
-  a_sub[9]     1245.0   1.00  
-  a_sub[19]     398.0   1.03  
-  a_sub[3]      477.0   1.02  
-  a_sub[22]     718.0   1.02  
-  a_sub[30]     897.0   1.01  
-  a_sub[14]    1113.0   1.01  
-  a_sub[7]      621.0   1.02  
+           Estimate       SE
+  elpd_loo -12549.28    86.78
+  p_loo     2681.82        -
+
+  There has been a warning during the calculation. Please check the results.
+  ------
+
+  Pareto k diagnostic values:
+                           Count   Pct.
+  (-Inf, 0.5]   (good)     5914   92.6%
+   (0.5, 0.7]   (ok)        407    6.4%
+     (0.7, 1]   (bad)        65    1.0%
+     (1, Inf)   (very bad)    3    0.0%
 #+end_example
 :end:
-:end:
-:end:
 
+Unfortunately there are quite a few observations with high pareto k values, and arviz raises a warning.
 
+To address this issue we also ran exact ten-fold cross validation.
 
+The code below checks the results of these finds the posterior mean for
+out-of-sample log likelihood for each split in our model and compares the
+results with two alternative models:
 
-
-#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes
-  az.plot_forest(idata_cat.posterior["a_ec1_tau_log_km"], kind="forestplot", combined=True)
+#+begin_src jupyter-python :session py :exports both :results raw drawer :async yes :display plain
+  run_dir = os.path.join("results", "runs")
+  runs = [
+      os.path.join(run_dir, s) for s in os.listdir(run_dir)
+      if os.path.isdir(os.path.join(run_dir, s))
+  ]
+  for run in runs:
+      run_ll = 0
+      splits_dir = os.path.join(run, "splits")
+      print(f"calculating out of sample log likelihoods for model {run}...")
+      for split in os.listdir(splits_dir):
+          idata = az.from_netcdf(os.path.join(splits_dir, split, "idata.nc"))
+          split_ll = (
+              idata.get("log_likelihood")["llik"]
+              .mean(dim=["chain", "draw"])
+              .values.sum()
+          )
+          print(f"\t{split}: {str(split_ll)}")
+          run_ll += split_ll
+      print(f"\ttotal out of sample log likelihood: {run_ll}")
 #+end_src
 
 #+RESULTS:
 :results:
-:RESULTS:
-# [goto error]
-#+begin_example
-
-  KeyErrorTraceback (most recent call last)
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _construct_dataarray(self, name)
-     1369         try:
-  -> 1370             variable = self._variables[name]
-     1371         except KeyError:
-
-  KeyError: 'a_ec1_tau_log_km'
-
-  During handling of the above exception, another exception occurred:
-
-  KeyErrorTraceback (most recent call last)
-  <ipython-input-129-18b5ec8f4397> in <module>
-  ----> 1 az.plot_forest(idata_cat.posterior["a_ec1_tau_log_km"], kind="forestplot", combined=True)
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in __getitem__(self, key)
-     1472 
-     1473         if hashable(key):
-  -> 1474             return self._construct_dataarray(key)
-     1475         else:
-     1476             return self._copy_listed(np.asarray(key))
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _construct_dataarray(self, name)
-     1370             variable = self._variables[name]
-     1371         except KeyError:
-  -> 1372             _, name, variable = _get_virtual_variable(
-     1373                 self._variables, name, self._level_coords, self.dims
-     1374             )
-
-  ~/.pyenv/versions/3.8.6/lib/python3.8/site-packages/xarray/core/dataset.py in _get_virtual_variable(variables, key, level_vars, dim_sizes)
-      166         ref_var = dim_var.to_index_variable().get_level_variable(ref_name)
-      167     else:
-  --> 168         ref_var = variables[ref_name]
-      169 
-      170     if var_name is None:
-
-  KeyError: 'a_ec1_tau_log_km'
-#+end_example
-:END:
-:end:
-:end:
-:END:
-:end:
-:end:
-:results:
-: array([<AxesSubplot:title={'center':'94.0% HDI'}>], dtype=object)
-[[file:./.ob-jupyter/0685b66e41ef8bd626bc0e82da8853abe370d4c6.png]]
-:end:
+: calculating out of sample log likelihoods for model results/runs/blk...
+: 	split_4: -1477.2729990849998
+: 	split_3: -1481.00882687375
+: 	split_2: -1441.2448831225
+: 	split_5: -1477.1304594875
+: 	split_0: -1467.7910366725
+: 	split_7: -1480.53716923375
+: 	split_9: -1504.9884546787503
+: 	split_8: -1502.4060516825002
+: 	split_6: -1483.4119273775
+: 	split_1: -1515.77739092
+: 	total out of sample log likelihood: -14831.569199133752
+: calculating out of sample log likelihoods for model results/runs/simple...
+: 	split_4: -2245.9115185025003
+: 	split_3: -2182.5809449999997
+: 	split_2: -2262.4983365774997
+: 	split_5: -2150.721065105
+: 	split_0: -2351.9525779625
+: 	split_7: -2288.8911877974997
+: 	split_9: -2194.1904108999997
+: 	split_8: -2348.7044462475
+: 	split_6: -2389.71007908
+: 	split_1: -2263.04032354
+: 	total out of sample log likelihood: -22678.2008907125
+: calculating out of sample log likelihoods for model results/runs/really_simple...
+: 	split_4: -1552.20558885
+: 	split_3: -1505.90971685
+: 	split_2: -1551.5482681499998
+: 	split_5: -1470.82288385
+: 	split_0: -1639.23052325
+: 	split_7: -1557.061260825
+: 	split_9: -1516.690492875
+: 	split_8: -1651.7273156750002
+: 	split_6: -1680.8369810999998
+: 	split_1: -1575.714097825
+: 	total out of sample log likelihood: -15701.747129249998
 :end:
 :end:
 :end:
