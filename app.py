@@ -14,8 +14,9 @@ from src.data_preparation import BIOLOGY_FCTS
 
 SUMMARY_CSV_FILE = os.path.join("results", "app_summary.csv")
 IDATA_FILE = os.path.join("results", "idata", "idata_blk.nc")
-PREPARED_DATA_FILE = os.path.join("data", "prepared", "lit_lik_nat.csv")
-COORDS_FILE = os.path.join("data", "coords", "lit_lik_nat.json")
+DATA_DIR = os.path.join("data", "prepared", "tenfold")
+PREPARED_DATA_FILE = os.path.join(DATA_DIR, "input_df.csv")
+COORDS_FILE = os.path.join(DATA_DIR, "coords.json")
 
 
 def get_lit_link(e: Any, l: Any) -> str:
@@ -39,16 +40,6 @@ def get_obs(
     obs["log km"] = obs["y"]
     obs["km"] = np.exp(obs["y"])
     return obs
-
-
-def check_if_natural(
-    msmts: pd.DataFrame, organism: str, ec4: str, substrate: str
-) -> bool:
-    return bool(
-        msmts.groupby(["organism", "ec4", "substrate"])["is_natural"]
-        .first()
-        .loc[(organism, ec4, substrate)]
-    )
 
 
 def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
@@ -130,7 +121,6 @@ st.sidebar.write(
     "distribution."
 )
 biology = "|".join(map(str, [ec4, organism, substrate]))
-# b_natural = idata.posterior["b_natural"]
 yhat = idata.get("posterior")["log_km"].sel({"biology": biology})
 
 low, median, high = yhat.quantile([0.01, 0.5, 0.99]).values
@@ -181,7 +171,7 @@ col2.write(
 st.write("Below is a table of all the measurements.")
 st.write(
     obs.sort_values("log km")
-    .reset_index()[["reference", "is_natural", "km", "log km"]]
+    .reset_index()[["reference", "km", "log km"]]
     .to_html(escape=False),
     unsafe_allow_html=True,
 )
