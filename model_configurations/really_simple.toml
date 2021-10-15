@@ -1,8 +1,6 @@
 name = "really_simple"
+data_dir = "data/prepared/tenfold"
 stan_file = "src/stan/really_simple.stan"
-data_file = "data/stan_input/blk_lik_nat.json"
-coords_file = "data/coords/blk_lik_nat.json"
-dims_file = "data/dims/blk_lik_nat.json"
 do_not_run = true
 
 [sample_kwargs]
@@ -13,3 +11,6 @@ iter_sampling = 400
 max_treedepth = 11
 chains = 4
 refresh = 1
+
+[sample_kwargs_cross_validation]
+chains = 1

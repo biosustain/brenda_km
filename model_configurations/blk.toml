@@ -1,14 +1,17 @@
 name = "blk"
 stan_file = "src/stan/blk.stan"
-data_file = "data/stan_input/blk_lik_nat.json"
-coords_file = "data/coords/blk_lik_nat.json"
-dims_file = "data/dims/blk_lik_nat.json"
+data_dir = "data/prepared/tenfold"
+# do_not_run = true
+run_cross_validation = true
 
 [sample_kwargs]
 show_progress = true
 save_warmup = true
-iter_warmup = 1000
-iter_sampling = 1000
-max_treedepth = 13
+iter_warmup = 800
+iter_sampling = 800
+max_treedepth = 11
 chains = 4
 refresh = 1
+
+[sample_kwargs_cross_validation]
+chains = 1
