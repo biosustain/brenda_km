@@ -1,5 +1,5 @@
 #+TITLE: Analysing enzyme databases with Stan and Arviz
-#+AUTHOR: Teddy Groves
+#+AUTHOR: Teddy Groves (Joint work with Areti Tsigkinopoulou)
 #+DATE: %date
 #+LaTeX_CLASS: beamer
 #+LaTeX_CLASS_OPTIONS: [aspectratio=169]
@@ -24,7 +24,7 @@
 #+attr_html: :width 65%
 #+begin_column
 
-Since ~1920 we can parameterise enzyme-catalysed reactions:
+Since ~1920 we can parameterise enzyme-catalysed reactions.
 
 $$
 v=E\cdot\frac{k_{+}^{cat}\frac{GLC}{k_{GLC}^{M}}\frac{ATP}{k_{ATP}^{M}}
@@ -48,7 +48,7 @@ $$
 #+attr_html: :width 35%
 #+begin_column
 
-Kinetic parameters measurements are available online.
+Kinetic parameter measurements are available online.
 
 #+end_column
 
@@ -64,7 +64,7 @@ Kinetic parameters measurements are available online.
 - Relevant information can be inaccessible
 - Many parameters have not been measured
 
-Result: systems biology step zero
+Result: kinetic modelling step zero
 1. Manually trawl the database
 2. Read the actual papers
 3. Decide how to resolve disagreements
@@ -102,7 +102,7 @@ $$
 $$
 
 ** Write the model in Stan
-#+begin_example
+#+begin_src stan
 model {
   if (likelihood){
     y_train ~ student_t(nu, log_km[biology_train], sigma);
@@ -117,7 +117,7 @@ model {
   tau_ec_sub ~ normal(0, 1);
   tau_sub ~ normal(0, 1);
 }
-#+end_example
+#+end_src
 
 * Results
 ** Fake data 
@@ -169,9 +169,10 @@ model {
 [[./img/app.png]]
 
 * Final thoughts
-- This data is hard to model
+- This data is tricky to model: plenty of room for improvement.
 - File-based cmdstanpy workflow is great!
 - ~llik~ + ~yrep~ = long io
+- cookiecutter-cmdstanpy: not yet but maybe some day
   
 * Thanks for listening!
 
