@@ -41,5 +41,5 @@ reportMissingImports = true
 reportMissingTypeStubs = false
 disableOrganizeImports = false
 useLibraryCodeForTypes = true
-venv = "~/.venvs/.venv_brenda"
+venv = "~/.venvs/brenda"
 pythonPlatform = "Darwin"

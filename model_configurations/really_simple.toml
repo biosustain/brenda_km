@@ -1,7 +1,7 @@
 name = "really_simple"
 data_dir = "data/prepared/tenfold"
 stan_file = "src/stan/really_simple.stan"
-do_not_run = true
+# do_not_run = true
 
 [sample_kwargs]
 show_progress = true

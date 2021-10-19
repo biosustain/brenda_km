@@ -13,7 +13,7 @@ from scipy.stats.kde import gaussian_kde
 from src.data_preparation import BIOLOGY_FCTS
 
 SUMMARY_CSV_FILE = os.path.join("results", "app_summary.csv")
-IDATA_FILE = os.path.join("results", "idata", "idata_blk.nc")
+IDATA_FILE = os.path.join("results", "runs", "blk", "posterior", "idata.nc")
 DATA_DIR = os.path.join("data", "prepared", "tenfold")
 PREPARED_DATA_FILE = os.path.join(DATA_DIR, "input_df.csv")
 COORDS_FILE = os.path.join(DATA_DIR, "coords.json")
