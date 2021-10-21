@@ -26,7 +26,7 @@ def main():
         print(coords["organism"])
         if not mc.do_not_run:
             run_dir = os.path.join(RESULTS_DIR, mc.name)
-            suffs = ["prior" "posterior"]
+            suffs = ["prior", "posterior"]
             if os.path.exists(
                 os.path.join(mc.data_dir, "stan_input_fake.json")
             ):
