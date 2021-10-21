@@ -1,7 +1,6 @@
 """Definition of the ModelConfiguration class."""
 
 import os
-from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, Optional
 

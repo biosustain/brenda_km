@@ -3,10 +3,10 @@
 data {
   int<lower=1> N_train;             // number of training measurements
   int<lower=1> N_test;              // number of test measurements
-  int<lower=1> N_bio;               // Possible enz x org x sub combinations
-  array[N_train] int<lower=1,upper=N_bio> biology_train;
+  int<lower=1> N_biology;           // Possible ec x org x sub combinations
+  array[N_train] int<lower=1,upper=N_biology> biology_train;
   vector[N_train] y_train;
-  array[N_test] int<lower=1,upper=N_bio> biology_test;
+  array[N_test] int<lower=1,upper=N_biology> biology_test;
   vector[N_test] y_test;
   int<lower=0,upper=1> likelihood;
 }
@@ -15,7 +15,7 @@ parameters {
   real mu_log_km;
   real<lower=1> nu;
   real<lower=0> tau;
-  vector[N_bio] log_km;
+  vector[N_biology] log_km;
 }
 model {
   if (likelihood){y_train ~ student_t(nu, log_km[biology_train], sigma);}

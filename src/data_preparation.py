@@ -178,12 +178,16 @@ def prepare_data(pp: pd.DataFrame, k: int) -> PrepareDataOutput:
     ).reset_index(drop=True)
     for fct in fcts:
         lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
+    coords = {c: pd.factorize(lits[c])[1].tolist() for c in fcts}
+    coords_with_unknowns = ["substrate", "ec_sub", "org_sub"]
+    for coord in coords_with_unknowns:
+        coords[coord] += [f"unknown {coord}"]
     stan_input_base = {
-        "N_bio": lits["biology"].nunique(),
-        "N_sub": lits["substrate"].nunique(),
-        "N_ec_sub": lits["ec_sub"].nunique(),
-        "N_org_sub": lits["org_sub"].nunique(),
-        "sub": lits.groupby("biology")["substrate_stan"].first(),
+        "N_biology": lits["biology"].nunique(),
+        "N_substrate": len(coords["substrate"]),
+        "N_ec_sub": len(coords["ec_sub"]),
+        "N_org_sub": len(coords["org_sub"]),
+        "substrate": lits.groupby("biology")["substrate_stan"].first(),
         "ec_sub": lits.groupby("biology")["ec_sub_stan"].first(),
         "org_sub": lits.groupby("biology")["org_sub_stan"].first(),
     }
@@ -222,9 +226,9 @@ def prepare_data(pp: pd.DataFrame, k: int) -> PrepareDataOutput:
         )
         for train_ix, test_ix in splits
     )
-    coords = {c: pd.factorize(lits[c])[1].tolist() for c in fcts}
+
     dims = {
-        "a_sub": ["substrate"],
+        "a_substrate": ["substrate"],
         "a_ec_sub": ["ec_sub"],
         "a_org_sub": ["org_sub"],
         "log_km": ["biology"],

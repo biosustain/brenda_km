@@ -10,7 +10,7 @@ HARD_CODED_PARAMS = {
     "nu": 4,
     "mu": -2,
     "sigma": 0.8,
-    "tau_sub": 1.6,
+    "tau_substrate": 1.6,
     "tau_ec_sub": 0.6,
     "tau_org_sub": 1.1,
 }
@@ -37,7 +37,7 @@ def main():
         f"a_{suff}": np.random.normal(
             0, HARD_CODED_PARAMS[f"tau_{suff}"], input_orig[f"N_{suff}"]
         ).tolist()
-        for suff in ["sub", "ec_sub", "org_sub"]
+        for suff in ["substrate", "ec_sub", "org_sub"]
     }
     params = {**HARD_CODED_PARAMS, **rng_params}
     model = CmdStanModel(stan_file=TRUE_MODEL_FILE)

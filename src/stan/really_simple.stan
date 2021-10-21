@@ -1,8 +1,8 @@
 /* Simplest BRENDA model I can think of. */
 
 data {
-  int<lower=1> N_train;             // number of measurements
-  int<lower=1> N_test;              // number of measurements
+  int<lower=1> N_train;
+  int<lower=1> N_test;
   vector[N_train] y_train;
   vector[N_test] y_test;
   int<lower=0,upper=1> likelihood;

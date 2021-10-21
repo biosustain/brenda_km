@@ -17,13 +17,6 @@ NATURAL_SUBSTRATES_CSV = os.path.join(
 )
 PREPROCESSED_CSV = os.path.join(PREPARED_DATA_DIR, "km_preprocessed.csv")
 
-NATURAL_ONLY_CSV = os.path.join(
-    PREPARED_DATA_DIR, "data_prepared_natural_substrates_only.csv"
-)
-STAN_INPUT_DIR = os.path.join(HERE, "data", "stan_input")
-COORDS_DIR = os.path.join(HERE, "data", "coords")
-DIMS_DIR = os.path.join(HERE, "data", "dims")
-
 
 def main():
     """Run the script."""

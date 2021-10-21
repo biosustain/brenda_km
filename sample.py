@@ -1,7 +1,9 @@
 import json
 import os
 
-from src.loading import load_model_configuration
+import toml
+
+from src.model_configuration import ModelConfiguration
 from src.sampling import sample
 
 MODEL_CONFIGURATION_DIR = "model_configurations"
@@ -15,12 +17,13 @@ def main():
         if f.endswith(".toml")
     ]
     for config_file in sorted(config_files):
-        mc = load_model_configuration(config_file)
+        mc = ModelConfiguration(**toml.load(config_file))
         with open(os.path.join(mc.data_dir, "coords.json"), "r") as f:
             coords = json.load(f)
         with open(os.path.join(mc.data_dir, "dims.json"), "r") as f:
             dims = json.load(f)
 
+        print(coords["organism"])
         if not mc.do_not_run:
             run_dir = os.path.join(RESULTS_DIR, mc.name)
             suffs = []
@@ -53,7 +56,7 @@ def main():
                         **mc.sample_kwargs_cross_validation,
                     }
 
-                for f in os.listdir(splits_dir):
+                for f in sorted(os.listdir(splits_dir)):
                     output_dir = os.path.join(
                         run_dir, "splits", f.split(".")[0]
                     )
