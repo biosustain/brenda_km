@@ -3,6 +3,7 @@ cmdstanpy>=0.9.77
 numpy
 pandas
 scipy
+sklearn
 streamlit
 altair
 toml
