@@ -8,7 +8,9 @@ import arviz as az
 import numpy as np
 import pandas as pd
 import streamlit as st
+from arviz.data.inference_data import InferenceData
 from scipy.stats.kde import gaussian_kde
+from xarray import DataArray
 
 from src.data_preparation import BIOLOGY_FCTS
 
@@ -51,9 +53,32 @@ def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
     )
 
 
+def get_log_km(
+    idata: InferenceData, ec4: str, organism: str, substrate_in: str
+) -> DataArray:
+    posterior = idata.get("posterior").stack(dim=["chain", "draw"])
+    substrate = (
+        substrate_in
+        if substrate_in in posterior.coords["substrate"]
+        else "unknown substrate"
+    )
+    ec_sub, org_sub = (
+        f"{s}|{substrate}"
+        if f"{s}|{substrate}" in posterior.coords[coord_name]
+        else "unknown " + coord_name
+        for s, coord_name in [(ec4, "ec_sub"), (organism, "org_sub")]
+    )
+    mu = posterior["mu"]
+    a_substrate = posterior["a_substrate"].sel({"substrate": substrate})
+    a_ec_sub = posterior["a_ec_sub"].sel({"ec_sub": ec_sub})
+    a_org_sub = posterior["a_org_sub"].sel({"org_sub": org_sub})
+    return mu + a_substrate + a_ec_sub + a_org_sub
+
+
 # non-choice-dependent data
 msmts = pd.read_csv(PREPARED_DATA_FILE).reset_index()
-idata = az.from_netcdf(IDATA_FILE).stack(chain_draw=["chain", "draw"])
+idata = az.from_netcdf(IDATA_FILE)
+# .stack(chain_draw=["chain", "draw"])
 with open(COORDS_FILE, "r") as f:
     coords = json.load(f)
 log_km_posterior = idata.get("posterior")["log_km"]
@@ -61,11 +86,11 @@ biologies = pd.DataFrame.from_records(
     [l.split("|") for l in log_km_posterior.coords["biology"].values],
     columns=BIOLOGY_FCTS,
 ).assign(
-    q_1pct=log_km_posterior.quantile(0.01, dim="chain_draw").values,
-    median=log_km_posterior.quantile(0.5, dim="chain_draw").values,
-    q_99pct=log_km_posterior.quantile(0.99, dim="chain_draw").values,
-    mean=log_km_posterior.mean(dim="chain_draw").values,
-    sd=log_km_posterior.std(dim="chain_draw").values,
+    q_1pct=log_km_posterior.quantile(0.01, dim=["chain", "draw"]).values,
+    median=log_km_posterior.quantile(0.5, dim=["chain", "draw"]).values,
+    q_99pct=log_km_posterior.quantile(0.99, dim=["chain", "draw"]).values,
+    mean=log_km_posterior.mean(dim=["chain", "draw"]).values,
+    sd=log_km_posterior.std(dim=["chain", "draw"]).values,
 )
 
 # Start of app
@@ -87,17 +112,13 @@ st.sidebar.write(
 
 
 # Get required data
-organism = st.sidebar.selectbox("Organism", biologies["organism"].unique())
-ec4 = st.sidebar.selectbox(
-    "EC4",
-    biologies.groupby("organism")["ec4"].unique().loc[organism],
+organisms, ec4s, substrates = (
+    ["Unknown " + col] + biologies[col].unique().tolist()
+    for col in ["organism", "ec4", "substrate"]
 )
-substrate = st.sidebar.selectbox(
-    "Substrate",
-    biologies.groupby(["organism", "ec4"])["substrate"]
-    .unique()
-    .loc[(organism, ec4)],
-)
+organism = st.sidebar.selectbox("Organism", organisms)
+ec4 = st.sidebar.selectbox("EC4", ec4s)
+substrate = st.sidebar.selectbox("Substrate", substrates)
 
 st.sidebar.markdown(
     get_table_download_link(
@@ -120,8 +141,8 @@ st.sidebar.write(
     "source code and for instructions to reproduce the full posterior "
     "distribution."
 )
-biology = "|".join(map(str, [ec4, organism, substrate]))
-yhat = idata.get("posterior")["log_km"].sel({"biology": biology})
+# biology = "|".join(map(str, [ec4, organism, substrate]))
+yhat = get_log_km(idata, ec4, organism, substrate)
 
 low, median, high = yhat.quantile([0.01, 0.5, 0.99]).values
 mean = float(yhat.mean())
