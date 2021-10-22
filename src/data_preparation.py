@@ -173,7 +173,11 @@ def prepare_data(pp: pd.DataFrame, k: int) -> PrepareDataOutput:
     lits = pd.DataFrame(
         {
             **{c: g[c].first() for c in fcts},
-            **{"y": g["log_km"].mean(), "n": g.size(), "sd": g["log_km"].std()},
+            **{
+                "y": g["log_km"].median(),
+                "n": g.size(),
+                "sd": g["log_km"].std(),
+            },
         }
     ).reset_index(drop=True)
     for fct in fcts:
