@@ -5,7 +5,7 @@ data_dir = "data/prepared/tenfold"
 
 [sample_kwargs]
 show_progress = true
-save_warmup = true
+save_warmup = false
 iter_warmup = 400
 iter_sampling = 400
 max_treedepth = 11

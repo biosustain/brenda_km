@@ -5,7 +5,7 @@ stan_file = "src/stan/really_simple.stan"
 
 [sample_kwargs]
 show_progress = true
-save_warmup = true
+save_warmup = false
 iter_warmup = 400
 iter_sampling = 400
 max_treedepth = 11
