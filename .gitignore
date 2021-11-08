@@ -1,4 +1,5 @@
 *.csv
+!data/raw/*.csv
 *.txt
 *.png
 *.hpp
