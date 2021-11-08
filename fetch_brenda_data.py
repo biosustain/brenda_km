@@ -23,12 +23,11 @@ OUTPUT_FILEPATHS = {
     "temperature_optima": os.path.join(
         "data", "raw", "brenda_temperature_optima.csv"
     ),
-    "km_measurements": os.path.join(
-        "data", "raw", "brenda_km_measurements.csv"
-    ),
+    "km_reports": os.path.join("data", "raw", "brenda_km_reports.csv"),
+    "kcat_reports": os.path.join("data", "raw", "brenda_kcat_reports.csv"),
 }
 WSDL = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
-CHUNKSIZE = 300
+CHUNKSIZE = 100
 
 
 def _fetch_ec_numbers(email: str, password_hex: str) -> List[str]:
@@ -102,7 +101,8 @@ def _fetch_natural_substrates(
     return out
 
 
-def _fetch_km_measurements(
+def _fetch_reports(
+    pref: str,
     email: str,
     password_hex: str,
     ec_numbers: List[str],
@@ -119,13 +119,14 @@ def _fetch_km_measurements(
         client = zeep.Client(WSDL)
         for ec_number in tqdm(chunk):
             try:
+                time.sleep(0.5)
                 result = client.service.getKmValue(
                     email,
                     password_hex,
                     f"ecNumber*{ec_number}",
                     "organism*",
-                    "kmValue*",
-                    "kmValueMaximum*",
+                    f"{pref}Value*",
+                    f"{pref}ValueMaximum*",
                     "substrate*",
                     "commentary*",
                     "ligandStructureId*",
@@ -152,13 +153,17 @@ def main():
         print("Fetching natural substrates...")
         ns = _fetch_natural_substrates(email, password_hex, ec_numbers)
         ns.to_csv(OUTPUT_FILEPATHS["natural_substrates"])
-    if not os.path.exists(OUTPUT_FILEPATHS["temperature_optima"]):
-        print("Fetching temperature optima")
-        to = _fetch_temperature_optima(email, password_hex, ec_numbers)
-        to.to_csv(OUTPUT_FILEPATHS["temperature_optima"])
-    if not os.path.exists(OUTPUT_FILEPATHS["km_measurements"]):
-        print("Fetching km measurements...")
-        km = _fetch_km_measurements(email, password_hex, ec_numbers)
+    # if not os.path.exists(OUTPUT_FILEPATHS["temperature_optima"]):
+    # print("Fetching temperature optima")
+    # to = _fetch_temperature_optima(email, password_hex, ec_numbers)
+    # to.to_csv(OUTPUT_FILEPATHS["temperature_optima"])
+    if not os.path.exists(OUTPUT_FILEPATHS["kcat_reports"]):
+        print("Fetching kcat reports...")
+        kcat = _fetch_reports("kcatKm", email, password_hex, ec_numbers)
+        kcat.to_csv(OUTPUT_FILEPATHS["kcat_reports"])
+    if not os.path.exists(OUTPUT_FILEPATHS["km_reports"]):
+        print("Fetching km reports...")
+        km = _fetch_reports("km", email, password_hex, ec_numbers)
         km.to_csv(OUTPUT_FILEPATHS["km_measurements"])
 
 
