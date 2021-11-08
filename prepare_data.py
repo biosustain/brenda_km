@@ -11,7 +11,7 @@ from src.data_preparation import PrepareDataInput, prepare_data, preprocess
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW_DATA_DIR = os.path.join(HERE, "data", "raw")
 PREPARED_DATA_DIR = os.path.join(HERE, "data", "prepared")
-KM_MEASUREMENTS_CSV = os.path.join(RAW_DATA_DIR, "brenda_km_measurements.csv")
+KM_REPORTS_CSV = os.path.join(RAW_DATA_DIR, "brenda_km_reports.csv")
 NATURAL_SUBSTRATES_CSV = os.path.join(
     RAW_DATA_DIR, "brenda_natural_substrates.csv"
 )
@@ -21,8 +21,8 @@ PREPROCESSED_CSV = os.path.join(PREPARED_DATA_DIR, "km_preprocessed.csv")
 def main():
     """Run the script."""
 
-    print(f"Reading raw data from {KM_MEASUREMENTS_CSV}")
-    km = pd.read_csv(KM_MEASUREMENTS_CSV, index_col=0)
+    print(f"Reading raw data from {KM_REPORTS_CSV}")
+    km = pd.read_csv(KM_REPORTS_CSV, index_col=0)
     nat = pd.read_csv(NATURAL_SUBSTRATES_CSV, index_col=0)
 
     print("Preprocessing...")
