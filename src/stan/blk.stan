@@ -1,7 +1,8 @@
 /* BRENDA model extending the one in the paper
 
-- Borger, S., Liebermeister, W., & Klipp, E. (). Prediction of Enzyme Kinetic
-  Parameters Based on Statistical Learning. , (), 8.
+- Borger, S., Liebermeister, W., & Klipp, E. (2006). Prediction of enzyme
+  kinetic parameters based on statistical learning. Genome Informatics, 17(1),
+  80–87.
 
 */
 
