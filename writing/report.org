@@ -289,6 +289,42 @@ observations. We therefore also performed also performed exact tenfold cross
 validation, comparing the models' leave-10%-out log predictive density.
 
 * Results
+
+** Fit to fake data
+To verify that our model would work under ideal model specification we fit it to
+data that we generated using the model assumptions. To achieve this, we assigned
+plausible values to the non-hierarchical parameters, then randomly generated
+values for the hierarchical parameters, then used all the parameters to generate
+random measurements, based on the real predictors. See the script
+~generate_fake_data.py~ in the project repository for full details. The
+resulting marginal posterior intervals are shown in [@fig:ppc_fake].
+
+#+CAPTION: Marginal posterior predictive distributions for fake data fit
+#+LABEL: ppc_fake
+[[../results/plots/ppc_fake.svg]]
+
+The cross validation results were as follows:
+
+|--------------------------------------------+-----------------------------------------|
+| Procedure                                  | average left-out log predictive density |
+|--------------------------------------------+-----------------------------------------|
+| approximate leave-one-out cross validation |                                         |
+| exact tenfold cross validation             |                                         |
+|--------------------------------------------+-----------------------------------------|
+
+
+These results show that, if it precisely described the true data generating
+process, our model would be capable of achieving an acceptable fit to our
+dataset. While this is almost certainly not correct, the exercise is helpful
+both for verifying the computation and for getting an idea of the upper limit of
+the possible predictive performance given plausible parameter values.
+
+** Fit to Real data
+
+#+CAPTION: Marginal posterior predictive distributions for real data fits
+#+LABEL: ppc_fake
+[[../results/plots/ppc.svg]]
+
 * Discussion
 * References
 #+PRINT_BIBLIOGRAPHY:

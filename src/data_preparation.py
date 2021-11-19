@@ -2,7 +2,8 @@
 
 import os
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Iterable, List, Tuple, Union
+from functools import partial
+from typing import Any, Dict, Iterable, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -15,7 +16,8 @@ ORGANISMS_TO_INCLUDE = [
     "Homo sapiens",
     "Saccharomyces cerevisiae",
 ]
-NON_NULL_COLS = ["ec4", "km", "organism", "substrate"]
+BIOLOGY_FCTS = ["ec4", "organism", "substrate"]
+LIT_FCTS = BIOLOGY_FCTS + ["ec_sub", "org_sub", "literature", "biology"]
 EXTRA_NULL_VALUES = ["more", -999]
 NUMBER_REGEX = r"\d*\.?\d+"
 TEMP_REGEX = (
@@ -32,33 +34,45 @@ COFACTORS = [
     "NADP+",
     "ADP",
 ]
-BIOLOGY_FCTS = ["ec4", "organism", "substrate"]
+DIMS = {
+    "a_substrate": ["substrate"],
+    "a_ec_sub": ["ec_sub"],
+    "a_org_sub": ["org_sub"],
+    "log_km": ["biology"],
+}
+RENAMING_DICT = {
+    "ecNumber": "ec4",
+    "kmValue": "km",
+    "kcatKmValue": "kcat",
+    "ligandStructureId": "ligand_structure_id",
+}
+
 THIS_FILE = os.path.dirname(os.path.abspath(__file__))
 
 # types
 StanDict = Dict[str, Union[float, int, List[float], List[int]]]
+CoordDict = Dict[str, List[str]]
 
 
 @dataclass
 class PrepareDataOutput:
-    stan_input_prior: StanDict
-    stan_input_posterior: StanDict
-    stan_inputs_cv: List[StanDict]
+    standict_prior: StanDict
+    standict_posterior: StanDict
+    standicts_cv: List[StanDict]
     coords: Dict[str, Any]
     dims: Dict[str, Any]
     df: pd.DataFrame
     splits: Iterable[Tuple]
 
 
-PrepFunc = Callable[[pd.DataFrame, int], PrepareDataOutput]
-
-
 @dataclass
 class PrepareDataInput:
-    prepare_func: PrepFunc
-    pp: pd.DataFrame
-    k: int
     name: str
+    raw_reports: pd.DataFrame
+    number_of_cv_folds: int
+    response_col: str
+    natural_only: bool
+    natural_ligands: pd.DataFrame
 
 
 def replace_nulls_with_empty_set(s: pd.Series) -> pd.Series:
@@ -66,43 +80,9 @@ def replace_nulls_with_empty_set(s: pd.Series) -> pd.Series:
     return pd.Series(np.where(s.notnull(), s, frozenset()), index=s.index)
 
 
-def preprocess(km: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
-    """Add extra columns to the raw data and tidy some names."""
-    out = (
-        km.copy()
-        .rename(
-            columns={
-                "ecNumber": "ec4",
-                "kmValue": "km",
-                "ligandStructureId": "ligand_structure_id",
-            }
-        )
-        .replace(EXTRA_NULL_VALUES, np.nan)
-        .pipe(make_columns_lower_case)
-    )
-    out["natural_ligands"] = out.join(
-        nat.groupby(["ecNumber", "organism"])["ligandStructureId"].apply(
-            frozenset
-        ),
-        on=["ec4", "organism"],
-    )["ligandStructureId"].pipe(replace_nulls_with_empty_set)
-    out["is_natural"] = out.apply(
-        lambda row: row["ligand_structure_id"] in row["natural_ligands"], axis=1
-    )
-    out["ph"] = out["commentary"].str.extract(PH_REGEX)[0]
-    out["mols"] = out["commentary"].str.extract(MOL_REGEX)[0]
-    out["temperature"] = out["commentary"].str.extract(TEMP_REGEX)[0]
-    for ec in [1, 2, 3]:
-        out["ec" + str(ec)] = [".".join(s.split(".")[:ec]) for s in out["ec4"]]
-    out["log_km"] = np.log(out["km"])
-    out["sub_type"] = (
-        out["substrate"].where(lambda s: s.isin(COFACTORS)).fillna("other")
-    )
-    out["biology"] = out[BIOLOGY_FCTS].astype(str).apply("|".join, axis=1)
-    return out
-
-
-def filter_reports(r: pd.DataFrame, natural_only: bool) -> pd.Series:
+def filter_reports(
+    r: pd.DataFrame, natural_only: bool, response_col: str
+) -> pd.Series:
     """Get a boolean series indicating whether to keep each report.
 
     :param r: DataFrame of reports. Note that dtypes of the temperature and ph
@@ -111,10 +91,13 @@ def filter_reports(r: pd.DataFrame, natural_only: bool) -> pd.Series:
     :param natural_only: Whether or not to exclude reports with non-natural
     substrates.
 
+    :param response_col: The response variable, probably "km" or "kcat"
+
     """
     base = (
-        r[NON_NULL_COLS].notnull().all(axis=1).astype(bool)
-        & r["km"].ge(0)
+        r[BIOLOGY_FCTS].notnull().all(axis=1).astype(bool)
+        & r[response_col].notnull()
+        & r[response_col].ge(0)
         & ~r["ligand_structure_id"].eq(0)
         & r["organism"].isin(ORGANISMS_TO_INCLUDE)
         & ~r["temperature"].ge(50)
@@ -138,41 +121,67 @@ def process_temperature_column(t: pd.Series) -> pd.Series:
     return t.str.split("-").explode().astype(float).groupby(level=0).mean()
 
 
-def prepare_data(pp: pd.DataFrame, k: int) -> PrepareDataOutput:
+def correct_report_dtypes(r: pd.DataFrame, response_col: str):
+    """Make sure the columns have the right dtypes
 
-    """Get a dataframe of literature/biology groups.
-
-    Uses the Borger, Liebermeister and Klipp framework.
-
-    :param pp: A dataframe of preprocessed reports
-
-    :param natural_only: A bool indicating whether to exclude measurements of
-    non-natural substrates
-
-    :param k: number of train/test splits
-
+    :param r: dataframe of reports
     """
-    r = pp.copy()
+    df_out = r.copy()
+    float_cols = ["ph", "mols", "temperature", response_col]
+    for col in float_cols:
+        df_out[col] = r[col].astype(float)
+    return df_out
 
-    # correct dtypes if necessary
-    r["temperature"] = process_temperature_column(r["temperature"])
-    r["ph"] = r["ph"].astype(float)
-    r["mols"] = r["mols"].astype(float)
-    r["km"] = r["km"].astype(float)
 
-    r["ec_sub"] = r["ec4"].astype(str).str.cat(r["substrate"], sep="|")
-    r["org_sub"] = r["organism"].str.cat(r["substrate"], sep="|")
+def get_natural_ligands_col(r: pd.DataFrame, nat: pd.DataFrame):
+    return r.join(
+        nat.groupby(["ecNumber", "organism"])["ligandStructureId"].apply(
+            frozenset
+        ),
+        on=["ec4", "organism"],
+    )["ligandStructureId"].pipe(replace_nulls_with_empty_set)
 
-    # filter
-    cond = filter_reports(r, natural_only=True)
-    r = r.loc[cond]
 
-    fcts = BIOLOGY_FCTS + ["ec_sub", "org_sub", "literature", "biology"]
-    # group
-    g = r.groupby(["biology", "literature"])
+def add_columns_to_reports(r: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
+    """Add new columns to a table of reports
+
+    :param r: Dataframe of reports
+    """
+    out = (
+        r.rename(columns=RENAMING_DICT)
+        .replace(EXTRA_NULL_VALUES, np.nan)
+        .pipe(make_columns_lower_case)
+    )
+    out["natural_ligands"] = get_natural_ligands_col(out, nat)
+    out["is_natural"] = out.apply(
+        lambda row: row["ligand_structure_id"] in row["natural_ligands"], axis=1
+    )
+    out["ph"] = out["commentary"].str.extract(PH_REGEX)[0]
+    out["mols"] = out["commentary"].str.extract(MOL_REGEX)[0]
+    out["temperature"] = process_temperature_column(
+        out["commentary"].str.extract(TEMP_REGEX)[0]
+    )
+    for ec in [1, 2, 3]:
+        out["ec" + str(ec)] = [".".join(s.split(".")[:ec]) for s in out["ec4"]]
+    out["log_km"] = np.log(out["km"])
+    out["sub_type"] = (
+        out["substrate"].where(lambda s: s.isin(COFACTORS)).fillna("other")
+    )
+    out["biology"] = out[BIOLOGY_FCTS].astype(str).apply("|".join, axis=1)
+    out["ec_sub"] = out["ec4"].astype(str).str.cat(out["substrate"], sep="|")
+    out["org_sub"] = out["organism"].str.cat(out["substrate"], sep="|")
+    return out
+
+
+def get_lits(reports: pd.DataFrame) -> pd.DataFrame:
+    """get dataframe of study/km combinations ("lits")
+
+    :param reports: dataframe of reports
+    """
+    g = reports.groupby(BIOLOGY_FCTS + ["literature"])
     lits = pd.DataFrame(
         {
-            **{c: g[c].first() for c in fcts},
+            **{c: g[c].first() for c in LIT_FCTS},
             **{
                 "y": g["log_km"].median(),
                 "n": g.size(),
@@ -180,75 +189,63 @@ def prepare_data(pp: pd.DataFrame, k: int) -> PrepareDataOutput:
             },
         }
     ).reset_index(drop=True)
-    for fct in fcts:
+    for fct in LIT_FCTS:
         lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
-    coords = {c: pd.factorize(lits[c])[1].tolist() for c in fcts}
+    return lits
+
+
+def get_coords(lits: pd.DataFrame) -> CoordDict:
+    """Get a dictionary of Stan and arviz compatible coords
+
+    :param lits: Dataframe of lits (see function get_lits)
+    """
+    coords = {c: pd.factorize(lits[c])[1].tolist() for c in LIT_FCTS}
     coords_with_unknowns = ["substrate", "ec_sub", "org_sub"]
     for coord in coords_with_unknowns:
         coords[coord] += [f"unknown {coord}"]
-    stan_input_base = {
-        "N_biology": lits["biology"].nunique(),
-        "N_substrate": len(coords["substrate"]),
-        "N_ec_sub": len(coords["ec_sub"]),
-        "N_org_sub": len(coords["org_sub"]),
-        "substrate": lits.groupby("biology")["substrate_stan"].first(),
-        "ec_sub": lits.groupby("biology")["ec_sub_stan"].first(),
-        "org_sub": lits.groupby("biology")["org_sub_stan"].first(),
-    }
-    stan_input_posterior, stan_input_prior = (
-        listify_dict(
-            {
-                **stan_input_base,
-                **{
-                    "N_train": len(lits),
-                    "N_test": len(lits),
-                    "biology_train": lits["biology_stan"],
-                    "biology_test": lits["biology_stan"],
-                    "y_train": lits["y"],
-                    "y_test": lits["y"],
-                },
-                **{"likelihood": int(likelihood)},
-            }
-        )
-        for likelihood in [1, 0]
-    )
-    splits = list(KFold(k, shuffle=True).split(lits))
-    stan_inputs_cv = list(
-        listify_dict(
-            {
-                **stan_input_base,
-                **{
-                    "N_train": len(train_ix),
-                    "N_test": len(test_ix),
-                    "biology_train": lits.loc[train_ix, "biology_stan"],
-                    "biology_test": lits.loc[test_ix, "biology_stan"],
-                    "y_train": lits.loc[train_ix, "y"],
-                    "y_test": lits.loc[test_ix, "y"],
-                },
-                **{"likelihood": int(1)},
-            }
-        )
-        for train_ix, test_ix in splits
-    )
+    return coords
 
-    dims = {
-        "a_substrate": ["substrate"],
-        "a_ec_sub": ["ec_sub"],
-        "a_org_sub": ["org_sub"],
-        "log_km": ["biology"],
-    }
-    return PrepareDataOutput(
-        stan_input_prior=stan_input_prior,
-        stan_input_posterior=stan_input_posterior,
-        stan_inputs_cv=stan_inputs_cv,
-        coords=coords,
-        dims=dims,
-        df=lits,
-        splits=splits,
+
+def get_standict(
+    lits: pd.DataFrame,
+    coords: CoordDict,
+    likelihood: bool,
+    train_ix: List[int],
+    test_ix: List[int],
+) -> StanDict:
+    """Get a Stan input
+
+    :param lits: Dataframe of lits
+    :param coords: Dictionary of coordinates
+    :param likelihood: Whether or not to run in likelihood mode
+    :param: train_ix: List of indexes of training lits
+    :param: test_ix: List of indexes of test lits
+    """
+    return listify_dict(
+        {
+            "N_biology": lits["biology"].nunique(),
+            "N_substrate": len(coords["substrate"]),
+            "N_ec_sub": len(coords["ec_sub"]),
+            "N_org_sub": len(coords["org_sub"]),
+            "substrate": lits.groupby("biology")["substrate_stan"].first(),
+            "ec_sub": lits.groupby("biology")["ec_sub_stan"].first(),
+            "org_sub": lits.groupby("biology")["org_sub_stan"].first(),
+            "N_train": len(train_ix),
+            "N_test": len(test_ix),
+            "biology_train": lits.loc[train_ix, "biology_stan"],
+            "biology_test": lits.loc[test_ix, "biology_stan"],
+            "y_train": lits.loc[train_ix, "y"],
+            "y_test": lits.loc[test_ix, "y"],
+            "likelihood": int(likelihood),
+        }
     )
 
 
-def listify_dict(d: Dict) -> Dict:
+def listify_dict(d: Dict) -> StanDict:
+    """Make sure a dictionary is a valid Stan input.
+
+    :param d: input dictionary, possibly with wrong types
+    """
     out = {}
     for k, v in d.items():
         if not isinstance(k, str):
@@ -262,3 +259,52 @@ def listify_dict(d: Dict) -> Dict:
         else:
             raise ValueError(f"value {str(v)} has wrong type!")
     return out
+
+
+def prepare_data(pi: PrepareDataInput) -> PrepareDataOutput:
+
+    """Get a dataframe of literature/biology groups.
+
+    Uses the Borger, Liebermeister and Klipp framework.
+
+    :param pi: A PrepareDataInput object
+
+    """
+    # get dataframe of reports
+    filter_reports_for_pi = partial(
+        filter_reports,
+        natural_only=pi.natural_only,
+        response_col=pi.response_col,
+    )
+    reports = (
+        pi.raw_reports.copy()
+        .pipe(add_columns_to_reports, nat=pi.natural_ligands)
+        .pipe(correct_report_dtypes, response_col=pi.response_col)
+        .loc[filter_reports_for_pi]
+    )
+    lits = get_lits(reports)
+    coords = get_coords(lits)
+    ix_all = range(len(lits))
+    splits = list(KFold(pi.number_of_cv_folds, shuffle=True).split(lits))
+    get_standict_xv = partial(
+        get_standict, lits=lits, coords=coords, likelihood=True
+    )
+    get_standict_main = partial(
+        get_standict, lits=lits, coords=coords, train_ix=ix_all, test_ix=ix_all
+    )
+    standict_prior, standict_posterior = (
+        get_standict_main(likelihood=likelihood) for likelihood in (False, True)
+    )
+    standicts_cv = list(
+        get_standict_xv(train_ix=train_ix, test_ix=test_ix)
+        for train_ix, test_ix in splits
+    )
+    return PrepareDataOutput(
+        standict_prior=standict_prior,
+        standict_posterior=standict_posterior,
+        standicts_cv=standicts_cv,
+        coords=coords,
+        dims=DIMS,
+        df=lits,
+        splits=splits,
+    )

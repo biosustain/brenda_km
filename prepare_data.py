@@ -6,12 +6,13 @@ import os
 import pandas as pd
 from cmdstanpy.utils import write_stan_json
 
-from src.data_preparation import PrepareDataInput, prepare_data, preprocess
+from src.data_preparation import PrepareDataInput, prepare_data
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW_DATA_DIR = os.path.join(HERE, "data", "raw")
 PREPARED_DATA_DIR = os.path.join(HERE, "data", "prepared")
 KM_REPORTS_CSV = os.path.join(RAW_DATA_DIR, "brenda_km_reports.csv")
+KCAT_REPORTS_CSV = os.path.join(RAW_DATA_DIR, "brenda_kcat_reports.csv")
 NATURAL_SUBSTRATES_CSV = os.path.join(
     RAW_DATA_DIR, "brenda_natural_substrates.csv"
 )
@@ -22,18 +23,27 @@ def main():
     """Run the script."""
 
     print(f"Reading raw data from {KM_REPORTS_CSV}")
-    km = pd.read_csv(KM_REPORTS_CSV, index_col=0)
-    nat = pd.read_csv(NATURAL_SUBSTRATES_CSV, index_col=0)
-
-    print("Preprocessing...")
-    pp = preprocess(km, nat)
-
-    print(f"Writing pre-processed data to {PREPROCESSED_CSV}")
-    pp.to_csv(PREPROCESSED_CSV, index=False)
-
+    km_reports = pd.read_csv(KM_REPORTS_CSV, index_col=0)
+    kcat_reports = pd.read_csv(KCAT_REPORTS_CSV, index_col=0)
+    natural_ligands = pd.read_csv(NATURAL_SUBSTRATES_CSV, index_col=0)
     print("Preparing Stan input files...")
     prep_inputs = [
-        PrepareDataInput(prepare_data, pp, 10, "tenfold"),
+        PrepareDataInput(
+            name="km_tenfold",
+            raw_reports=km_reports,
+            number_of_cv_folds=10,
+            response_col="km",
+            natural_only=True,
+            natural_ligands=natural_ligands,
+        ),
+        PrepareDataInput(
+            name="kcat_tenfold",
+            raw_reports=kcat_reports,
+            number_of_cv_folds=10,
+            response_col="kcat",
+            natural_only=True,
+            natural_ligands=natural_ligands,
+        ),
     ]
     for pi in prep_inputs:
         print(f"\tPreparing Stan input {pi.name}...")
@@ -47,11 +57,11 @@ def main():
             os.mkdir(output_dir)
             print(splits_dir)
             os.mkdir(splits_dir)
-        po = pi.prepare_func(pi.pp, pi.k)
+        po = prepare_data(pi)
         po.df.to_csv(os.path.join(output_dir, "input_df.csv"))
-        write_stan_json(input_file_posterior, po.stan_input_posterior)
-        write_stan_json(input_file_prior, po.stan_input_prior)
-        for i, si in enumerate(po.stan_inputs_cv):
+        write_stan_json(input_file_posterior, po.standict_posterior)
+        write_stan_json(input_file_prior, po.standict_prior)
+        for i, si in enumerate(po.standicts_cv):
             f = os.path.join(splits_dir, f"split_{str(i)}.json")
             write_stan_json(f, si)
         with open(os.path.join(output_dir, "coords.json"), "w") as f:

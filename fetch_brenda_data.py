@@ -102,7 +102,7 @@ def _fetch_natural_substrates(
 
 
 def _fetch_reports(
-    pref: str,
+    var: str,
     email: str,
     password_hex: str,
     ec_numbers: List[str],
@@ -114,19 +114,27 @@ def _fetch_reports(
     ]
     out = pd.DataFrame()
     for i, chunk in enumerate(chunks):
-        print(f"Fetching ec numbers from {i*chunksize} to {(i+1)*chunksize-1}")
+        print(f"Fetching ec numbers from {chunk[0]} to {chunk[-1]}")
+        print(
+            f"i.e. {i*chunksize} to {(i+1)*chunksize-1} out of {len(ec_numbers)}."
+        )
         time.sleep(2)
         client = zeep.Client(WSDL)
+        fetch_func = (
+            client.service.getKmValue
+            if var == "kmValue"
+            else client.service.getTurnoverNumber
+        )
         for ec_number in tqdm(chunk):
             try:
                 time.sleep(0.5)
-                result = client.service.getKmValue(
+                result = fetch_func(
                     email,
                     password_hex,
                     f"ecNumber*{ec_number}",
                     "organism*",
-                    f"{pref}Value*",
-                    f"{pref}ValueMaximum*",
+                    f"{var}*",
+                    f"{var}Maximum*",
                     "substrate*",
                     "commentary*",
                     "ligandStructureId*",
@@ -148,7 +156,8 @@ def main():
     password = os.environ["BRENDA_PASSWORD"]
     password_hex = hashlib.sha256(password.encode("utf-8")).hexdigest()
     print("Fetching ec numbers...")
-    ec_numbers = _fetch_ec_numbers(email, password_hex)
+    ec_numbers = sorted(_fetch_ec_numbers(email, password_hex))
+    print(f"Found {len(ec_numbers)} ec numbers.")
     if not os.path.exists(OUTPUT_FILEPATHS["natural_substrates"]):
         print("Fetching natural substrates...")
         ns = _fetch_natural_substrates(email, password_hex, ec_numbers)
@@ -159,11 +168,11 @@ def main():
     # to.to_csv(OUTPUT_FILEPATHS["temperature_optima"])
     if not os.path.exists(OUTPUT_FILEPATHS["kcat_reports"]):
         print("Fetching kcat reports...")
-        kcat = _fetch_reports("kcatKm", email, password_hex, ec_numbers)
+        kcat = _fetch_reports("turnoverNumber", email, password_hex, ec_numbers)
         kcat.to_csv(OUTPUT_FILEPATHS["kcat_reports"])
     if not os.path.exists(OUTPUT_FILEPATHS["km_reports"]):
         print("Fetching km reports...")
-        km = _fetch_reports("km", email, password_hex, ec_numbers)
+        km = _fetch_reports("kmValue", email, password_hex, ec_numbers)
         km.to_csv(OUTPUT_FILEPATHS["km_measurements"])
 
 
