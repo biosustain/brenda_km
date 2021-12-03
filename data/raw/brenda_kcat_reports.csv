@@ -1,0 +1,992 @@
+,literature,substrate,turnoverNumberMaximum,commentary,organism,turnoverNumber,ecNumber,ligandStructureId
+0,[744545],NADPH,,"45&deg;C, pH 6.1, cosubstrate: 3-hydroxy-2-butanone, wild-type enzyme",Pyrococcus furiosus,0.2,1.1.1.1,5
+1,[744545],NADPH,,"45&deg;C, pH 6.1, cosubstrate: 3-hydroxy-2-butanone, mutant enzyme K249G/H255R",Pyrococcus furiosus,1.2,1.1.1.1,5
+2,[735498],NADPH,,"pH 6.5, 65&deg;C",Yokenella sp.,433,1.1.1.1,5
+3,[712962],NADPH,,"cosubstrate octanal, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,4808,1.1.1.1,5
+4,[728012],NAD+,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.4,1.1.1.1,7
+5,[746361],NAD+,,"pH 8.8, 45&deg;C, mutant enzyme G211InsC",Pyrococcus furiosus,0.43,1.1.1.1,7
+6,[697839],NAD+,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.52,1.1.1.1,7
+7,[285573],NAD+,,"pH 7.5, anodic enzyme form",Homo sapiens,0.717,1.1.1.1,7
+8,[684583],NAD+,,65&deg;C,Thermus thermophilus,0.84,1.1.1.1,7
+9,[684583],NAD+,,"pH 10.5, 65&deg;C",Thermus thermophilus,0.84,1.1.1.1,7
+10,[736309],NAD+,,"mutant W49F/W87F/V260A, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,1,1.1.1.1,7
+11,[737865],NAD+,,"cosubstrate butan-1-ol, pH 7.0, 30&deg;C",Mycobacterium sp.,1,1.1.1.1,7
+12,[744545],NAD+,,"45&deg;C, pH 8.8, cosubstrate: 2,3-butanediol, wild-type enzyme",Pyrococcus furiosus,1,1.1.1.1,7
+13,[746361],NAD+,,"pH 8.8, 45&deg;C, mutant enzyme G211C",Pyrococcus furiosus,1.1,1.1.1.1,7
+14,[681763],NAD+,,"in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,1.4,1.1.1.1,7
+15,[678116],NAD+,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,1.4,1.1.1.1,7
+16,[736309],NAD+,,"mutant W49F/W167Y/V260A, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,1.4,1.1.1.1,7
+17,[746361],NAD+,,"pH 8.8, 45&deg;C, mutant enzyme G211InsA",Pyrococcus furiosus,1.7,1.1.1.1,7
+18,[736309],NAD+,,"mutant V260A, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,1.9,1.1.1.1,7
+19,[736309],NAD+,,"mutant Y25A/W49F/W167Y/V260A, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,1.9,1.1.1.1,7
+20,[736309],NAD+,,"mutant Y25A/W49F/W167Y, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,2.5,1.1.1.1,7
+21,[736309],NAD+,,"mutant Y25A/W49F/W87F/V260A, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,2.5,1.1.1.1,7
+22,[746361],NAD+,,"pH 8.8, 45&deg;C, wild-type enzyme",Pyrococcus furiosus,2.6,1.1.1.1,7
+23,[736309],NAD+,,"mutant W49F/W87F, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,3,1.1.1.1,7
+24,[678121],NAD+,,"wild type enzyme, at 65&deg;C, in the presence of benzyl alcohol",Saccharolobus solfataricus,3.4,1.1.1.1,7
+25,[697839],NAD+,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,3.4,1.1.1.1,7
+26,[736309],NAD+,,"mutant W49F/W167Y, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,3.4,1.1.1.1,7
+27,[719428],NAD+,,"pH 8.0, 65&deg;C",Sulfolobus acidocaldarius,3.7,1.1.1.1,7
+28,[719428],NAD+,,"65&deg;C, pH 8.0",Sulfolobus acidocaldarius,3.7,1.1.1.1,7
+29,[746361],NAD+,,"pH 8.8, 45&deg;C, mutant enzyme G211S",Pyrococcus furiosus,4,1.1.1.1,7
+30,[285615],NAD+,,enzyme form ADH-2,Coturnix coturnix,4.67,1.1.1.1,7
+31,[736309],NAD+,,"mutant Y25A, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,5.1,1.1.1.1,7
+32,[285615],NAD+,,enzyme form ADH-3,Coturnix coturnix,6.18,1.1.1.1,7
+33,[736309],NAD+,,"mutant Y25A/W49F/W87F, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,6.3,1.1.1.1,7
+34,[746361],NAD+,,"pH 8.8, 45&deg;C, mutant enzyme G211InsG",Pyrococcus furiosus,6.5,1.1.1.1,7
+35,[746361],NAD+,,"pH 8.8, 45&deg;C, mutant enzyme G211InsS",Pyrococcus furiosus,6.7,1.1.1.1,7
+36,[285602],NAD+,,oxidation of ethanol,Mesocricetus auratus,7.75,1.1.1.1,7
+37,[736309],NAD+,,"wild-type, 30&deg;C, pH not specified in the publication",Geobacillus stearothermophilus,8,1.1.1.1,7
+38,[735486],NAD+,,"cosubstrate 1-phenylethanol, pH 9.0, 70&deg;C",Thermococcus kodakarensis,10.4,1.1.1.1,7
+39,[744545],NAD+,,"45&deg;C, pH 8.8, cosubstrate: 2,3-butanediol, mutant enzyme K249G/H255R",Pyrococcus furiosus,15,1.1.1.1,7
+40,[678116],NAD+,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,18.5,1.1.1.1,7
+41,[718681],NAD+,,"65&deg;C, pH 10.5",Sulfolobus acidocaldarius,19.3,1.1.1.1,7
+42,[697839],NAD+,,"Km above 50 mM, mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,21,1.1.1.1,7
+43,[735486],NAD+,,"cosubstrate 2,3-butanediol, pH 9.0, 70&deg;C",Thermococcus kodakarensis,30.8,1.1.1.1,7
+44,[723979],NAD+,,"pH 7.7, 60&deg;C",Geobacillus stearothermophilus,33,1.1.1.1,7
+45,[735548],NAD+,,"wild-type, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,34.2,1.1.1.1,7
+46,[712962],NAD+,,"cosubstrate 1-octanol, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,38.5,1.1.1.1,7
+47,[678121],NAD+,,"mutant enzyme N249Y, at 65&deg;C, in the presence of benzyl alcohol",Saccharolobus solfataricus,50,1.1.1.1,7
+48,[712962],NAD+,,"cosubstrate ethanol, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,443.1,1.1.1.1,7
+49,[744545],NADH,,"45&deg;C, pH 6.1, cosubstrate: 3-hydroxy-2-butanone, wild-type enzyme",Pyrococcus furiosus,0.36,1.1.1.1,8
+50,[697839],NADH,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.38,1.1.1.1,8
+51,[728012],NADH,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.41,1.1.1.1,8
+52,[744545],NADH,,"45&deg;C, pH 6.1, cosubstrate: 3-hydroxy-2-butanone, mutant enzyme K249G/H255R",Pyrococcus furiosus,1.1,1.1.1.1,8
+53,[719428],NADH,8,"pH 5.5, 65&deg;C",Sulfolobus acidocaldarius,2,1.1.1.1,8
+54,[719428],NADH,8,"65&deg;C, pH 5.5",Sulfolobus acidocaldarius,2,1.1.1.1,8
+55,[678116],NADH,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,2,1.1.1.1,8
+56,[681763],NADH,,"in 50 mM Tris-HCl (pH 7.5) containing 0.25 mM benzaldehyde, at 65&deg;C",Saccharolobus solfataricus,4.5,1.1.1.1,8
+57,[678116],NADH,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,4.5,1.1.1.1,8
+58,[285615],NADH,,enzyme form ADH-3,Coturnix coturnix,8.88,1.1.1.1,8
+59,[678121],NADH,,"wild type enzyme, at 65&deg;C, in the presence of benzaldehyde",Saccharolobus solfataricus,10.3,1.1.1.1,8
+60,[697839],NADH,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,10.3,1.1.1.1,8
+61,[735486],NADH,,"cosubstrate acetoin, pH 6.0, 70&deg;C",Thermococcus kodakarensis,15.6,1.1.1.1,8
+62,[735486],NADH,,"cosubstrate acetoin, pH 6.0, 70&deg;C",Thermococcus kodakarensis,17.3,1.1.1.1,8
+63,[678121],NADH,,"mutant enzyme N249Y, at 65&deg;C, in the presence of benzaldehyde",Saccharolobus solfataricus,25.3,1.1.1.1,8
+64,[718681],NADH,,"65&deg;C, pH 5.0",Sulfolobus acidocaldarius,26.2,1.1.1.1,8
+65,[697839],NADH,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,34.8,1.1.1.1,8
+66,[723979],NADH,,"pH 7.7, 60&deg;C",Geobacillus stearothermophilus,43,1.1.1.1,8
+67,[684583],NADH,,65&deg;C,Thermus thermophilus,52.4,1.1.1.1,8
+68,[684583],NADH,,"pH 10.5, 65&deg;C",Thermus thermophilus,52.4,1.1.1.1,8
+69,[737865],NADH,,"cosubstrate butanal, pH 7.0, 30&deg;C",Mycobacterium sp.,153,1.1.1.1,8
+70,[735548],NADH,,"wild-type, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,326,1.1.1.1,8
+71,[712962],NADH,,"cosubstrate acetaldehyde, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,1646,1.1.1.1,8
+72,[744545],NADP+,,"45&deg;C, pH 8.8, cosubstrate: 2,3-butanediol, wild-type enzyme",Pyrococcus furiosus,0.03,1.1.1.1,10
+73,[746361],NADP+,,"pH 8.8, 45&deg;C, wild-type enzyme",Pyrococcus furiosus,0.073,1.1.1.1,10
+74,[746361],NADP+,,"pH 8.8, 45&deg;C, mutant enzyme G211S",Pyrococcus furiosus,0.29,1.1.1.1,10
+75,[746361],NADP+,,"pH 8.8, 45&deg;C, mutant enzyme G211InsG",Pyrococcus furiosus,0.52,1.1.1.1,10
+76,[746361],NADP+,,"pH 8.8, 45&deg;C, mutant enzyme G211InsC",Pyrococcus furiosus,0.86,1.1.1.1,10
+77,[746361],NADP+,,"pH 8.8, 45&deg;C, mutant enzyme G211C",Pyrococcus furiosus,0.92,1.1.1.1,10
+78,[746361],NADP+,,"pH 8.8, 45&deg;C, mutant enzyme G211InsA",Pyrococcus furiosus,2.1,1.1.1.1,10
+79,[746361],NADP+,,"pH 8.8, 45&deg;C, mutant enzyme G211InsS",Pyrococcus furiosus,2.1,1.1.1.1,10
+80,[744545],NADP+,,"45&deg;C, pH 8.8, cosubstrate: 2,3-butanediol, mutant enzyme K249G/H255R",Pyrococcus furiosus,4.7,1.1.1.1,10
+81,[735486],NADP+,,"cosubstrate 1-phenylethanol, pH 9.0, 70&deg;C",Thermococcus kodakarensis,10.5,1.1.1.1,10
+82,[735486],NADP+,,"cosubstrate 2,3-butanediol, pH 9.0, 70&deg;C",Thermococcus kodakarensis,30,1.1.1.1,10
+83,[712962],NADP+,,"cosubstrate ethanol, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,43.9,1.1.1.1,10
+84,[735498],NADP+,,"pH 8.0, 55&deg;C",Yokenella sp.,194,1.1.1.1,10
+85,[712962],NADP+,,"cosubstrate 1-octanol, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,283.1,1.1.1.1,10
+86,[684620],ethanol,,,Picrophilus torridus,0.00086,1.1.1.1,69
+87,[285579],ethanol,,"pyrazole-insensitive enzyme, pH 7.5",Saimiri sciureus,0.0833,1.1.1.1,69
+88,[655197],ethanol,,"recombinant allozyme Ile308, pH 7.5, 25&deg;C",Homo sapiens,0.167,1.1.1.1,69
+89,[655197],ethanol,,"recombinant allozyme Val308, pH 7.5, 25&deg;C",Homo sapiens,0.175,1.1.1.1,69
+90,[728012],ethanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.23,1.1.1.1,69
+91,[285579],ethanol,,"pyrazole-sensitive enzyme, pH 7.5",Saimiri sciureus,0.4,1.1.1.1,69
+92,[686626],ethanol,,"40&deg;C, pH 9.0, 50 mM Tris-HCl, 4 M NaCl",Natronomonas pharaonis,0.4,1.1.1.1,69
+93,[285579],ethanol,,"pyrazole-insensitive enzyme, pH 10.0",Saimiri sciureus,0.45,1.1.1.1,69
+94,[285656],ethanol,,,Alligator mississippiensis,0.467,1.1.1.1,69
+95,[681763],ethanol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,0.5,1.1.1.1,69
+96,[678116],ethanol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,0.5,1.1.1.1,69
+97,[285579],ethanol,,pyrazole-sensitive enzyme,Saimiri sciureus,0.567,1.1.1.1,69
+98,[285573],ethanol,,"pH 7.5, anodic enzyme form",Homo sapiens,0.7,1.1.1.1,69
+99,[678116],ethanol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,0.85,1.1.1.1,69
+100,[285604],ethanol,,"isoenzyme ADH-3, pH 10.0",Rattus norvegicus,1,1.1.1.1,69
+101,[285597],ethanol,,,Equus caballus,1.27,1.1.1.1,69
+102,[285621],ethanol,,,Saccharolobus solfataricus,1.88,1.1.1.1,69
+103,[655479],ethanol,,"recombinant isozyme ADH1, pH 7.5, 25&deg;C",Mus musculus,1.92,1.1.1.1,69
+104,[285567],ethanol,,per active site,Homo sapiens,2.5,1.1.1.1,69
+105,[285650],ethanol,,isoenzyme AA-ADH,Mesocricetus auratus,2.83,1.1.1.1,69
+106,[697839],ethanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,3.1,1.1.1.1,69
+107,[742936],ethanol,,"pH 7.0, 30&deg;C",Citrobacter sp. S-77,3.2,1.1.1.1,69
+108,[285650],ethanol,,isoenzyme BB-ADH,Mesocricetus auratus,3.38,1.1.1.1,69
+109,[285568],ethanol,,"isoenzyme gamma1,gamma1",Homo sapiens,3.83,1.1.1.1,69
+110,[285568],ethanol,,"isoenzyme alpha,gamma1",Homo sapiens,4,1.1.1.1,69
+111,[697839],ethanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,4.1,1.1.1.1,69
+112,[655479],ethanol,,"recombinant isozyme ADH1, pH 10.5, 25&deg;C",Mus musculus,4.42,1.1.1.1,69
+113,[735841],ethanol,,"pH 7.0, temperature not specified in the publication",Kluyveromyces marxianus,4.5,1.1.1.1,69
+114,[285615],ethanol,,enzyme form ADH-2,Coturnix coturnix,4.92,1.1.1.1,69
+115,[285615],ethanol,,enzyme form ADH-3,Coturnix coturnix,6.63,1.1.1.1,69
+116,[285569],ethanol,,,Homo sapiens,7.83,1.1.1.1,69
+117,[285602],ethanol,,,Mesocricetus auratus,8,1.1.1.1,69
+118,[686626],ethanol,,"70&deg;C, pH 9.0, 50 mM Tris-HCl, 4 M NaCl",Natronomonas pharaonis,8.2,1.1.1.1,69
+119,[285650],ethanol,,isoenzyme TT-ADH,Mesocricetus auratus,9.58,1.1.1.1,69
+120,[285573],ethanol,,"pH 10.0, anodic enzyme form",Homo sapiens,10.2,1.1.1.1,69
+121,[285608],ethanol,,,Homo sapiens,30.7,1.1.1.1,69
+122,[735841],ethanol,,"pH 7.0, temperature not specified in the publication",Kluyveromyces marxianus,33,1.1.1.1,69
+123,[668532],ethanol,,"10&deg;C, pH 9.0",Flavobacterium frigidimaris,39.9,1.1.1.1,69
+124,[655479],ethanol,,"recombinant isozyme ADH4, pH 7.5, 25&deg;C",Mus musculus,41.3,1.1.1.1,69
+125,[668532],ethanol,,"20&deg;C, pH 9.0",Flavobacterium frigidimaris,62.48,1.1.1.1,69
+126,[285604],ethanol,,"isoenzyme ADH-1, pH 10.0",Rattus norvegicus,62.7,1.1.1.1,69
+127,[285647],ethanol,,mutant enzyme W54L,Equus caballus,102,1.1.1.1,69
+128,[668532],ethanol,,"30&deg;C, pH 9.0",Flavobacterium frigidimaris,109.5,1.1.1.1,69
+129,[285647],ethanol,,wild-type enzyme Adh 1,Equus caballus,123,1.1.1.1,69
+130,[712962],ethanol,,"cosubstrate NADP+, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,136.2,1.1.1.1,69
+131,[735841],ethanol,,"pH 7.0, temperature not specified in the publication",Kluyveromyces marxianus,142,1.1.1.1,69
+132,[699019],ethanol,,"in 50 mM Tris-HCl, pH 8.0 at 25&deg;C",Saccharomyces cerevisiae,143,1.1.1.1,69
+133,[735841],ethanol,,"pH 7.0, temperature not specified in the publication",Kluyveromyces marxianus,158,1.1.1.1,69
+134,[668532],ethanol,,"40&deg;C, pH 9.0",Flavobacterium frigidimaris,160.8,1.1.1.1,69
+135,[655479],ethanol,,"recombinant isozyme ADH4, pH 10.5, 25&deg;C",Mus musculus,215,1.1.1.1,69
+136,[668532],ethanol,,"10&deg;C, pH 9.0",Saccharomyces cerevisiae,251.3,1.1.1.1,69
+137,[668532],ethanol,,"50&deg;C, pH 9.0",Flavobacterium frigidimaris,262.3,1.1.1.1,69
+138,[735548],ethanol,,"wild-type, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,305,1.1.1.1,69
+139,[285647],ethanol,,wild-type enzyme Adh 1,Equus caballus,308,1.1.1.1,69
+140,[735548],ethanol,,"mutant C257L, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,365,1.1.1.1,69
+141,[668532],ethanol,,"20&deg;C, pH 9.0",Saccharomyces cerevisiae,432.3,1.1.1.1,69
+142,[668532],ethanol,,"60&deg;C, pH 9.0",Flavobacterium frigidimaris,474.9,1.1.1.1,69
+143,[712962],ethanol,,"cosubstrate NAD+, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,638.7,1.1.1.1,69
+144,[668532],ethanol,,"30&deg;C, pH 9.0",Saccharomyces cerevisiae,786.1,1.1.1.1,69
+145,[668532],ethanol,,"40&deg;C, pH 9.0",Saccharomyces cerevisiae,895.4,1.1.1.1,69
+146,[721388],ethanol,,"pH 9.0, 22&deg;C, recombinant enzyme",Ogataea angusta,3000,1.1.1.1,69
+147,[285656],methanol,,,Alligator mississippiensis,0.05,1.1.1.1,83
+148,[285567],methanol,,,Homo sapiens,0.102,1.1.1.1,83
+149,[285579],methanol,,"pyrazole-sensitive enzyme, pH 7.5",Saimiri sciureus,0.117,1.1.1.1,83
+150,[285579],methanol,,"pyrazole-sensitive enzyme, pH 10.0",Saimiri sciureus,0.217,1.1.1.1,83
+151,[285621],methanol,,,Saccharolobus solfataricus,3.1,1.1.1.1,83
+152,[686626],acetaldehyde,,"40&deg;C, pH 9.0, 50 mM Tris-HCl, 4 M NaCl",Natronomonas pharaonis,0.3,1.1.1.1,90
+153,[742936],acetaldehyde,,"pH 7.0, 30&deg;C",Citrobacter sp. S-77,2.5,1.1.1.1,90
+154,[285579],acetaldehyde,,"pyrazole-insensitive enzyme, pH 7.0",Saimiri sciureus,3.33,1.1.1.1,90
+155,[686626],acetaldehyde,,"70&deg;C, pH 9.0, 50 mM Tris-HCl, 4 M NaCl",Natronomonas pharaonis,5.4,1.1.1.1,90
+156,[285579],acetaldehyde,,"pyrazole-sensitive enzyme, pH 7.0",Saimiri sciureus,16.7,1.1.1.1,90
+157,[285597],acetaldehyde,,,Equus caballus,31.8,1.1.1.1,90
+158,[735841],acetaldehyde,,"pH 7.0, temperature not specified in the publication",Kluyveromyces marxianus,53,1.1.1.1,90
+159,[735360],acetaldehyde,,"wild-type, 60&deg;C, pH 6.0, presence of 0.1 mM Zn2+",Parageobacillus thermoglucosidasius,83,1.1.1.1,90
+160,[712962],acetaldehyde,,"cosubstrate NADPH, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,138.1,1.1.1.1,90
+161,[735841],acetaldehyde,,"pH 7.0, temperature not specified in the publication",Kluyveromyces marxianus,283,1.1.1.1,90
+162,[735360],acetaldehyde,,"alcohol dehydrogenase domain, 60&deg;C, pH 6.0, presence of 0.1 mM Zn2+",Parageobacillus thermoglucosidasius,350,1.1.1.1,90
+163,[712962],acetaldehyde,,"cosubstrate NADH, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,404.8,1.1.1.1,90
+164,[735548],acetaldehyde,,"wild-type, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,681,1.1.1.1,90
+165,[721388],acetaldehyde,,"pH 6.0, 22&deg;C, recombinant enzyme",Ogataea angusta,3500,1.1.1.1,90
+166,[739927],formaldehyde,,"pH 7.0, 30&deg;C",Saccharomyces cerevisiae,1.28,1.1.1.1,130
+167,[697839],benzaldehyde,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.36,1.1.1.1,146
+168,[728012],benzaldehyde,,"pH 8.0, 60&deg;C",Aeropyrum pernix,1.22,1.1.1.1,146
+169,[678116],benzaldehyde,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,1.8,1.1.1.1,146
+170,[681763],benzaldehyde,,"in 50 mM Tris-HCl (pH 7.5) containing 0.2 mM NADH + H+, at 65&deg;C",Saccharolobus solfataricus,3.5,1.1.1.1,146
+171,[678116],benzaldehyde,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,3.5,1.1.1.1,146
+172,[678121],benzaldehyde,,"wild type enzyme, at 65&deg;C",Saccharolobus solfataricus,11.3,1.1.1.1,146
+173,[697839],benzaldehyde,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,11.3,1.1.1.1,146
+174,[697839],benzaldehyde,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,13.1,1.1.1.1,146
+175,[678121],benzaldehyde,,"mutant enzyme N249Y, at 65&deg;C",Saccharolobus solfataricus,25.5,1.1.1.1,146
+176,[285597],benzaldehyde,,,Equus caballus,29.5,1.1.1.1,146
+177,[735498],benzaldehyde,,"pH 6.5, 65&deg;C",Yokenella sp.,360,1.1.1.1,146
+178,[697839],benzyl alcohol,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.35,1.1.1.1,260
+179,[285597],benzyl alcohol,,,Equus caballus,0.78,1.1.1.1,260
+180,[285604],benzyl alcohol,,"isoenzyme ADH-3, pH 10.0",Rattus norvegicus,1,1.1.1.1,260
+181,[728012],benzyl alcohol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,1.02,1.1.1.1,260
+182,[285602],benzyl alcohol,,,Mesocricetus auratus,1.37,1.1.1.1,260
+183,[678116],benzyl alcohol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,1.4,1.1.1.1,260
+184,[285621],benzyl alcohol,,,Saccharolobus solfataricus,1.68,1.1.1.1,260
+185,[285615],benzyl alcohol,,enzyme form ADH-3,Coturnix coturnix,2.52,1.1.1.1,260
+186,[678121],benzyl alcohol,,"wild type enzyme, at 65&deg;C",Saccharolobus solfataricus,3.6,1.1.1.1,260
+187,[697839],benzyl alcohol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,3.6,1.1.1.1,260
+188,[736412],benzyl alcohol,,"mutant A25Y, pH 7.0, 30&deg;C",Moraxella sp.,3.8,1.1.1.1,260
+189,[285568],benzyl alcohol,,"isoenzyme alpha,gamma1",Homo sapiens,4.67,1.1.1.1,260
+190,[736412],benzyl alcohol,,"mutant W87A, pH 7.0, 30&deg;C",Geobacillus stearothermophilus,5.5,1.1.1.1,260
+191,[736412],benzyl alcohol,,"wild-type, pH 7.0, 30&deg;C",Moraxella sp.,6.9,1.1.1.1,260
+192,[285569],benzyl alcohol,,,Homo sapiens,9.17,1.1.1.1,260
+193,[736412],benzyl alcohol,,"mutant Y25A, pH 7.0, 30&deg;C",Geobacillus stearothermophilus,14,1.1.1.1,260
+194,[678116],benzyl alcohol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,14.5,1.1.1.1,260
+195,[697839],benzyl alcohol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,20,1.1.1.1,260
+196,[678121],benzyl alcohol,,"mutant enzyme N249Y, at 65&deg;C",Saccharolobus solfataricus,21.7,1.1.1.1,260
+197,[736412],benzyl alcohol,,"wild-type, pH 7.0, 30&deg;C",Geobacillus stearothermophilus,24.9,1.1.1.1,260
+198,[285604],benzyl alcohol,,"isoenzyme ADH-1, pH 10.0",Rattus norvegicus,89.7,1.1.1.1,260
+199,[735498],benzyl alcohol,,"pH 8.0, 55&deg;C",Yokenella sp.,93.3,1.1.1.1,260
+200,[285597],propionaldehyde,,,Equus caballus,41.9,1.1.1.1,273
+201,[739927],propanal,,"pH 7.0, 30&deg;C",Saccharomyces cerevisiae,0.73,1.1.1.1,328
+202,[285621],acetone,,,Saccharolobus solfataricus,0.317,1.1.1.1,333
+203,[285586],acetone,,,Equus caballus,0.33,1.1.1.1,333
+204,[697839],Butyraldehyde,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.36,1.1.1.1,499
+205,[697839],Butyraldehyde,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,19.7,1.1.1.1,499
+206,[697839],Butyraldehyde,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,19.7,1.1.1.1,499
+207,[285597],Butyraldehyde,,,Equus caballus,35.4,1.1.1.1,499
+208,[735548],Butyraldehyde,,"wild-type, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,931,1.1.1.1,499
+209,[739927],Butanal,,"pH 7.0, 30&deg;C",Saccharomyces cerevisiae,1.99,1.1.1.1,540
+210,[737865],Butanal,,"cosubstrate NADH, pH 7.0, 30&deg;C",Mycobacterium sp.,102,1.1.1.1,540
+211,[728012],1-butanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.41,1.1.1.1,556
+212,[285604],1-butanol,,"isoenzyme ADH-3, pH 10.0",Rattus norvegicus,0.833,1.1.1.1,556
+213,[697839],1-butanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,3.1,1.1.1.1,556
+214,[285602],1-butanol,,,Mesocricetus auratus,7.5,1.1.1.1,556
+215,[697839],1-butanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,15.1,1.1.1.1,556
+216,[285604],1-butanol,,"isoenzyme ADH-1, pH 10.0",Rattus norvegicus,48.8,1.1.1.1,556
+217,[739927],glycolaldehyde,,"pH 7.0, 30&deg;C",Saccharomyces cerevisiae,18.65,1.1.1.1,604
+218,[285579],butanol,,"pyrazole-insensitive enzyme, pH 7.5",Saimiri sciureus,0.0833,1.1.1.1,626
+219,[285579],butanol,,"pyrazole-sensitive enzyme, pH 7.5",Saimiri sciureus,0.35,1.1.1.1,626
+220,[285579],butanol,,"pyrazole-sensitive enzyme and pyrazole-insensitive enzyme, pH 10.0",Saimiri sciureus,0.45,1.1.1.1,626
+221,[285573],butanol,,"pH 7.5, anodic enzyme form",Homo sapiens,0.7,1.1.1.1,626
+222,[285656],butanol,,,Alligator mississippiensis,1.1,1.1.1.1,626
+223,[285647],butanol,,mutant enzyme W54L,Equus caballus,32.7,1.1.1.1,626
+224,[285608],butanol,,,Homo sapiens,34.8,1.1.1.1,626
+225,[285647],butanol,,wild-type enzyme Adh 1,Equus caballus,118,1.1.1.1,626
+226,[745695],D-sorbitol,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.0052,1.1.1.1,627
+227,[285650],n-butanol,,isoenzymee BB-ADH,Mesocricetus auratus,2.58,1.1.1.1,629
+228,[285650],n-butanol,,isoenzyme AA-ADH,Mesocricetus auratus,3.33,1.1.1.1,629
+229,[285650],n-butanol,,isoenzyme TT-ADH,Mesocricetus auratus,7.18,1.1.1.1,629
+230,[735548],n-butanol,,"wild-type, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,195,1.1.1.1,629
+231,[728012],1-propanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.26,1.1.1.1,660
+232,[681763],1-propanol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,660
+233,[678116],1-propanol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,660
+234,[678116],1-propanol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,2.2,1.1.1.1,660
+235,[697839],1-propanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,2.5,1.1.1.1,660
+236,[678121],1-propanol,,"wild type enzyme, at 65&deg;C",Saccharolobus solfataricus,2.6,1.1.1.1,660
+237,[697839],1-propanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,15.7,1.1.1.1,660
+238,[678121],1-propanol,,"mutant enzyme N249Y, at 65&deg;C",Saccharolobus solfataricus,16.6,1.1.1.1,660
+239,[728012],2-propanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.24,1.1.1.1,682
+240,[681763],2-propanol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,0.25,1.1.1.1,682
+241,[678116],2-propanol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,0.25,1.1.1.1,682
+242,[678116],2-propanol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,0.45,1.1.1.1,682
+243,[285569],2-propanol,,,Homo sapiens,0.75,1.1.1.1,682
+244,[723979],2-propanol,,"pH 7.7, 60&deg;C",Geobacillus stearothermophilus,287,1.1.1.1,682
+245,[745695],D-gluconate,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.98,1.1.1.1,698
+246,[681763],4-nitrobenzaldehyde,,"in 50 mM Tris-HCl (pH 7.5) containing 0.2 mM NADH + H+, at 65&deg;C",Saccharolobus solfataricus,4.6,1.1.1.1,759
+247,[678116],4-nitrobenzaldehyde,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,4.6,1.1.1.1,759
+248,[722888],phenylacetaldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Saccharomyces cerevisiae",Rhodococcus ruber,202,1.1.1.1,769
+249,[722888],phenylacetaldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Hansenula polymorpha",Rhodococcus ruber,264,1.1.1.1,769
+250,[722888],phenylacetaldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Arxula adeninivorans",Rhodococcus ruber,303,1.1.1.1,769
+251,[654370],all-trans-retinal,,"pH 7.5, 25&deg;C, isozyme ADH1B1",Homo sapiens,0.018,1.1.1.1,778
+252,[285648],all-trans-retinal,,oxidation with NAD+,Equus caballus,0.022,1.1.1.1,778
+253,[654370],all-trans-retinal,,"pH 7.5, 25&deg;C, isozyme ADH1B2",Homo sapiens,0.55,1.1.1.1,778
+254,[654370],all-trans-retinal,,"pH 7.5, 25&deg;C, isozyme ADH4",Homo sapiens,1.83,1.1.1.1,778
+255,[285648],all-trans-retinal,,reduction with NADH,Equus caballus,2.5,1.1.1.1,778
+256,[719428],isatin,,"pH 5.5, 65&deg;C",Sulfolobus acidocaldarius,22,1.1.1.1,805
+257,[719428],isatin,,"65&deg;C, pH 5.5",Sulfolobus acidocaldarius,22,1.1.1.1,805
+258,[285571],octanal,,,Homo sapiens,3.33,1.1.1.1,837
+259,[285615],octanal,,enzyme form ADH-3,Coturnix coturnix,17,1.1.1.1,837
+260,[712962],octanal,,"cosubstrate NADPH, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,518.4,1.1.1.1,837
+261,[654370],all-trans-retinol,,"pH 7.5, 25&deg;C, isozyme ADH1B1",Homo sapiens,0.028,1.1.1.1,847
+262,[654370],all-trans-retinol,,"pH 7.5, 25&deg;C, isozyme ADH1B2",Homo sapiens,0.25,1.1.1.1,847
+263,[285608],all-trans-retinol,,,Homo sapiens,0.4,1.1.1.1,847
+264,[654370],all-trans-retinol,,"pH 7.5, 25&deg;C, isozyme ADH4",Homo sapiens,0.9,1.1.1.1,847
+265,[285648],all-trans-retinol,,oxidation with NAD+,Equus caballus,1.55,1.1.1.1,847
+266,[285656],Cyclohexanol,,,Alligator mississippiensis,0.167,1.1.1.1,873
+267,[285604],Cyclohexanol,,"isoenzyme ADH-2, pH 10.0",Rattus norvegicus,0.383,1.1.1.1,873
+268,[728012],Cyclohexanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.52,1.1.1.1,873
+269,[285569],Cyclohexanol,,,Homo sapiens,0.583,1.1.1.1,873
+270,[681763],Cyclohexanol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,0.65,1.1.1.1,873
+271,[678116],Cyclohexanol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,0.65,1.1.1.1,873
+272,[285615],Cyclohexanol,,enzyme form ADH-2,Coturnix coturnix,0.75,1.1.1.1,873
+273,[678116],Cyclohexanol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,873
+274,[678121],Cyclohexanol,,"wild type enzyme, at 65&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,873
+275,[697839],Cyclohexanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,873
+276,[285604],Cyclohexanol,,"isoenzyme ADH-3, pH 10.0",Rattus norvegicus,1.5,1.1.1.1,873
+277,[285650],Cyclohexanol,,isoenzyme BB-ADH,Mesocricetus auratus,1.75,1.1.1.1,873
+278,[285604],Cyclohexanol,,"isoenzyme ADH-1, pH 10.0",Rattus norvegicus,1.75,1.1.1.1,873
+279,[285602],Cyclohexanol,,,Mesocricetus auratus,2.03,1.1.1.1,873
+280,[285650],Cyclohexanol,,isoenzyme AA-ADH,Mesocricetus auratus,2.4,1.1.1.1,873
+281,[285615],Cyclohexanol,,enzyme form ADH-3,Coturnix coturnix,3.55,1.1.1.1,873
+282,[285650],Cyclohexanol,,isoenzyme TT-ADH,Mesocricetus auratus,8.5,1.1.1.1,873
+283,[697839],Cyclohexanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,12.4,1.1.1.1,873
+284,[678121],Cyclohexanol,,"mutant enzyme N249Y, at 65&deg;C",Saccharolobus solfataricus,15.9,1.1.1.1,873
+285,[723979],cinnamyl alcohol,,"pH 7.7, 60&deg;C",Geobacillus stearothermophilus,43,1.1.1.1,936
+286,[285647],cinnamyl alcohol,,mutant enzyme W54L,Equus caballus,98,1.1.1.1,936
+287,[285647],cinnamyl alcohol,,wild-type enzyme Adh 1,Equus caballus,133,1.1.1.1,936
+288,[285586],Isopropanol,,,Equus caballus,0.58,1.1.1.1,958
+289,[285608],Propanol,,,Homo sapiens,17.2,1.1.1.1,976
+290,[285647],Propanol,,mutant enzyme W54L,Equus caballus,28.7,1.1.1.1,976
+291,[722888],acetophenone,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Hansenula polymorpha",Rhodococcus ruber,211,1.1.1.1,982
+292,[722888],acetophenone,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Saccharomyces cerevisiae",Rhodococcus ruber,259,1.1.1.1,982
+293,[722888],acetophenone,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Arxula adeninivorans",Rhodococcus ruber,288,1.1.1.1,982
+294,[681763],4-methoxybenzaldehyde,,"in 50 mM Tris-HCl (pH 7.5) containing 0.2 mM NADH + H+, at 65&deg;C",Saccharolobus solfataricus,0.6,1.1.1.1,1016
+295,[678116],4-methoxybenzaldehyde,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,0.6,1.1.1.1,1016
+296,[684583],4-methoxybenzaldehyde,,"pH 6.0, 65&deg;C",Thermus thermophilus,3.1,1.1.1.1,1016
+297,[678121],4-methoxybenzaldehyde,,"wild type enzyme, at 65&deg;C",Saccharolobus solfataricus,3.3,1.1.1.1,1016
+298,[678121],4-methoxybenzaldehyde,,"mutant enzyme N249Y, at 65&deg;C",Saccharolobus solfataricus,20.5,1.1.1.1,1016
+299,[723979],cinnamaldehyde,,"pH 7.7, 60&deg;C",Geobacillus stearothermophilus,55,1.1.1.1,1071
+300,[728012],2-butanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.48,1.1.1.1,1132
+301,[285602],2-butanol,,,Mesocricetus auratus,4.75,1.1.1.1,1132
+302,[742472],Glutaraldehyde,,"pH 6, 60&deg;C",Pyrobaculum calidifontis,93.13,1.1.1.1,1142
+303,[285566],1-Pentanol,,,Homo sapiens,0.183,1.1.1.1,1156
+304,[728012],1-Pentanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.45,1.1.1.1,1156
+305,[697839],1-Pentanol,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.53,1.1.1.1,1156
+306,[285604],1-Pentanol,,"isoenzyme ADH-3, pH 10.0",Rattus norvegicus,1.17,1.1.1.1,1156
+307,[697839],1-Pentanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,2.5,1.1.1.1,1156
+308,[285604],1-Pentanol,,"isoenzyme ADH-2, pH 10.0",Rattus norvegicus,3.53,1.1.1.1,1156
+309,[697839],1-Pentanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,16.3,1.1.1.1,1156
+310,[285604],1-Pentanol,,"isoenzyme ADH-1, pH 10.0",Rattus norvegicus,48.8,1.1.1.1,1156
+311,[697839],4-methoxybenzyl alcohol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.37,1.1.1.1,1158
+312,[728012],4-methoxybenzyl alcohol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.6,1.1.1.1,1158
+313,[678116],4-methoxybenzyl alcohol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,1.5,1.1.1.1,1158
+314,[684583],4-methoxybenzyl alcohol,,65&deg;C,Thermus thermophilus,1.6,1.1.1.1,1158
+315,[684583],4-methoxybenzyl alcohol,,"pH 10.5, 65&deg;C",Thermus thermophilus,1.6,1.1.1.1,1158
+316,[697839],4-methoxybenzyl alcohol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,2.9,1.1.1.1,1158
+317,[678121],4-methoxybenzyl alcohol,,"wild type enzyme, at 65&deg;C",Saccharolobus solfataricus,3.3,1.1.1.1,1158
+318,[697839],4-methoxybenzyl alcohol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,16.8,1.1.1.1,1158
+319,[678116],4-methoxybenzyl alcohol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,20.5,1.1.1.1,1158
+320,[678121],4-methoxybenzyl alcohol,,"mutant enzyme N249Y, at 65&deg;C",Saccharolobus solfataricus,25.5,1.1.1.1,1158
+321,[285586],2-butanone,,,Equus caballus,0.12,1.1.1.1,1171
+322,[745695],2-dehydro-3-deoxy-D-gluconate,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,1.4,1.1.1.1,1172
+323,[728012],1-Hexanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.37,1.1.1.1,1214
+324,[697839],1-Hexanol,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.42,1.1.1.1,1214
+325,[697839],1-Hexanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,2,1.1.1.1,1214
+326,[285602],1-Hexanol,,,Mesocricetus auratus,3.03,1.1.1.1,1214
+327,[697839],1-Hexanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,13.3,1.1.1.1,1214
+328,[285604],1-Octanol,,"isoenzyme ADH-3, pH 10.0",Rattus norvegicus,1,1.1.1.1,1228
+329,[285604],1-Octanol,,"isoenzyme ADH-2, pH 10.0",Rattus norvegicus,2.33,1.1.1.1,1228
+330,[285566],1-Octanol,,,Homo sapiens,2.83,1.1.1.1,1228
+331,[285604],1-Octanol,,"isoenzyme ADH-1, pH 10.0",Rattus norvegicus,60.8,1.1.1.1,1228
+332,[712962],1-Octanol,,"cosubstrate NADP+, pH 8.0, 60&deg;C",Geobacillus thermodenitrificans,260.7,1.1.1.1,1228
+333,[655197],Octanol,,"recombinant allozyme Ile308, pH 7.5, 25&deg;C",Homo sapiens,0.038,1.1.1.1,1241
+334,[655197],Octanol,,"recombinant allozyme Val308, pH 7.5, 25&deg;C",Homo sapiens,0.04,1.1.1.1,1241
+335,[285656],Octanol,,,Alligator mississippiensis,0.15,1.1.1.1,1241
+336,[722012],Octanol,,pH and temperature not specified in the publication,Scyliorhinus canicula,3.17,1.1.1.1,1241
+337,[285568],Octanol,,"isoenzyme alpha,gamma1",Homo sapiens,4.33,1.1.1.1,1241
+338,[285571],Octanol,,,Homo sapiens,7.33,1.1.1.1,1241
+339,[285569],Octanol,,,Homo sapiens,8.33,1.1.1.1,1241
+340,[735486],acetoin,,"pH 6.0, 70&deg;C",Thermococcus kodakarensis,13.7,1.1.1.1,1274
+341,[728012],cyclohexanone,,"pH 8.0, 60&deg;C",Aeropyrum pernix,1.27,1.1.1.1,1299
+342,[285597],cyclohexanone,,,Equus caballus,5.9,1.1.1.1,1299
+343,[655197],retinol,,"recombinant allozyme Ile308, pH 7.5, 25&deg;C",Homo sapiens,0.087,1.1.1.1,1356
+344,[655197],retinol,,"recombinant allozyme Val308, pH 7.5, 25&deg;C",Homo sapiens,0.11,1.1.1.1,1356
+345,[285569],ethylene glycol,,,Homo sapiens,0.75,1.1.1.1,1410
+346,[657302],ethylene glycol,,,Pseudomonas aeruginosa,4.5,1.1.1.1,1410
+347,[285656],Hexanol,,,Alligator mississippiensis,0.167,1.1.1.1,1412
+348,[655479],Hexanol,,"recombinant isozyme ADH1, pH 7.5, 25&deg;C",Mus musculus,0.45,1.1.1.1,1412
+349,[655479],Hexanol,,"recombinant isozyme ADH1, pH 10.5, 25&deg;C",Mus musculus,3.83,1.1.1.1,1412
+350,[285608],Hexanol,,,Homo sapiens,19.5,1.1.1.1,1412
+351,[285647],Hexanol,,mutant enzyme W54L,Equus caballus,23.9,1.1.1.1,1412
+352,[285647],Hexanol,,wild-type enzyme Adh 1,Equus caballus,29.6,1.1.1.1,1412
+353,[655479],Hexanol,,"recombinant isozyme ADH4, pH 7.5, 25&deg;C",Mus musculus,30.8,1.1.1.1,1412
+354,[655479],Hexanol,,"recombinant isozyme ADH4, pH 10.5, 25&deg;C",Mus musculus,86.5,1.1.1.1,1412
+355,[722888],Valeraldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Saccharomyces cerevisiae",Rhodococcus ruber,418,1.1.1.1,1481
+356,[722888],Valeraldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Arxula adeninivorans",Rhodococcus ruber,432,1.1.1.1,1481
+357,[722888],Valeraldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Hansenula polymorpha",Rhodococcus ruber,528,1.1.1.1,1481
+358,[285571],Pentanol,,,Homo sapiens,0.245,1.1.1.1,1542
+359,[285579],Pentanol,,"pyrazole-sensitive enzyme, pH 7.5",Saimiri sciureus,0.283,1.1.1.1,1542
+360,[285579],Pentanol,,"pyrazole-sensitive enzyme, pH 10.0",Saimiri sciureus,0.333,1.1.1.1,1542
+361,[285573],Pentanol,,"pH 7.5, anodic enzyme form",Homo sapiens,0.667,1.1.1.1,1542
+362,[285569],Pentanol,,,Homo sapiens,8,1.1.1.1,1542
+363,[285608],Pentanol,,,Homo sapiens,16,1.1.1.1,1542
+364,[285647],Pentanol,,mutant enzyme W54L,Equus caballus,18.4,1.1.1.1,1542
+365,[285647],Pentanol,,wild-type enzyme Adh 1,Equus caballus,56.2,1.1.1.1,1542
+366,[697839],Isobutyraldehyde,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.82,1.1.1.1,1646
+367,[697839],Isobutyraldehyde,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,18.1,1.1.1.1,1646
+368,[697839],Isobutyraldehyde,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,29,1.1.1.1,1646
+369,[718681],benzil,,"65&deg;C, pH 5.0",Sulfolobus acidocaldarius,1.6,1.1.1.1,1673
+370,[285571],Vanillyl alcohol,,,Homo sapiens,0.467,1.1.1.1,1768
+371,[285569],Vanillyl alcohol,,,Homo sapiens,8.67,1.1.1.1,1768
+372,[745695],D-arabitol,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.0019,1.1.1.1,1786
+373,[684583],3-Methoxybenzaldehyde,,65&deg;C,Thermus thermophilus,3.1,1.1.1.1,1856
+374,[285647],propan-2-ol,,mutant enzyme W54L,Equus caballus,5.8,1.1.1.1,1878
+375,[285621],propan-2-ol,,,Saccharolobus solfataricus,6.92,1.1.1.1,1878
+376,[285647],propan-2-ol,,wild-type enzyme Adh 1,Equus caballus,53.1,1.1.1.1,1878
+377,[285586],2-Pentanone,,,Equus caballus,0.0713,1.1.1.1,1911
+378,[728012],2-Pentanone,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.77,1.1.1.1,1911
+379,[285650],n-Hexanol,,isoenzyme BB-ADH,Mesocricetus auratus,2.35,1.1.1.1,1983
+380,[285650],n-Hexanol,,isoenzyme AA-ADH,Mesocricetus auratus,2.8,1.1.1.1,1983
+381,[285650],n-Hexanol,,isoenzyme TT-ADH,Mesocricetus auratus,4.08,1.1.1.1,1983
+382,[285586],(S)-2-butanol,,,Equus caballus,1,1.1.1.1,1990
+383,[697839],(S)-2-butanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,1990
+384,[285608],(S)-2-butanol,,,Homo sapiens,2.17,1.1.1.1,1990
+385,[697839],(S)-2-butanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,4.8,1.1.1.1,1990
+386,[744545],"2,3-Butanediol",,"45&deg;C, pH 8.8, cosubstrate: NADP+, wild-type enzyme",Pyrococcus furiosus,0.03,1.1.1.1,2004
+387,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, wild-type enzyme, cofactor: NAP+",Pyrococcus furiosus,0.073,1.1.1.1,2004
+388,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211S, cofactor: NADP+",Pyrococcus furiosus,0.29,1.1.1.1,2004
+389,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211InsC, cofactor: NAD+",Pyrococcus furiosus,0.43,1.1.1.1,2004
+390,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211InsG, cofactor: NADP+",Pyrococcus furiosus,0.52,1.1.1.1,2004
+391,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211InsC, cofactor: NADP+",Pyrococcus furiosus,0.86,1.1.1.1,2004
+392,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211C, cofactor: NADP+",Pyrococcus furiosus,0.92,1.1.1.1,2004
+393,[744545],"2,3-Butanediol",,"45&deg;C, pH 8.8, cosubstrate: NAD+, wild-type enzyme",Pyrococcus furiosus,1,1.1.1.1,2004
+394,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211C, cofactor: NAD+",Pyrococcus furiosus,1.1,1.1.1.1,2004
+395,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211InsA, cofactor: NAD+",Pyrococcus furiosus,1.7,1.1.1.1,2004
+396,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211InsA, cofactor: NADP+",Pyrococcus furiosus,2.1,1.1.1.1,2004
+397,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211InsS, cofactor: NADP+",Pyrococcus furiosus,2.1,1.1.1.1,2004
+398,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, wild-type enzyme, cofactor: NAD+",Pyrococcus furiosus,2.6,1.1.1.1,2004
+399,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211S, cofactor: NAD+",Pyrococcus furiosus,4,1.1.1.1,2004
+400,[744545],"2,3-Butanediol",,"45&deg;C, pH 8.8, cosubstrate: NADP+, mutant enzyme K249G/H255R",Pyrococcus furiosus,4.7,1.1.1.1,2004
+401,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211InsG, cofactor: NAD+",Pyrococcus furiosus,6.5,1.1.1.1,2004
+402,[746361],"2,3-Butanediol",,"pH 8.8, 45&deg;C, mutant enzyme G211InsS, cofactor: NAD+",Pyrococcus furiosus,6.7,1.1.1.1,2004
+403,[744545],"2,3-Butanediol",,"45&deg;C, pH 8.8, cosubstrate: NAD+, mutant enzyme K249G/H255R",Pyrococcus furiosus,15,1.1.1.1,2004
+404,[735486],"2,3-Butanediol",,"pH 9.0, 70&deg;C",Thermococcus kodakarensis,43.8,1.1.1.1,2004
+405,[285648],11-cis-retinol,,oxidation with NAD+,Equus caballus,0.022,1.1.1.1,2186
+406,[697839],trans-cinnamaldehyde,,"mutant enzyme W95L,, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.21,1.1.1.1,2225
+407,[697839],trans-cinnamaldehyde,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,2.1,1.1.1.1,2225
+408,[697839],trans-cinnamaldehyde,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,18.9,1.1.1.1,2225
+409,[697839],(R)-2-butanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1,1.1.1.1,2292
+410,[697839],(R)-2-butanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1.7,1.1.1.1,2292
+411,[285586],(R)-2-butanol,,,Equus caballus,2,1.1.1.1,2292
+412,[728012],2-Pentanol,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.6,1.1.1.1,2329
+413,[285621],Anisaldehyde,,,Saccharolobus solfataricus,0.983,1.1.1.1,2471
+414,[285621],Cyclopentanone,,,Saccharolobus solfataricus,1.02,1.1.1.1,2478
+415,[697839],1-Heptanol,,"mutant enzyme W95L, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,0.51,1.1.1.1,2632
+416,[697839],1-Heptanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1.6,1.1.1.1,2632
+417,[697839],1-Heptanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,11.9,1.1.1.1,2632
+418,[285621],butan-1-ol,,,Saccharolobus solfataricus,1.97,1.1.1.1,2646
+419,[737865],butan-1-ol,,"cosubstrate NAD+, pH 7.0, 30&deg;C",Mycobacterium sp.,2,1.1.1.1,2646
+420,[285615],butan-1-ol,,enzyme form ADH-3,Coturnix coturnix,7.22,1.1.1.1,2646
+421,[721911],ethyl pyruvate,,"pH 6.5, 50&deg;C, recombinant enzyme",Carboxydothermus hydrogenoformans,3.97,1.1.1.1,2654
+422,[285569],2-deoxy-D-ribose,,,Homo sapiens,2.83,1.1.1.1,2811
+423,[285648],9-cis-retinal,,reduction with NADH,Equus caballus,0.023,1.1.1.1,2897
+424,[681763],4-carboxybenzaldehyde,,"in 50 mM Tris-HCl (pH 7.5) containing 0.2 mM NADH + H+, at 65&deg;C",Saccharolobus solfataricus,0.7,1.1.1.1,2936
+425,[678116],4-carboxybenzaldehyde,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,0.7,1.1.1.1,2936
+426,[285650],12-hydroxydodecanoate,,isoenzyme TT-ADH,Mesocricetus auratus,1.03,1.1.1.1,3007
+427,[285604],12-hydroxydodecanoate,,"isoenzyme ADH-3, pH 10.0",Rattus norvegicus,1.27,1.1.1.1,3007
+428,[285615],12-hydroxydodecanoate,,enzyme form ADH-3,Coturnix coturnix,1.45,1.1.1.1,3007
+429,[285650],12-hydroxydodecanoate,,isoenzyme BB-ADH,Mesocricetus auratus,2.2,1.1.1.1,3007
+430,[285602],12-hydroxydodecanoate,,,Mesocricetus auratus,2.43,1.1.1.1,3007
+431,[285650],12-hydroxydodecanoate,,isoenzyme AA-ADH,Mesocricetus auratus,2.77,1.1.1.1,3007
+432,[285608],12-hydroxydodecanoate,,,Homo sapiens,2.95,1.1.1.1,3007
+433,[285571],12-hydroxydodecanoate,,,Homo sapiens,3.03,1.1.1.1,3007
+434,[285604],12-hydroxydodecanoate,,"isoenzyme ADH-12, pH 10.0",Rattus norvegicus,3.83,1.1.1.1,3007
+435,[285569],12-hydroxydodecanoate,,,Homo sapiens,4,1.1.1.1,3007
+436,[285604],12-hydroxydodecanoate,,"isoenzyme ADH-1, pH 10.0",Rattus norvegicus,20,1.1.1.1,3007
+437,[718681],1-Indanol,,"65&deg;C, pH 10.5",Sulfolobus acidocaldarius,6.2,1.1.1.1,3175
+438,[684583],1-Indanol,,65&deg;C,Thermus thermophilus,45.7,1.1.1.1,3175
+439,[285566],12-Hydroxydodecanoic acid,,,Homo sapiens,0.333,1.1.1.1,3301
+440,[285621],butan-2-one,,,Saccharolobus solfataricus,1.93,1.1.1.1,3330
+441,[684583],1-Indanone,,65&deg;C,Thermus thermophilus,8.3,1.1.1.1,3431
+442,[684583],1-Indanone,,"pH 10.5, 65&deg;C",Thermus thermophilus,8.3,1.1.1.1,3431
+443,[735486],1-phenylethanol,,"pH 9.0, 70&deg;C",Thermococcus kodakarensis,35.7,1.1.1.1,3432
+444,[697839],3-Pentanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1.5,1.1.1.1,3438
+445,[285586],3-Pentanol,,,Equus caballus,2.26,1.1.1.1,3438
+446,[285647],3-methyl-1-butanol,,mutant enzyme W54L,Equus caballus,0.08,1.1.1.1,3601
+447,[285647],3-methyl-1-butanol,,wild-type enzyme Adh 1,Equus caballus,0.27,1.1.1.1,3601
+448,[719428],"1-phenyl-1,2-propanedione",,"65&deg;C, pH 5.5",Sulfolobus acidocaldarius,3.1,1.1.1.1,3675
+449,[718681],"1-phenyl-1,2-propanedione",,"65&deg;C, pH 5.0",Sulfolobus acidocaldarius,5.3,1.1.1.1,3675
+450,[684583],"1-phenyl-1,2-propanedione",,65&deg;C,Thermus thermophilus,17.1,1.1.1.1,3675
+451,[285648],9-cis-retinol,,oxidation with NAD+,Equus caballus,0.025,1.1.1.1,3700
+452,[285648],13-cis-retinal,,reduction with NADH,Equus caballus,0.018,1.1.1.1,3708
+453,[728012],2-Heptanone,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.73,1.1.1.1,3777
+454,[285648],11-cis-retinal,,reduction with NADH,Equus caballus,0.021,1.1.1.1,3960
+455,[728012],2-Hexanone,,"pH 8.0, 60&deg;C",Aeropyrum pernix,1.08,1.1.1.1,3966
+456,[285621],3-methylcyclohexanone,,,Saccharolobus solfataricus,2.17,1.1.1.1,3972
+457,[719428],3-methylcyclohexanone,,"65&deg;C, pH 5.5",Sulfolobus acidocaldarius,3.8,1.1.1.1,3972
+458,[745695],D-mannonate,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.53,1.1.1.1,3998
+459,[285621],propan-1-ol,,,Saccharolobus solfataricus,4.03,1.1.1.1,4046
+460,[718681],"2,2,2-trifluoroacetophenone",,"65&deg;C, pH 5.0",Sulfolobus acidocaldarius,1.7,1.1.1.1,4175
+461,[719428],"2,2,2-trifluoroacetophenone",,"65&deg;C, pH 5.5",Sulfolobus acidocaldarius,10,1.1.1.1,4175
+462,[684583],"2,2,2-trifluoroacetophenone",,65&deg;C,Thermus thermophilus,25.5,1.1.1.1,4175
+463,[684583],"2,2,2-trifluoroacetophenone",,"pH 10.5, 65&deg;C",Thermus thermophilus,25.5,1.1.1.1,4175
+464,[681763],benzylalcohol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,1.4,1.1.1.1,4228
+465,[684583],(S)-1-phenylethanol,,"pH 10.5, 65&deg;C",Thermus thermophilus,1.1,1.1.1.1,4333
+466,[285647],butan-2-ol,,mutant enzyme W54L,Equus caballus,0.31,1.1.1.1,4337
+467,[285621],butan-2-ol,,,Saccharolobus solfataricus,3.55,1.1.1.1,4337
+468,[285647],butan-2-ol,,wild-type enzyme Adh 1,Equus caballus,11.9,1.1.1.1,4337
+469,[742472],"1,4-Butanediol",,"pH 10, 60&deg;C",Pyrobaculum calidifontis,1.98,1.1.1.1,4462
+470,[719428],(S)-1-indanol,,"pH 8.0, 65&deg;C",Sulfolobus acidocaldarius,13.7,1.1.1.1,4637
+471,[719428],(S)-1-indanol,,"65&deg;C, pH 8.0",Sulfolobus acidocaldarius,13.7,1.1.1.1,4637
+472,[684583],(S)-1-indanol,,"pH 10.5, 65&deg;C",Thermus thermophilus,61.4,1.1.1.1,4637
+473,[285586],3-Pentanone,,,Equus caballus,0.36,1.1.1.1,4765
+474,[285586],(S)-2-pentanol,,,Equus caballus,0.87,1.1.1.1,4931
+475,[697839],(S)-2-pentanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,2.6,1.1.1.1,4931
+476,[697839],(S)-2-pentanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,6.7,1.1.1.1,4931
+477,[678116],3-Methoxybenzyl alcohol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,1.4,1.1.1.1,5107
+478,[678116],3-Methoxybenzyl alcohol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,16,1.1.1.1,5107
+479,[285569],3-Phenyl-1-propanol,,,Homo sapiens,7.5,1.1.1.1,5108
+480,[285648],13-cis-retinol,,oxidation with NAD+,Equus caballus,0.018,1.1.1.1,5281
+481,[718681],ethyl benzoylformate,,"65&deg;C, pH 5.0",Sulfolobus acidocaldarius,1.9,1.1.1.1,5419
+482,[719428],ethyl benzoylformate,,"65&deg;C, pH 5.5",Sulfolobus acidocaldarius,2.35,1.1.1.1,5419
+483,[684583],ethyl benzoylformate,,65&deg;C,Thermus thermophilus,50.1,1.1.1.1,5419
+484,[285604],2-Buten-1-ol,,"isoenzyme ADH-3, pH 10.0",Rattus norvegicus,1.67,1.1.1.1,5465
+485,[285604],2-Buten-1-ol,,"isoenzyme ADH-2, pH 10.0",Rattus norvegicus,5.83,1.1.1.1,5465
+486,[285604],2-Buten-1-ol,,"isoenzyme ADH-1, pH 10.0",Rattus norvegicus,213,1.1.1.1,5465
+487,[728012],2-Octanone,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.74,1.1.1.1,5474
+488,[285650],all-trans retinol,,isoenzyme AA-ADH,Mesocricetus auratus,0.35,1.1.1.1,5515
+489,[285602],all-trans retinol,,,Mesocricetus auratus,1.3,1.1.1.1,5515
+490,[285650],all-trans retinol,,isoenzyme TT-ADH,Mesocricetus auratus,1.3,1.1.1.1,5515
+491,[285650],all-trans retinol,,isoenzyme BB-ADH,Mesocricetus auratus,1.9,1.1.1.1,5515
+492,[745695],D-xylonate,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.032,1.1.1.1,5539
+493,[285586],(R)-2-pentanol,,,Equus caballus,1.01,1.1.1.1,5695
+494,[697839],(R)-2-pentanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1.1,1.1.1.1,5695
+495,[697839],(R)-2-pentanol,,"mutant enzyme W95L/N249Y, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1.9,1.1.1.1,5695
+496,[739927],furfural,,"pH 7.0, 30&deg;C",Saccharomyces cerevisiae,1.58,1.1.1.1,5969
+497,[285597],hexaldehyde,,,Equus caballus,56.6,1.1.1.1,6132
+498,[285615],pentan-1-ol,,enzyme form ADH-3,Coturnix coturnix,2.92,1.1.1.1,6137
+499,[722888],4-chloroacetophenone,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Hansenula polymorpha",Rhodococcus ruber,145,1.1.1.1,6308
+500,[722888],4-chloroacetophenone,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Saccharomyces cerevisiae",Rhodococcus ruber,230,1.1.1.1,6308
+501,[722888],4-chloroacetophenone,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Arxula adeninivorans",Rhodococcus ruber,432,1.1.1.1,6308
+502,[722888],capronaldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Arxula adeninivorans",Rhodococcus ruber,317,1.1.1.1,7164
+503,[722888],capronaldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Hansenula polymorpha",Rhodococcus ruber,410,1.1.1.1,7164
+504,[722888],capronaldehyde,,"pH 6.0, 37&deg;C, recombinant enzyme expressed from Saccharomyces cerevisiae",Rhodococcus ruber,576,1.1.1.1,7164
+505,[745695],D-altronate,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.19,1.1.1.1,7175
+506,[285586],(R)-2-octanol,,,Equus caballus,0.053,1.1.1.1,7436
+507,[728012],2-decanone,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.4,1.1.1.1,7438
+508,[285615],octan-1-ol,,enzyme form ADH-3,Coturnix coturnix,1.85,1.1.1.1,7458
+509,[684583],alpha-tetralone,,65&deg;C,Thermus thermophilus,7.7,1.1.1.1,7745
+510,[684583],alpha-tetralone,,"pH 10.5, 65&deg;C",Thermus thermophilus,7.7,1.1.1.1,7745
+511,[285647],4-Methyl-1-pentanol,,wild-type enzyme Adh 1,Equus caballus,6.7,1.1.1.1,8020
+512,[285647],4-Methyl-1-pentanol,,mutant enzyme W54L,Equus caballus,18.6,1.1.1.1,8020
+513,[285594],p-nitrophenyl octanoate,,,Equus caballus,0.24,1.1.1.1,8170
+514,[285621],pentan-3-ol,,,Saccharolobus solfataricus,2.92,1.1.1.1,8418
+515,[285586],(S)-2-octanol,,,Equus caballus,1.52,1.1.1.1,9492
+516,[728012],2-nonanone,1,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.7,1.1.1.1,9505
+517,[719428],cycloheptanol,,"pH 8.0, 65&deg;C",Sulfolobus acidocaldarius,4.4,1.1.1.1,9530
+518,[719428],cycloheptanol,,"65&deg;C, pH 8.0",Sulfolobus acidocaldarius,4.4,1.1.1.1,9530
+519,[718681],cycloheptanol,,"65&deg;C, pH 10.5",Sulfolobus acidocaldarius,7,1.1.1.1,9530
+520,[745695],D-ribonate,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.0052,1.1.1.1,10628
+521,[681763],3-methoxybenzylalcohol,,"in the presence of 5 mM benzylalcohol, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,11079
+522,[681763],3-methoxybenzylalcohol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,1.4,1.1.1.1,11079
+523,[285621],3-methylbutan-2-one,,,Saccharolobus solfataricus,1.22,1.1.1.1,11099
+524,[654370],4-hydroxy-retinol,,"pH 7.5, 25&deg;C, isozyme ADH1B1",Homo sapiens,0.092,1.1.1.1,11517
+525,[654370],4-hydroxy-retinol,,"pH 7.5, 25&deg;C, isozyme ADH1B2",Homo sapiens,2.83,1.1.1.1,11517
+526,[654370],4-hydroxy-retinol,,"pH 7.5, 25&deg;C, isozyme ADH4",Homo sapiens,34.2,1.1.1.1,11517
+527,[654370],4-oxo-retinal,,"pH 7.5, 25&deg;C, isozyme ADH1B1",Homo sapiens,0.167,1.1.1.1,11518
+528,[654370],4-oxo-retinal,,"pH 7.5, 25&deg;C, isozyme ADH1B2",Homo sapiens,7.83,1.1.1.1,11518
+529,[654370],4-oxo-retinal,,"pH 7.5, 25&deg;C, isozyme ADH4",Homo sapiens,20,1.1.1.1,11518
+530,[719428],methyl benzoylformate,,"65&deg;C, pH 5.5",Sulfolobus acidocaldarius,6.2,1.1.1.1,11716
+531,[285573],3-Pyridylcarbinol,,"pH 7.5, anodic enzyme form",Homo sapiens,0.683,1.1.1.1,12358
+532,[719428],(R)-1-indanol,,"pH 8.0, 65&deg;C",Sulfolobus acidocaldarius,7.1,1.1.1.1,13100
+533,[719428],(R)-1-indanol,,"65&deg;C, pH 8.0",Sulfolobus acidocaldarius,7.1,1.1.1.1,13100
+534,[678116],3-bromobenzyl alcohol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,13125
+535,[678116],3-bromobenzyl alcohol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,2,1.1.1.1,13125
+536,[678116],4-bromobenzyl alcohol,,"native enzyme, at 55&deg;C",Saccharolobus solfataricus,1.1,1.1.1.1,13134
+537,[678116],4-bromobenzyl alcohol,,"carboxymethylated enzyme, at 55&deg;C",Saccharolobus solfataricus,3.5,1.1.1.1,13134
+538,[719428],(S)-alpha-tetralol,,"pH 8.0, 65&deg;C",Sulfolobus acidocaldarius,2.1,1.1.1.1,14398
+539,[719428],(S)-alpha-tetralol,,"65&deg;C, pH 8.0",Sulfolobus acidocaldarius,2.1,1.1.1.1,14398
+540,[684583],(S)-alpha-tetralol,,"pH 10.5, 65&deg;C",Thermus thermophilus,57,1.1.1.1,14398
+541,[285569],tryptophol,,,Homo sapiens,1.83,1.1.1.1,16004
+542,[681763],4-methoxybenzylalcohol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,1.5,1.1.1.1,16556
+543,[654370],"3,4-dihydro-retinol",,"pH 7.5, 25&deg;C, isozyme ADH1B2",Homo sapiens,0.088,1.1.1.1,17627
+544,[654370],"3,4-dihydro-retinol",,"pH 7.5, 25&deg;C, isozyme ADH4",Homo sapiens,2.5,1.1.1.1,17627
+545,[654370],"3,4-dihydro-retinal",,"pH 7.5, 25&deg;C, isozyme ADH1B2",Homo sapiens,0.22,1.1.1.1,17628
+546,[654370],"3,4-dihydro-retinal",,"pH 7.5, 25&deg;C, isozyme ADH4",Homo sapiens,1.22,1.1.1.1,17628
+547,[718681],"2',3',4',5',6'-pentafluoroacetophenone",,"65&deg;C, pH 5.0",Sulfolobus acidocaldarius,3.2,1.1.1.1,19167
+548,[684583],(S)-(+)-1-indanol,,65&deg;C,Thermus thermophilus,61.4,1.1.1.1,20578
+549,[285597],hexyl alcohol,,,Equus caballus,0.99,1.1.1.1,21612
+550,[285650],methylcrotonyl alcohol,,isoenzyme BB-ADH,Mesocricetus auratus,2.63,1.1.1.1,21633
+551,[285650],methylcrotonyl alcohol,,isoenzyme AA-ADH,Mesocricetus auratus,3,1.1.1.1,21633
+552,[285650],methylcrotonyl alcohol,,isoenzyme TT-ADH,Mesocricetus auratus,8.58,1.1.1.1,21633
+553,[718681],ethyl 3-methyl-2-oxobutyrate,,"65&deg;C, pH 5.0",Sulfolobus acidocaldarius,26,1.1.1.1,24214
+554,[684583],alpha-tetralol,,65&deg;C,Thermus thermophilus,48.1,1.1.1.1,25540
+555,[684583],(S)-(+)-alpha-tetraol,,65&deg;C,Thermus thermophilus,57,1.1.1.1,25541
+556,[285597],3-oxo-5beta-androstan-17beta-ol,,,Equus caballus,2.05,1.1.1.1,29504
+557,[285597],"5beta-Pregnan-21-ol-3,20-dione hemisuccinate",,,Equus caballus,0.9,1.1.1.1,29619
+558,[285597],Butyl alcohol,,,Equus caballus,0.94,1.1.1.1,29828
+559,[285569],16-hydroxyhexadecanoate,,,Homo sapiens,6.17,1.1.1.1,31945
+560,[744545],3-hydroxy-2-butanone,,"45&deg;C, pH 6.1, cosubstrate: NADPH, wild-type enzyme",Pyrococcus furiosus,0.2,1.1.1.1,32067
+561,[744545],3-hydroxy-2-butanone,,"45&deg;C, pH 6.1, cosubstrate: NADH, wild-type enzyme",Pyrococcus furiosus,0.36,1.1.1.1,32067
+562,[744545],3-hydroxy-2-butanone,,"45&deg;C, pH 6.1, cosubstrate: NADH, mutant enzyme K249G/H255R",Pyrococcus furiosus,1.1,1.1.1.1,32067
+563,[744545],3-hydroxy-2-butanone,,"45&deg;C, pH 6.1, cosubstrate: NADPH, mutant enzyme K249G/H255R",Pyrococcus furiosus,1.2,1.1.1.1,32067
+564,[681763],3-bromobenzylalcohol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,1.2,1.1.1.1,37077
+565,[681763],4-bromobenzylalcohol,,"in the presence of 3 mM NAD+, in 0.1 M glycine-NaOH, pH 9.2, at 65&deg;C",Saccharolobus solfataricus,1.1,1.1.1.1,37078
+566,[684583],(S)-(-)-1-phenylethanol,,65&deg;C,Thermus thermophilus,1.1,1.1.1.1,37889
+567,[684583],methylbenzoylformate,,65&deg;C,Thermus thermophilus,38.1,1.1.1.1,37890
+568,[718681],"2,2-dichloroacetophenone",,"65&deg;C, pH 5.0",Sulfolobus acidocaldarius,0.65,1.1.1.1,37992
+569,[735498],(2E)-but-2-enal,,"pH 6.5, 65&deg;C",Yokenella sp.,405,1.1.1.1,38719
+570,[697839],2-ethoxyethanol,,"wild type enzyme, in 0.1 M glycine-NaOH buffer (pH 10.5), at 65&deg;C",Saccharolobus solfataricus,1.6,1.1.1.1,39156
+571,[719428],cis-decahydro-1-naphthol,,"65&deg;C, pH 8.0",Sulfolobus acidocaldarius,0.98,1.1.1.1,42132
+572,[719428],(R)-alpha-tetralol,,"pH 8.0, 65&deg;C",Sulfolobus acidocaldarius,13.5,1.1.1.1,42133
+573,[719428],(R)-alpha-tetralol,,"65&deg;C, pH 8.0",Sulfolobus acidocaldarius,13.5,1.1.1.1,42133
+574,[719428],methyl o-chlorobenzoylformate,,"pH 5.5, 65&deg;C",Sulfolobus acidocaldarius,9.2,1.1.1.1,42134
+575,[719428],methyl o-chlorobenzoylformate,,"65&deg;C, pH 5.5",Sulfolobus acidocaldarius,9.2,1.1.1.1,42134
+576,[718681],isoborneol,,"65&deg;C, pH 10.5",Sulfolobus acidocaldarius,16.6,1.1.1.1,42135
+577,[718681],tetralin-1-ol,,"65&deg;C, pH 10.5",Sulfolobus acidocaldarius,9.6,1.1.1.1,42136
+578,[285597],Propyl alcohol,,,Equus caballus,1.17,1.1.1.1,44731
+579,[285621],3-methyl-cyclohexanol,,,Saccharolobus solfataricus,7.72,1.1.1.1,48273
+580,[285621],pentan2-ol,,,Saccharolobus solfataricus,3.82,1.1.1.1,49341
+581,[684583],"1-phenyl-1,2-propandione",,"pH 10.5, 65&deg;C",Thermus thermophilus,17.1,1.1.1.1,90130
+582,[684583],methyl oxo(phenyl)acetate,,"pH 10.5, 65&deg;C",Thermus thermophilus,38.1,1.1.1.1,144721
+583,[728012],tert-butyl acetoacetate,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.072,1.1.1.1,194812
+584,[728012],4-methoxyphenylacetone,,"pH 8.0, 60&deg;C",Aeropyrum pernix,0.071,1.1.1.1,194813
+585,[735548],12-hydroxylauric acid methyl ester,,"wild-type, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,27.6,1.1.1.1,210505
+586,[735548],12-hydroxylauric acid methyl ester,,"mutant C257L, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,34.3,1.1.1.1,210505
+587,[735548],12-oxolauric acid methyl ester,,"wild-type, pH 8.0, 60&deg;C",Geobacillus stearothermophilus,308,1.1.1.1,210506
+588,[684583],ethyl oxo(phenyl)acetate,,"pH 10.5, 65&deg;C",Thermus thermophilus,50.1,1.1.1.1,210507
+589,[735498],(2E)-but-2-en-1-ol,,"pH 8.0, 55&deg;C",Yokenella sp.,101,1.1.1.1,210508
+590,[745695],D-allonate,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.18,1.1.1.1,224737
+591,[745695],D-talonate,,at pH 7.9 and 25&deg;C,Sphingomonas sp. A1,0.021,1.1.1.1,224738
+592,[285583],more,,,Equus caballus,-999,1.1.1.1,0
+593,[285568],more,,"turnover-numbers for the class I isoenzymes with the substrates ethanol, methanol, ethylene glycol, benzyl alcohol, octanol, cyclohexanol and 16-hydroxyhexadecanoic acid",Homo sapiens,-999,1.1.1.1,0
+594,[285586],more,,Km-values of active-site Co(II)substituted enzyme,Equus caballus,-999,1.1.1.1,0
+595,[285618],more,,kinetics of ethanol oxidation,Drosophila melanogaster,-999,1.1.1.1,0
+596,[285618],more,,kinetics of ethanol oxidation,Drosophila simulans,-999,1.1.1.1,0
+597,[655479],more,,"kcat for isozymes ADH1, and ADH4 for all retinoid substrates in forward and reverse reaction",Mus musculus,-999,1.1.1.1,0
+598,[655479],more,,"kcat for isozymes ADH1B1, ADH1B2, and ADH4 for all retinoid substrates in forward and reverse reaction",Homo sapiens,-999,1.1.1.1,0
+599,[667832],more,,"effects of tert-butanol, butyramide, valeramide and capronamide on turnover-number of ethanol",Mus musculus,-999,1.1.1.1,0
+600,[743908],more,,kinetic data f&uuml;or wild-type enzyme and chimeric enzyme created by insertion of an RTX domain from the adenylate cyclase of Bordetella pertussis into a loop near the catalytic active site of the thermostable alcohol dehydrogenase D (AdhD) from Pyrococcus furiosus,Pyrococcus furiosus,-999,1.1.1.1,0
+601,[726712],NADPH,,"pH 7.5, 60&deg;C",Thermococcus sibiricus,1.51,1.1.1.2,5
+602,[737531],NADPH,,"substrate furfural, pH 7.2, 30&deg;C",Scheffersomyces stipitis,2.21,1.1.1.2,5
+603,[737531],NADPH,,"substrate furfural, pH 7.2, 30&deg;C",Scheffersomyces stipitis,4.75,1.1.1.2,5
+604,[722498],NADPH,,"80&deg;C, pH not specified in the publication",Pyrococcus furiosus,6.3,1.1.1.2,5
+605,[737531],NADPH,,"substrate 5-hydroxymethylfurfural, pH 7.2, 30&deg;C",Scheffersomyces stipitis,6.5,1.1.1.2,5
+606,[697837],NADPH,,"native enzyme, with 90 mM ethanol as cosubstrate, in 100 mM EPPS buffer (pH 8.8)",Thermococcus sp.,24,1.1.1.2,5
+607,[697837],NADPH,,"recombinant enzyme, with 90 mM ethanol as cosubstrate, in 100 mM EPPS buffer (pH 8.8)",Thermococcus sp.,24,1.1.1.2,5
+608,[675348],NADPH,,"oxidation, recombinant wild-type, 30&deg;C, pH 7.0",Levilactobacillus brevis,38.1,1.1.1.2,5
+609,[684751],NADPH,,"pH 8.0, 80&deg;C",Pseudothermotoga hypogea,52,1.1.1.2,5
+610,[738511],NADPH,,"cosubstrate: 2-butanone, pH 7.5, 80&deg;C",Thermococcus guaymasensis,158,1.1.1.2,5
+611,[722498],NAD+,,"80&deg;C, pH not specified in the publication",Pyrococcus furiosus,2.4,1.1.1.2,7
+612,[675348],NAD+,,"reduction, recombinant mutant G37D, 30&deg;C, pH 7.0",Levilactobacillus brevis,9.9,1.1.1.2,7
+613,[737531],NADH,,"substrate furfural, pH 7.2, 30&deg;C",Scheffersomyces stipitis,2.7,1.1.1.2,8
+614,[737531],NADH,,"substrate furfural, pH 7.2, 30&deg;C",Scheffersomyces stipitis,6.23,1.1.1.2,8
+615,[675348],NADH,,"oxidation, recombinant mutant G37D, 30&deg;C, pH 7.0",Levilactobacillus brevis,36.6,1.1.1.2,8
+616,[726712],NADP+,,"pH 10.5, 60&deg;C",Thermococcus sibiricus,0.45,1.1.1.2,10
+617,[675348],NADP+,,"reduction, recombinant wild-type, 30&deg;C, pH 7.0",Levilactobacillus brevis,4.4,1.1.1.2,10
+618,[675348],NADP+,,"reduction, recombinant mutant G37D, 30&deg;C, pH 7.0",Levilactobacillus brevis,5.9,1.1.1.2,10
+619,[737874],NADP+,,pH 7.0. 30&deg;C,Mycobacterium sp.,13.41,1.1.1.2,10
+620,[722498],NADP+,,"80&deg;C, pH not specified in the publication",Pyrococcus furiosus,15.8,1.1.1.2,10
+621,[684751],NADP+,,"pH 11.0, 80&deg;C",Pseudothermotoga hypogea,50,1.1.1.2,10
+622,[697837],NADP+,,"recombinant enzyme, with 90 mM ethanol as cosubstrate, in 100 mM EPPS buffer (pH 8.8)",Thermococcus sp.,81,1.1.1.2,10
+623,[697837],NADP+,,"native enzyme, with 90 mM ethanol as cosubstrate, in 100 mM EPPS buffer (pH 8.8)",Thermococcus sp.,84,1.1.1.2,10
+624,[738511],NADP+,,"cosubstrate: 2-butanol, pH 7.5, 80&deg;C",Thermococcus guaymasensis,1333,1.1.1.2,10
+625,[684751],ethanol,,"pH 11.0, 80&deg;C",Pseudothermotoga hypogea,14,1.1.1.2,69
+626,[722498],ethanol,,"80&deg;C, pH not specified in the publication",Pyrococcus furiosus,19.2,1.1.1.2,69
+627,[698623],ethanol,,,Synechocystis sp.,27.35,1.1.1.2,69
+628,[698623],ethanol,,in 30 mM Tris-HCl (pH 8.0),Synechocystis sp.,27.35,1.1.1.2,69
+629,[697837],ethanol,,"recombinant enzyme, with 0.4 mM NADP+ as cosubstrate, in 100 mM EPPS buffer (pH 8.8)",Thermococcus sp.,81,1.1.1.2,69
+630,[697837],ethanol,,"native enzyme, with 0.4 mM NADP+ as cosubstrate, in 100 mM EPPS buffer (pH 8.8)",Thermococcus sp.,84,1.1.1.2,69
+631,[722498],acetaldehyde,,"80&deg;C, pH not specified in the publication",Pyrococcus furiosus,5.5,1.1.1.2,90
+632,[684751],acetaldehyde,,"pH 8.0, 80&deg;C",Pseudothermotoga hypogea,15,1.1.1.2,90
+633,[697837],acetaldehyde,,"recombinant enzyme, with 0.4 mM NADP+ as cosubstrate, in 100 mM EPPS buffer (pH 8.8)",Thermococcus sp.,22.9,1.1.1.2,90
+634,[697837],acetaldehyde,,"native enzyme, with 0.4 mM NADP+ as cosubstrate, in 100 mM EPPS buffer (pH 8.8)",Thermococcus sp.,23.6,1.1.1.2,90
+635,[687794],acetaldehyde,,"pH 7.0, 37&deg;C",Escherichia coli,53.5,1.1.1.2,90
+636,[698623],acetaldehyde,,,Synechocystis sp.,157.6,1.1.1.2,90
+637,[698623],acetaldehyde,,in 30 mM Tris-HCl (pH 8.0),Synechocystis sp.,157.6,1.1.1.2,90
+638,[726712],D-xylose,,"pH 10.5, 60&deg;C",Thermococcus sibiricus,0.7,1.1.1.2,115
+639,[286168],glycerol,,,Homo sapiens,0.0283,1.1.1.2,135
+640,[286165],glycerol,,,Sus scrofa,0.612,1.1.1.2,135
+641,[687794],propionaldehyde,,"pH 7.0, 37&deg;C",Escherichia coli,45.1,1.1.1.2,273
+642,[722498],methylglyoxal,,"80&deg;C, pH not specified in the publication",Pyrococcus furiosus,3.7,1.1.1.2,322
+643,[286165],D-glucuronate,,,Sus scrofa,11.6,1.1.1.2,339
+644,[684751],Butyraldehyde,,"pH 8.0, 80&deg;C",Pseudothermotoga hypogea,48,1.1.1.2,499
+645,[737536],Butanal,,"pH 7.0, temperature not specified in the publication",Pectobacterium atrosepticum,20.1,1.1.1.2,540
+646,[698623],Butanal,,,Synechocystis sp.,156,1.1.1.2,540
+647,[698623],Butanal,,in 30 mM Tris-HCl (pH 8.0),Synechocystis sp.,156.6,1.1.1.2,540
+648,[698623],butanol,,,Synechocystis sp.,17.05,1.1.1.2,626
+649,[698623],butanol,,in 30 mM Tris-HCl (pH 8.0),Synechocystis sp.,17.05,1.1.1.2,626
+650,[684751],butanol,,"pH 11.0, 80&deg;C",Pseudothermotoga hypogea,48,1.1.1.2,626
+651,[654493],hexanal,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,359,1.1.1.2,628
+652,[286165],D-glyceraldehyde,,,Sus scrofa,14.4,1.1.1.2,639
+653,[726712],2-propanol,,"pH 10.5, 60&deg;C",Thermococcus sibiricus,0.53,1.1.1.2,682
+654,[738511],diacetyl,,"cosubstrate: NADPH, pH 7.5, 80&deg;C",Thermococcus guaymasensis,202,1.1.1.2,746
+655,[286165],4-nitrobenzaldehyde,,,Sus scrofa,22,1.1.1.2,759
+656,[722498],phenylacetaldehyde,,"80&deg;C, pH not specified in the publication",Pyrococcus furiosus,10.4,1.1.1.2,769
+657,[737536],pentanal,,"pH 7.0, temperature not specified in the publication",Pectobacterium atrosepticum,49.2,1.1.1.2,781
+658,[698623],pentanal,,,Synechocystis sp.,159,1.1.1.2,781
+659,[698623],pentanal,,in 30 mM Tris-HCl (pH 8.0),Synechocystis sp.,159.1,1.1.1.2,781
+660,[654493],pentanal,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,378,1.1.1.2,781
+661,[654493],pentanal,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,11920,1.1.1.2,781
+662,[654493],cinnamyl alcohol,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,14.8,1.1.1.2,936
+663,[698623],cinnamyl alcohol,,,Synechocystis sp.,60.78,1.1.1.2,936
+664,[698623],cinnamyl alcohol,,in 30 mM Tris-HCl (pH 8.0),Synechocystis sp.,60.78,1.1.1.2,936
+665,[654493],cinnamyl alcohol,,"pH 10.0, 25&deg;C",Saccharomyces cerevisiae,70,1.1.1.2,936
+666,[654493],cinnamyl alcohol,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,1622,1.1.1.2,936
+667,[654493],cinnamyl alcohol,,"pH 10.0, 25&deg;C",Saccharomyces cerevisiae,3404,1.1.1.2,936
+668,[675348],acetophenone,,"cofactor NADH, reduction, recombinant mutant G37Dm 30&deg;C, pH 7.0",Levilactobacillus brevis,35.7,1.1.1.2,982
+669,[675348],acetophenone,,"cofactor NADPH, reduction, recombinant wild-type, 30&deg;C, pH 7.0",Levilactobacillus brevis,44.5,1.1.1.2,982
+670,[698623],cinnamaldehyde,,,Synechocystis sp.,107.9,1.1.1.2,1071
+671,[698623],cinnamaldehyde,,in 30 mM Tris-HCl (pH 8.0),Synechocystis sp.,107.9,1.1.1.2,1071
+672,[654493],cinnamaldehyde,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,307,1.1.1.2,1071
+673,[654493],cinnamaldehyde,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,7913,1.1.1.2,1071
+674,[286168],p-nitrobenzaldehyde,,,Homo sapiens,9.5,1.1.1.2,1076
+675,[738511],2-butanol,,"cosubstrate: NADP+, pH 7.5, 80&deg;C",Thermococcus guaymasensis,833,1.1.1.2,1132
+676,[654493],1-Pentanol,,"pH 10.0, 25&deg;C",Saccharomyces cerevisiae,918,1.1.1.2,1156
+677,[738511],2-butanone,,"cosubstrate: NADPH, pH 7.5, 80&deg;C",Thermococcus guaymasensis,190,1.1.1.2,1171
+678,[687794],acrolein,,"pH 7.0, 37&deg;C",Escherichia coli,62.5,1.1.1.2,1198
+679,[738511],acetoin,,"cosubstrate: NADPH, pH 7.5, 80&deg;C",Thermococcus guaymasensis,142,1.1.1.2,1274
+680,[654493],Hexanol,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,10.7,1.1.1.2,1412
+681,[698623],Pentanol,,,Synechocystis sp.,13.15,1.1.1.2,1542
+682,[698623],Pentanol,,in 30 mM Tris-HCl (pH 8.0),Synechocystis sp.,13.15,1.1.1.2,1542
+683,[286165],L-arabitol,,,Sus scrofa,1.77,1.1.1.2,1590
+684,[737874],butan-1-ol,,pH 7.0. 30&deg;C,Mycobacterium sp.,7.02,1.1.1.2,2646
+685,[286168],Phenylethanol,,,Homo sapiens,0.0283,1.1.1.2,2665
+686,[675348],Phenylethanol,,"oxidation, cosubstrate NADP+, recombinant wild-type, 30&deg;C, pH 7.0",Levilactobacillus brevis,5.4,1.1.1.2,2665
+687,[675348],Phenylethanol,,"oxidation, cosubstrate NADP+, recombinant mutant G37D, 30&deg;C, pH 7.0",Levilactobacillus brevis,8.2,1.1.1.2,2665
+688,[675348],Phenylethanol,,"oxidation, cosubstrate NAD+, recombinant mutant G37D, 30&deg;C, pH 7.0",Levilactobacillus brevis,9.5,1.1.1.2,2665
+689,[654493],Phenylethanol,,"pH 10.0, 25&deg;C",Saccharomyces cerevisiae,1132,1.1.1.2,2665
+690,[654493],3-Methylbutanal,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,296,1.1.1.2,2711
+691,[654493],3-Methylbutanal,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,9581,1.1.1.2,2711
+692,[286165],4-carboxybenzaldehyde,,,Sus scrofa,21.7,1.1.1.2,2936
+693,[286168],"Propane-1,2-diol",,,Homo sapiens,0.0433,1.1.1.2,2982
+694,[286165],3-Pyridinecarboxaldehyde,,,Sus scrofa,26.8,1.1.1.2,3056
+695,[687794],malondialdehyde,,"pH 7.0, 37&deg;C",Escherichia coli,60.1,1.1.1.2,3350
+696,[654493],3-methyl-1-butanol,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,173,1.1.1.2,3601
+697,[654493],3-methyl-1-butanol,,"pH 10.0, 25&deg;C",Saccharomyces cerevisiae,2866,1.1.1.2,3601
+698,[654493],veratraldehyde,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,263,1.1.1.2,3852
+699,[654493],veratraldehyde,,"pH 7.0, 25&deg;C",Saccharomyces cerevisiae,6000,1.1.1.2,3852
+700,[738511],"meso-2,3-butanediol",,"cosubstrate: NADP+, pH 7.5, 80&deg;C",Thermococcus guaymasensis,952,1.1.1.2,4067
+701,[286168],benzylalcohol,,,Homo sapiens,0.0733,1.1.1.2,4228
+702,[286165],D-Lactaldehyde,,,Sus scrofa,13.7,1.1.1.2,4237
+703,[726712],Pyruvaldehyde,,"pH 7.5, 60&deg;C",Thermococcus sibiricus,2.04,1.1.1.2,5610
+704,[286165],4-Pyridinecarboxaldehyde,,,Sus scrofa,19.3,1.1.1.2,7125
+705,[687794],butanaldehyde,,"pH 7.0, 37&deg;C",Escherichia coli,59.5,1.1.1.2,7451
+706,[286165],4-cyanobenzaldehyde,,,Sus scrofa,16.6,1.1.1.2,8013
+707,[738511],"(2S,3S)-2,3-butanediol",,"cosubstrate: NADP+, pH 7.5, 80&deg;C",Thermococcus guaymasensis,512,1.1.1.2,10334
+708,[286168],4-Hydroxy-3-methoxybenzyl alcohol,,,Homo sapiens,0.148,1.1.1.2,12369
+709,[286165],3-Pyridinemethanol,,,Sus scrofa,0.07,1.1.1.2,15539
+710,[738511],"(2R,3R)-2,3-butanediol",,"cosubstrate: NADP+, pH 7.5, 80&deg;C",Thermococcus guaymasensis,740,1.1.1.2,16548
+711,[286165],(+)-Camphorquinone,,,Sus scrofa,5.6,1.1.1.2,19820
+712,[737874],"1,5-pentanediol",,pH 7.0. 30&deg;C,Mycobacterium sp.,5.31,1.1.1.2,21054
+713,[286168],phenylethanediol,,,Homo sapiens,0.08,1.1.1.2,32384
+714,[736930],(S)-1-phenyl-2-propanol,,"mutant W110L, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,0.65,1.1.1.2,57435
+715,[736930],(S)-1-phenyl-2-propanol,,"mutant W110Q, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,2.3,1.1.1.2,57435
+716,[736930],(S)-1-phenyl-2-propanol,,"mutant W110M, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,4.5,1.1.1.2,57435
+717,[736930],(S)-1-phenyl-2-propanol,,"mutant W110G, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,17.8,1.1.1.2,57435
+718,[736930],(S)-1-phenyl-2-propanol,,"mutant W110I, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,18.8,1.1.1.2,57435
+719,[736930],(S)-1-phenyl-2-propanol,,"mutant W110A, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,31.1,1.1.1.2,57435
+720,[736930],(S)-1-phenyl-2-propanol,,"mutant W110V, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,38.6,1.1.1.2,57435
+721,[736930],(R)-1-phenyl-2-propanol,,"mutant W110L, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,0.008,1.1.1.2,210629
+722,[736930],(R)-1-phenyl-2-propanol,,"mutant W110Q, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,0.025,1.1.1.2,210629
+723,[736930],(R)-1-phenyl-2-propanol,,"mutant W110M, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,0.045,1.1.1.2,210629
+724,[736930],(R)-1-phenyl-2-propanol,,"mutant W110I, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,0.46,1.1.1.2,210629
+725,[736930],(R)-1-phenyl-2-propanol,,"mutant W110A, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,0.56,1.1.1.2,210629
+726,[736930],(R)-1-phenyl-2-propanol,,"mutant W110V, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,1.2,1.1.1.2,210629
+727,[736930],(R)-1-phenyl-2-propanol,,"mutant W110G, pH 8.9, 50&deg;C",Thermoanaerobacter ethanolicus,1.4,1.1.1.2,210629
+728,[737874],"3-methyl-1,5-pentanediol",,pH 7.0. 30&deg;C,Mycobacterium sp.,7.84,1.1.1.2,213984
+729,[741408],NAD+,,"pH 9.0, 50&deg;C, recombinant mutant K57A",Pyrococcus horikoshii,48.5,1.1.1.3,7
+730,[741408],NAD+,,"pH 9.0, 50&deg;C, recombinant wild-type enzyme",Pyrococcus horikoshii,70.1,1.1.1.3,7
+731,[741408],NAD+,,"pH 9.0, 50&deg;C, recombinant mutant R40A",Pyrococcus horikoshii,96.1,1.1.1.3,7
+732,[741408],NADP+,,"pH 9.0, 50&deg;C, recombinant mutant R40A",Pyrococcus horikoshii,3.4,1.1.1.3,10
+733,[741408],NADP+,,"pH 9.0, 50&deg;C, recombinant mutant K57A",Pyrococcus horikoshii,26.7,1.1.1.3,10
+734,[712490],L-homoserine,,"cosubstrate NADP+, pH 8.0, 25&deg;C",Glycine max,0.042,1.1.1.3,345
+735,[712490],L-homoserine,,"cosubstrate NADP+, pH 8.0, 25&deg;C",Glycine max,0.052,1.1.1.3,345
+736,[712490],L-homoserine,,"cosubstrate NADP+, pH 8.0, 25&deg;C",Glycine max,0.07,1.1.1.3,345
+737,[654640],L-homoserine,,"recombinant wild-type bifunctional holoenzyme, homoserine dehydrogenase activity",Escherichia coli,0.24,1.1.1.3,345
+738,[654640],L-homoserine,,"recombinant isolated catalytic HDH-domain not containing the interface region, homoserine dehydrogenase activity",Escherichia coli,0.51,1.1.1.3,345
+739,[712490],L-homoserine,,"cosubstrate NAD+, pH 8.0, 25&deg;C",Glycine max,1.43,1.1.1.3,345
+740,[654640],L-homoserine,,"recombinant isolated catalytic HDH-domain containing the interface region, homoserine dehydrogenase activity",Escherichia coli,3.3,1.1.1.3,345
+741,[712490],L-homoserine,,"cosubstrate NAD+, pH 8.0, 25&deg;C",Glycine max,7,1.1.1.3,345
+742,[712490],L-homoserine,,"cosubstrate NAD+, pH 8.0, 25&deg;C",Glycine max,10.15,1.1.1.3,345
+743,[654640],L-homoserine,,"recombinant hybrid bifunctional holoenzyme AKIII-HDHI+ containing the interface region, homoserine dehydrogenase activity",Escherichia coli,24,1.1.1.3,345
+744,[712490],L-aspartate 4-semialdehyde,,"cosubstrate NADPH, pH 8.0, 25&deg;C",Glycine max,2.8,1.1.1.3,573
+745,[712490],L-aspartate 4-semialdehyde,,"cosubstrate NADH, pH 8.0, 25&deg;C",Glycine max,9.68,1.1.1.3,573
+746,[712490],L-aspartate 4-semialdehyde,,"cosubstrate NADPH, pH 8.0, 25&deg;C",Glycine max,11.58,1.1.1.3,573
+747,[712490],L-aspartate 4-semialdehyde,,"cosubstrate NADPH, pH 8.0, 25&deg;C",Glycine max,12.98,1.1.1.3,573
+748,[712490],L-aspartate 4-semialdehyde,,"cosubstrate NADH, pH 8.0, 25&deg;C",Glycine max,19.3,1.1.1.3,573
+749,[712490],L-aspartate 4-semialdehyde,,"cosubstrate NADH, pH 8.0, 25&deg;C",Glycine max,22.58,1.1.1.3,573
+750,[739571],NADPH,,"mutant S199R, pH 7.5, 25&deg;C",Clostridium autoethanogenum,32,1.1.1.4,5
+751,[739571],NADPH,,"mutant S199A, pH 7.5, 25&deg;C",Clostridium autoethanogenum,50,1.1.1.4,5
+752,[739571],NADPH,,"wild-type, pH 7.5, 25&deg;C",Clostridium autoethanogenum,68,1.1.1.4,5
+753,[739127],NAD+,,"with (2R,3R)-butane-2,3-diol as cosubstrate, at pH 6.5 and 55&deg;C",Rhodococcus erythropolis,10.27,1.1.1.4,7
+754,[739127],NADH,,"with diacetyl as cosubstrate, at pH 10.0 and 45&deg;C",Rhodococcus erythropolis,5.73,1.1.1.4,8
+755,[737501],acetaldehyde,,"pH 7.5, 25&deg;C",Clostridium autoethanogenum,93,1.1.1.4,90
+756,[738637],glycerol,,"enzyme DhaD, at pH 9.0 and 30&deg;C",Klebsiella pneumoniae,10.51,1.1.1.4,135
+757,[738637],glycerol,,"enzyme GldA, at pH 9.0 and 30&deg;C",Klebsiella pneumoniae,18.88,1.1.1.4,135
+758,[739571],acetone,6,"mutant S199C, pH 7.5, 25&deg;C",Clostridium autoethanogenum,3,1.1.1.4,333
+759,[739571],acetone,,"mutant S199W, pH 7.5, 25&deg;C",Clostridium autoethanogenum,48,1.1.1.4,333
+760,[737501],acetone,,"pH 7.5, 25&deg;C",Clostridium autoethanogenum,51.4,1.1.1.4,333
+761,[739571],acetone,,"wild-type, pH 7.5, 25&deg;C",Clostridium autoethanogenum,55,1.1.1.4,333
+762,[739571],acetone,,"mutant S199A, pH 7.5, 25&deg;C",Clostridium autoethanogenum,60,1.1.1.4,333
+763,[739571],acetone,,"mutant S199G, pH 7.5, 25&deg;C",Clostridium autoethanogenum,62,1.1.1.4,333
+764,[739571],acetone,,"mutant S199R, pH 7.5, 25&deg;C",Clostridium autoethanogenum,89,1.1.1.4,333
+765,[739127],diacetyl,,at pH 10.0 and 45&deg;C,Rhodococcus erythropolis,6.11,1.1.1.4,746
+766,[739571],2-butanone,8,"mutant S199W, pH 7.5, 25&deg;C",Clostridium autoethanogenum,2,1.1.1.4,1171
+767,[739571],2-butanone,,"mutant S199C, pH 7.5, 25&deg;C",Clostridium autoethanogenum,23,1.1.1.4,1171
+768,[739571],2-butanone,,"wild-type, pH 7.5, 25&deg;C",Clostridium autoethanogenum,37,1.1.1.4,1171
+769,[739571],2-butanone,,"mutant S199G, pH 7.5, 25&deg;C",Clostridium autoethanogenum,40,1.1.1.4,1171
+770,[739571],2-butanone,,"mutant S199A, pH 7.5, 25&deg;C",Clostridium autoethanogenum,46,1.1.1.4,1171
+771,[739571],2-butanone,,"mutant S199R, pH 7.5, 25&deg;C",Clostridium autoethanogenum,50,1.1.1.4,1171
+772,[740952],acetoin,,"cosubstrate NADPH, pH 7.0, temperature not specified in the publication",Escherichia coli,0.5,1.1.1.4,1274
+773,[740952],acetoin,,"cosubstrate NADH, pH 7.0, temperature not specified in the publication",Escherichia coli,1.4,1.1.1.4,1274
+774,[737501],acetoin,,"pH 7.5, 25&deg;C",Clostridium autoethanogenum,145,1.1.1.4,1274
+775,[737501],Butanone,,"pH 7.5, 25&deg;C",Clostridium autoethanogenum,44,1.1.1.4,3620
+776,[739571],(R)-acetoin,,"mutant S199C, pH 7.5, 25&deg;C",Clostridium autoethanogenum,41,1.1.1.4,4876
+777,[739571],(R)-acetoin,,"mutant S199W, pH 7.5, 25&deg;C",Clostridium autoethanogenum,66,1.1.1.4,4876
+778,[739571],(R)-acetoin,,"mutant S199R, pH 7.5, 25&deg;C",Clostridium autoethanogenum,95,1.1.1.4,4876
+779,[739571],(R)-acetoin,,"mutant S199G, pH 7.5, 25&deg;C",Clostridium autoethanogenum,110,1.1.1.4,4876
+780,[739571],(R)-acetoin,,"wild-type, pH 7.5, 25&deg;C",Clostridium autoethanogenum,150,1.1.1.4,4876
+781,[739571],(R)-acetoin,,"mutant S199A, pH 7.5, 25&deg;C",Clostridium autoethanogenum,230,1.1.1.4,4876
+782,[738637],"(2R,3R)-butane-2,3-diol",,"enzyme GldA, at pH 9.0 and 30&deg;C",Klebsiella pneumoniae,3.82,1.1.1.4,14490
+783,[739127],"(2R,3R)-butane-2,3-diol",,at pH 6.5 and 55&deg;C,Rhodococcus erythropolis,4.28,1.1.1.4,14490
+784,[738637],"(2R,3R)-butane-2,3-diol",,"enzyme DhaD, at pH 9.0 and 30&deg;C",Klebsiella pneumoniae,5.8,1.1.1.4,14490
+785,[737501],"(2R,3R)-2,3-butanediol",,"pH 7.5, 25&deg;C",Clostridium autoethanogenum,2.1,1.1.1.4,16548
+786,[738637],"meso-butane-2,3-diol",,"enzyme DhaD, at pH 9.0 and 30&deg;C",Klebsiella pneumoniae,4.67,1.1.1.4,42410
+787,[738637],"meso-butane-2,3-diol",,"enzyme GldA, at pH 9.0 and 30&deg;C",Klebsiella pneumoniae,15.33,1.1.1.4,42410
+788,[738637],"(3R,3S)-butane-2,3-diol",,"enzyme DhaD, at pH 9.0 and 30&deg;C",Klebsiella pneumoniae,3.68,1.1.1.4,213970
+789,[738637],"(3R,3S)-butane-2,3-diol",,"enzyme GldA, at pH 9.0 and 30&deg;C",Klebsiella pneumoniae,10.38,1.1.1.4,213970
+790,[740856],glycerol,,"pH 8.0, 60&deg;C, recombinant enzyme",Thermoanaerobacterium thermosaccharolyticum,1.89,1.1.1.6,135
+791,[741417],glycerol,,"pH 10.0, 30&deg;C, free enzyme",Klebsiella pneumoniae,2.06,1.1.1.6,135
+792,[741417],glycerol,,"pH 10.0, 30&deg;C, immobilized enzyme",Klebsiella pneumoniae,3.36,1.1.1.6,135
+793,[710980],"1,3-butanediol",,"pH 9.5, 30&deg;C",Klebsiella pneumoniae,2.6,1.1.1.6,2124
+794,[710980],"1,3-butanediol",,"pH 9.5, 30&deg;C",Salmonella enterica,2.7,1.1.1.6,2124
+795,[710980],"1,3-butanediol",,"wild type protein, pH 9.5, 30&deg;C",Escherichia coli,3.3,1.1.1.6,2124
+796,[710980],"1,3-butanediol",,"mutant protein Q70H/G193C/E291Q/A310T, pH 9.5, 30&deg;C",Escherichia coli,9.1,1.1.1.6,2124
+797,[710980],"1,3-butanediol",,"mutant protein D121A, pH 9.5, 30&deg;C",Escherichia coli,62.4,1.1.1.6,2124
+798,[710980],"1,3-butanediol",,"mutant protein Q70H/D121A/G193C/E291Q/A310T, pH 9.5, 30&deg;C",Escherichia coli,87.2,1.1.1.6,2124
+799,[740856],Glycerone,,"pH 6.0, 60&deg;C, recombinant enzyme",Thermoanaerobacterium thermosaccharolyticum,98.44,1.1.1.6,4016
+800,[740076],dihydroxyacetone phosphate,,"mutant enzyme R269A/N270A, at pH 7.5 and 25&deg;C",Homo sapiens,0.00028,1.1.1.8,278
+801,[740076],dihydroxyacetone phosphate,,"mutant enzyme R269A, at pH 7.5 and 25&deg;C",Homo sapiens,0.0059,1.1.1.8,278
+802,[740076],dihydroxyacetone phosphate,,"mutant enzyme N270A, at pH 7.5 and 25&deg;C",Homo sapiens,9,1.1.1.8,278
+803,[287342],dihydroxyacetone phosphate,,per subunit of 33500 Da,Ceratitis capitata,188,1.1.1.8,278
+804,[740076],dihydroxyacetone phosphate,,"wild type enzyme, at pH 7.5 and 25&deg;C",Homo sapiens,240,1.1.1.8,278
+805,[287331],dihydroxyacetone phosphate,,"reduction of synthetic dihydroxyacetone phosphate, 20&deg;C, pH 7, rabbit muscle",Oryctolagus cuniculus,345,1.1.1.8,278
+806,[287331],dihydroxyacetone phosphate,,"reduction of synthetic dihydroxyacetone phosphate, 20&deg;C, pH 7, rabbit muscle, under conditions where competitive inhibition by fructose 1,6-diphosphate are not excluded",Oryctolagus cuniculus,390,1.1.1.8,278
+807,[287342],sn-glycerol 3-phosphate,,per subunit of 33500 Da,Ceratitis capitata,32,1.1.1.8,422
+808,[740076],glycerone phosphate,,"mutant R269A/N270A, pH 7.5, 25&deg;C",Homo sapiens,0.00028,1.1.1.8,482
+809,[740076],glycerone phosphate,,"mutant R269A, pH 7.5, 25&deg;C",Homo sapiens,0.0059,1.1.1.8,482
+810,[740076],glycerone phosphate,,"mutant N270A, pH 7.5, 25&deg;C",Homo sapiens,9,1.1.1.8,482
+811,[740076],glycerone phosphate,,"wild-type enzyme, pH 7.5, 25&deg;C",Homo sapiens,240,1.1.1.8,482
+812,[655936],glycerone phosphate,,"pH 7.5, 25&deg;C",Eidolon helvum,19000,1.1.1.8,482
+813,[655936],L-glycerol-3-phosphate,,"pH 7.5, 25&deg;C",Eidolon helvum,51,1.1.1.8,5652
+814,[655936],L-glycerol-3-phosphate,,"pH 10.0, 25&deg;C",Eidolon helvum,78,1.1.1.8,5652
+815,[669305],NAD+,2.1,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R",Scheffersomyces stipitis,0.052,1.1.1.9,7
+816,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzym S96C/S99C/Y102C/D207A/I208R/F209S/N211R",Scheffersomyces stipitis,0.5,1.1.1.9,7
+817,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209Y",Scheffersomyces stipitis,1,1.1.1.9,7
+818,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme I208R/F209S",Scheffersomyces stipitis,1,1.1.1.9,7
+819,[737866],NAD+,,"mutant enzyme D205A/I206R, at pH 7.0 and 30&deg;C",Rhizomucor pusillus,1.16,1.1.1.9,7
+820,[742112],NAD+,,"recombinant mutant D205A/I206R, pH 9.0, 35&deg;C",Rhizomucor pusillus,1.16,1.1.1.9,7
+821,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/F209S",Scheffersomyces stipitis,3.33,1.1.1.9,7
+822,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209S",Scheffersomyces stipitis,4,1.1.1.9,7
+823,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme D207A",Scheffersomyces stipitis,5.17,1.1.1.9,7
+824,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209T",Scheffersomyces stipitis,5.17,1.1.1.9,7
+825,[737866],NAD+,,"mutant enzyme D205A, at pH 7.0 and 30&deg;C",Rhizomucor pusillus,5.18,1.1.1.9,7
+826,[742112],NAD+,,"recombinant mutant D205A, pH 9.0, 35&deg;C",Rhizomucor pusillus,5.18,1.1.1.9,7
+827,[737866],NAD+,,"recombinant enzyme, at pH 7.0 and 30&deg;C",Rhizomucor pusillus,6.35,1.1.1.9,7
+828,[742112],NAD+,,"recombinant wild-type enzyme, pH 9.0, 35&deg;C",Rhizomucor pusillus,6.35,1.1.1.9,7
+829,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R",Scheffersomyces stipitis,10.33,1.1.1.9,7
+830,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzym S96C/S99C/Y102C/D207A/I208R/F209S/N211R",Scheffersomyces stipitis,13.17,1.1.1.9,7
+831,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme N211R",Scheffersomyces stipitis,16.9,1.1.1.9,7
+832,[669305],NAD+,,"pH 9.0, 35&deg;, wild-type enzyme",Scheffersomyces stipitis,17.5,1.1.1.9,7
+833,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209S/N211R",Scheffersomyces stipitis,18,1.1.1.9,7
+834,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme F209S",Scheffersomyces stipitis,20.33,1.1.1.9,7
+835,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme N211R",Scheffersomyces stipitis,22.83,1.1.1.9,7
+836,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme I208R",Scheffersomyces stipitis,23.8,1.1.1.9,7
+837,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209S/N211R",Scheffersomyces stipitis,23.83,1.1.1.9,7
+838,[670911],NAD+,,"pH 7.0, wild-type enzyme",Gluconobacter oxydans,27.2,1.1.1.9,7
+839,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme S96C/S99C/Y102C/D207A/I208R/F209S",Scheffersomyces stipitis,29.5,1.1.1.9,7
+840,[669305],NAD+,,"pH 9.0, 35&deg;C, mutant enzyme S96C/S99CY102C",Scheffersomyces stipitis,30.33,1.1.1.9,7
+841,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209T",Scheffersomyces stipitis,0.017,1.1.1.9,10
+842,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme I208R/F209S",Scheffersomyces stipitis,0.145,1.1.1.9,10
+843,[737866],NADP+,,"recombinant enzyme, at pH 7.0 and 30&deg;C",Rhizomucor pusillus,0.185,1.1.1.9,10
+844,[670911],NADP+,,"pH 7.0, mutant enzyme D38S/M39R",Gluconobacter oxydans,0.206,1.1.1.9,10
+845,[737866],NADP+,,"mutant enzyme D205A, at pH 7.0 and 30&deg;C",Rhizomucor pusillus,0.33,1.1.1.9,10
+846,[737866],NADP+,,"mutant enzyme D205A/I206R, at pH 7.0 and 30&deg;C",Rhizomucor pusillus,0.4,1.1.1.9,10
+847,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme S96C/S99CY102C",Scheffersomyces stipitis,0.91,1.1.1.9,10
+848,[669305],NADP+,,"pH 9.0, 35&deg;, wild-type enzyme",Scheffersomyces stipitis,1.83,1.1.1.9,10
+849,[669305],NADP+,8,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R",Scheffersomyces stipitis,2,1.1.1.9,10
+850,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme N211R",Scheffersomyces stipitis,4.67,1.1.1.9,10
+851,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme D207A",Scheffersomyces stipitis,5.7,1.1.1.9,10
+852,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209Y",Scheffersomyces stipitis,6.17,1.1.1.9,10
+853,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/F209S",Scheffersomyces stipitis,8,1.1.1.9,10
+854,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme F209S",Scheffersomyces stipitis,9.83,1.1.1.9,10
+855,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme I208R",Scheffersomyces stipitis,10,1.1.1.9,10
+856,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209T",Scheffersomyces stipitis,32.83,1.1.1.9,10
+857,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209S",Scheffersomyces stipitis,41.7,1.1.1.9,10
+858,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme D207A/I208R/F209S/N211R",Scheffersomyces stipitis,64,1.1.1.9,10
+859,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzym S96C/S99C/Y102C/D207A/I208R/F209S/N211R",Scheffersomyces stipitis,183.3,1.1.1.9,10
+860,[669305],NADP+,,"pH 9.0, 35&deg;C, mutant enzyme S96C/S99C/Y102C/D207A/I208R/F209S",Scheffersomyces stipitis,210,1.1.1.9,10
+861,[655221],D-fructose,,"25&deg;C, pH 7.5, Tris-HCl",Candida sp. HA 167,920,1.1.1.9,117
+862,[738728],xylitol,,"recombinant enzyme, pH 7.0, 30&deg;C",Meyerozyma caribbica,1.12,1.1.1.9,416
+863,[742112],xylitol,3.7,"recombinant mutant D205A/I206R, pH 9.0, 35&deg;C, with NAD+",Rhizomucor pusillus,2,1.1.1.9,416
+864,[742112],xylitol,,"recombinant wild-type enzyme, pH 9.0, 35&deg;C, with NAD+",Rhizomucor pusillus,11.1,1.1.1.9,416
+865,[670911],xylitol,,"pH 7.0, cofactor: NADP+mutant enzyme D38S/M39R",Gluconobacter oxydans,17.9,1.1.1.9,416
+866,[738728],xylitol,,at pH 7.0 and 30&deg;C,Meyerozyma caribbica,18,1.1.1.9,416
+867,[742112],xylitol,,"recombinant mutant D205A, pH 9.0, 35&deg;C, with NAD+",Rhizomucor pusillus,19.7,1.1.1.9,416
+868,[670911],xylitol,,"pH 7.0, cofactor: NAD+, wild-type enzyme",Gluconobacter oxydans,24.6,1.1.1.9,416
+869,[655221],xylitol,,"25&deg;C, pH 7.5, Tris-HCl",Candida sp. HA 167,143,1.1.1.9,416
+870,[655221],xylitol,,"25&deg;C, pH 7.5, potassium phosphate",Candida sp. HA 167,170,1.1.1.9,416
+871,[667227],xylitol,,"35&deg;C, pH 7.5, recombinant enzyme",Blastobotrys adeninivorans,2115,1.1.1.9,416
+872,[667227],xylitol,,"35&deg;C, pH 7.5, native enzyme",Blastobotrys adeninivorans,2644,1.1.1.9,416
+873,[684974],D-sorbitol,8,,Ovis aries,2,1.1.1.9,627
+874,[738728],D-sorbitol,,at pH 7.0 and 30&deg;C,Meyerozyma caribbica,8.28,1.1.1.9,627
+875,[655221],D-sorbitol,,"25&deg;C, pH 7.5, Tris-HCl",Candida sp. HA 167,114,1.1.1.9,627
+876,[667227],D-sorbitol,,"35&deg;C, pH 7.5, native enzyme",Blastobotrys adeninivorans,528,1.1.1.9,627
+877,[667227],L-sorbose,,"35&deg;C, pH 7.5, native enzyme",Blastobotrys adeninivorans,216,1.1.1.9,685
+878,[667227],D-xylulose,,"35&deg;C, pH 7.5, native enzyme",Blastobotrys adeninivorans,302.9,1.1.1.9,715
+879,[655221],D-xylulose,,"25&deg;C, pH 7.5, Tris-HCl",Candida sp. HA 167,1500,1.1.1.9,715
+880,[655221],D-xylulose,,"25&deg;C, pH 7.5, potassium phosphate",Candida sp. HA 167,1800,1.1.1.9,715
+881,[667227],D-ribulose,,"35&deg;C, pH 7.5, native enzyme",Blastobotrys adeninivorans,74,1.1.1.9,922
+882,[684974],sorbitol,,mutant E154C,Candida sp. HA 167,1.19,1.1.1.9,1149
+883,[684974],sorbitol,,,Candida sp. HA 167,161,1.1.1.9,1149
+884,[738728],ribitol,,at pH 7.0 and 30&deg;C,Meyerozyma caribbica,4.5,1.1.1.9,1476
+885,[738728],L-arabitol,,at pH 7.0 and 30&deg;C,Meyerozyma caribbica,3.35,1.1.1.9,1590
+886,[655222],NADPH,,"pH 7.0, 25&deg;C, mutant K153M",Rattus norvegicus,0.0005,1.1.1.10,5
+887,[655222],NADPH,,"pH 7.0, 25&deg;C, mutant S136A",Rattus norvegicus,0.0006,1.1.1.10,5
+888,[655222],NADPH,,"pH 7.0, 25&deg;C, mutant Y149F",Rattus norvegicus,0.0009,1.1.1.10,5
+889,[656049],NADPH,,"pH 7.0, 25&deg;C",Homo sapiens,1.5,1.1.1.10,5
+890,[721689],NADPH,,"pH 7.0, 30&deg;C, recombinant enzyme, with L-xylulose",Trichoderma reesei,7.75,1.1.1.10,5
+891,[656049],NADPH,,"pH 7.0, 25&deg;C",Rattus norvegicus,25,1.1.1.10,5
+892,[655222],NADPH,,"pH 7.0, 25&deg;C, wild-type enzyme",Rattus norvegicus,25,1.1.1.10,5
+893,[656049],NADPH,,"pH 7.0, 25&deg;C",Cavia porcellus,26,1.1.1.10,5
+894,[656049],NADPH,,"pH 7.0, 25&deg;C",Mesocricetus auratus,27,1.1.1.10,5
+895,[656049],NADPH,,"pH 7.0, 25&deg;C",Mus musculus,34,1.1.1.10,5
+896,[656049],NAD+,,"pH 7.0, 25&deg;C",Homo sapiens,1.5,1.1.1.10,7
+897,[656049],NAD+,,"pH 7.0, 25&deg;C",Rattus norvegicus,41,1.1.1.10,7
+898,[656049],NAD+,,"pH 7.0, 25&deg;C",Mesocricetus auratus,44,1.1.1.10,7
+899,[656049],NAD+,,"pH 7.0, 25&deg;C",Mus musculus,55,1.1.1.10,7
+900,[656049],NADH,8,"pH 7.0, 25&deg;C",Mesocricetus auratus,2,1.1.1.10,8
+901,[656049],NADH,,"pH 7.0, 25&deg;C",Homo sapiens,3.8,1.1.1.10,8
+902,[656049],NADH,,"pH 7.0, 25&deg;C",Rattus norvegicus,23,1.1.1.10,8
+903,[656049],NADH,,"pH 7.0, 25&deg;C",Mus musculus,41,1.1.1.10,8
+904,[656049],NADH,,"pH 7.0, 25&deg;C",Cavia porcellus,76,1.1.1.10,8
+905,[656049],NADP+,,"pH 7.0, 25&deg;C",Homo sapiens,0.65,1.1.1.10,10
+906,[655222],NADP+,,"pH 7.0, 25&deg;C, wild-type enzyme",Rattus norvegicus,9.5,1.1.1.10,10
+907,[656049],NADP+,,"pH 7.0, 25&deg;C",Rattus norvegicus,10,1.1.1.10,10
+908,[656049],NADP+,,"pH 7.0, 25&deg;C",Mus musculus,15,1.1.1.10,10
+909,[656049],NADP+,,"pH 7.0, 25&deg;C",Cavia porcellus,23,1.1.1.10,10
+910,[656049],NADP+,,"pH 7.0, 25&deg;C",Mesocricetus auratus,26,1.1.1.10,10
+911,[656049],xylitol,,"pH 7.0, 25&deg;C",Homo sapiens,0.6,1.1.1.10,416
+912,[721689],xylitol,,"pH 7.0, 30&deg;C, recombinant enzyme",Trichoderma reesei,1,1.1.1.10,416
+913,[656049],xylitol,8,"pH 7.0, 25&deg;C",Mesocricetus auratus,2,1.1.1.10,416
+914,[684552],xylitol,,,Neurospora crassa,5.6,1.1.1.10,416
+915,[656049],xylitol,,"pH 7.0, 25&deg;C",Rattus norvegicus,10,1.1.1.10,416
+916,[656049],xylitol,,"pH 7.0, 25&deg;C",Mus musculus,17,1.1.1.10,416
+917,[656049],xylitol,,"pH 7.0, 25&deg;C",Cavia porcellus,20,1.1.1.10,416
+918,[656049],DL-glyceraldehyde,,"pH 7.0, 25&deg;C",Homo sapiens,0.52,1.1.1.10,487
+919,[656049],DL-glyceraldehyde,,"pH 7.0, 25&deg;C",Cavia porcellus,20,1.1.1.10,487
+920,[656049],DL-glyceraldehyde,,"pH 7.0, 25&deg;C",Rattus norvegicus,21,1.1.1.10,487
+921,[656049],DL-glyceraldehyde,,"pH 7.0, 25&deg;C",Mesocricetus auratus,22,1.1.1.10,487
+922,[656049],DL-glyceraldehyde,,"pH 7.0, 25&deg;C",Mus musculus,24,1.1.1.10,487
+923,[656049],dihydroxyacetone,,"pH 7.0, 25&deg;C",Homo sapiens,0.23,1.1.1.10,620
+924,[656049],dihydroxyacetone,,"pH 7.0, 25&deg;C",Mus musculus,3.3,1.1.1.10,620
+925,[656049],dihydroxyacetone,,"pH 7.0, 25&deg;C",Cavia porcellus,3.8,1.1.1.10,620
+926,[656049],dihydroxyacetone,,"pH 7.0, 25&deg;C",Rattus norvegicus,5.1,1.1.1.10,620
+927,[656049],dihydroxyacetone,,"pH 7.0, 25&deg;C",Mesocricetus auratus,8.7,1.1.1.10,620
+928,[721689],D-sorbitol,,"pH 7.0, 30&deg;C, recombinant enzyme",Trichoderma reesei,1.8,1.1.1.10,627
+929,[656049],D-xylulose,,"pH 7.0, 25&deg;C",Homo sapiens,0.1,1.1.1.10,715
+930,[722271],D-xylulose,,"pH 7.0, temperature not specified in the publication",Caenorhabditis elegans,1.22,1.1.1.10,715
+931,[656049],D-xylulose,,"pH 7.0, 25&deg;C",Mesocricetus auratus,6.9,1.1.1.10,715
+932,[656049],D-xylulose,,"pH 7.0, 25&deg;C",Mus musculus,7.4,1.1.1.10,715
+933,[656049],D-xylulose,,"pH 7.0, 25&deg;C",Rattus norvegicus,18,1.1.1.10,715
+934,[656049],D-xylulose,,"pH 7.0, 25&deg;C",Cavia porcellus,19,1.1.1.10,715
+935,[657322],diacetyl,,"pH 7.0, 25&deg;C, mutant N107L",Homo sapiens,0.0008,1.1.1.10,746
+936,[657322],diacetyl,,"pH 7.0, 25&deg;C, mutant N107D",Homo sapiens,0.009,1.1.1.10,746
+937,[657322],diacetyl,,"pH 7.0, 25&deg;C, wild-type enzyme",Homo sapiens,1.57,1.1.1.10,746
+938,[656049],diacetyl,,"pH 7.0, 25&deg;C",Homo sapiens,1.6,1.1.1.10,746
+939,[656049],diacetyl,,"pH 7.0, 25&deg;C",Cavia porcellus,24,1.1.1.10,746
+940,[656049],diacetyl,,"pH 7.0, 25&deg;C",Rattus norvegicus,25,1.1.1.10,746
+941,[656049],diacetyl,,"pH 7.0, 25&deg;C",Mesocricetus auratus,30,1.1.1.10,746
+942,[656049],diacetyl,,"pH 7.0, 25&deg;C",Mus musculus,41,1.1.1.10,746
+943,[656049],D-ribulose,,"pH 7.0, 25&deg;C",Homo sapiens,0.52,1.1.1.10,922
+944,[656049],D-ribulose,,"pH 7.0, 25&deg;C",Cavia porcellus,7.8,1.1.1.10,922
+945,[721689],D-ribulose,,"pH 7.0, 30&deg;C, recombinant enzyme",Trichoderma reesei,8.24,1.1.1.10,922
+946,[656049],D-ribulose,,"pH 7.0, 25&deg;C",Rattus norvegicus,19,1.1.1.10,922
+947,[656049],D-ribulose,,"pH 7.0, 25&deg;C",Mus musculus,26,1.1.1.10,922
+948,[656049],D-ribulose,,"pH 7.0, 25&deg;C",Mesocricetus auratus,31,1.1.1.10,922
+949,[684552],D-ribulose,,,Neurospora crassa,119,1.1.1.10,922
+950,[656049],L-xylulose,,"pH 7.0, 25&deg;C",Homo sapiens,0.65,1.1.1.10,1238
+951,[656049],L-xylulose,6,"pH 7.0, 25&deg;C",Mesocricetus auratus,3,1.1.1.10,1238
+952,[722271],L-xylulose,,"pH 7.0, temperature not specified in the publication",Caenorhabditis elegans,4.98,1.1.1.10,1238
+953,[721689],L-xylulose,,"pH 7.0, 30&deg;C, recombinant enzyme",Trichoderma reesei,11.4,1.1.1.10,1238
+954,[656049],L-xylulose,,"pH 7.0, 25&deg;C",Mus musculus,37,1.1.1.10,1238
+955,[656049],L-xylulose,,"pH 7.0, 25&deg;C",Cavia porcellus,37,1.1.1.10,1238
+956,[656049],L-xylulose,,"pH 7.0, 25&deg;C",Rattus norvegicus,39,1.1.1.10,1238
+957,[656049],acetoin,,"pH 7.0, 25&deg;C",Homo sapiens,0.65,1.1.1.10,1274
+958,[656049],acetoin,,"pH 7.0, 25&deg;C",Mus musculus,3,1.1.1.10,1274
+959,[656049],acetoin,,"pH 7.0, 25&deg;C",Rattus norvegicus,6.9,1.1.1.10,1274
+960,[656049],acetoin,,"pH 7.0, 25&deg;C",Cavia porcellus,6.9,1.1.1.10,1274
+961,[656049],acetoin,,"pH 7.0, 25&deg;C",Mesocricetus auratus,6.9,1.1.1.10,1274
+962,[656049],D-erythrose,,"pH 7.0, 25&deg;C",Homo sapiens,0.43,1.1.1.10,1442
+963,[722271],D-erythrose,,"pH 7.0, temperature not specified in the publication",Caenorhabditis elegans,1.8,1.1.1.10,1442
+964,[656049],D-erythrose,8,"pH 7.0, 25&deg;C",Cavia porcellus,2,1.1.1.10,1442
+965,[656049],D-erythrose,,"pH 7.0, 25&deg;C",Mus musculus,18,1.1.1.10,1442
+966,[656049],D-erythrose,,"pH 7.0, 25&deg;C",Rattus norvegicus,18,1.1.1.10,1442
+967,[656049],D-erythrose,,"pH 7.0, 25&deg;C",Mesocricetus auratus,23,1.1.1.10,1442
+968,[722271],L-ribulose,,"pH 7.0, temperature not specified in the publication",Caenorhabditis elegans,0.49,1.1.1.10,1621
+969,[656049],L-erythrulose,,"pH 7.0, 25&deg;C",Homo sapiens,0.6,1.1.1.10,1981
+970,[722271],L-erythrulose,,"pH 7.0, temperature not specified in the publication",Caenorhabditis elegans,3.32,1.1.1.10,1981
+971,[656049],L-erythrulose,,"pH 7.0, 25&deg;C",Mus musculus,23,1.1.1.10,1981
+972,[656049],L-erythrulose,,"pH 7.0, 25&deg;C",Cavia porcellus,24,1.1.1.10,1981
+973,[656049],L-erythrulose,,"pH 7.0, 25&deg;C",Rattus norvegicus,25,1.1.1.10,1981
+974,[656049],L-erythrulose,,"pH 7.0, 25&deg;C",Mesocricetus auratus,25,1.1.1.10,1981
+975,[656049],D-threose,,"pH 7.0, 25&deg;C",Homo sapiens,0.82,1.1.1.10,2881
+976,[656049],D-threose,8,"pH 7.0, 25&deg;C",Rattus norvegicus,2,1.1.1.10,2881
+977,[722271],D-threose,,"pH 7.0, temperature not specified in the publication",Caenorhabditis elegans,2.32,1.1.1.10,2881
+978,[656049],D-threose,,"pH 7.0, 25&deg;C",Mus musculus,23,1.1.1.10,2881
+979,[656049],D-threose,,"pH 7.0, 25&deg;C",Mesocricetus auratus,31,1.1.1.10,2881
+980,[656049],D-threose,,"pH 7.0, 25&deg;C",Cavia porcellus,32,1.1.1.10,2881
+981,[656049],L-threose,,"pH 7.0, 25&deg;C",Homo sapiens,0.52,1.1.1.10,3245
+982,[656049],L-threose,,"pH 7.0, 25&deg;C",Mus musculus,16,1.1.1.10,3245
+983,[656049],L-threose,,"pH 7.0, 25&deg;C",Rattus norvegicus,16,1.1.1.10,3245
+984,[656049],L-threose,,"pH 7.0, 25&deg;C",Mesocricetus auratus,23,1.1.1.10,3245
+985,[656049],L-threose,,"pH 7.0, 25&deg;C",Cavia porcellus,27,1.1.1.10,3245
+986,[656049],D-threitol,,"pH 7.0, 25&deg;C",Homo sapiens,0.48,1.1.1.10,3460
+987,[656049],D-threitol,,"pH 7.0, 25&deg;C",Rattus norvegicus,12,1.1.1.10,3460
+988,[656049],D-threitol,,"pH 7.0, 25&deg;C",Cavia porcellus,15,1.1.1.10,3460
+989,[656049],D-threitol,,"pH 7.0, 25&deg;C",Mus musculus,16,1.1.1.10,3460
+990,[656049],D-threitol,,"pH 7.0, 25&deg;C",Mesocricetus auratus,16,1.1.1.10,3460

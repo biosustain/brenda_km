@@ -45,10 +45,10 @@ The authors fit this measurement model to a subset of BRENDA data using maximum
 likelihood estimation, obtain out of sample predictions using leave-one-out
 cross validation and investigate patterns in the results.
 
-This approach is limited by inability to incorporate prior information about
-the plausible values of the main effects or their general trends. In addition,
-the analysis produces point estimates: it does not attempt to fully capture the
-available information about Kms.  This issue is particularly pertinent for
+This approach is limited by inability to incorporate prior information about the
+plausible values of the main effects or their general trends. In addition, the
+analysis produces point estimates: it does not attempt to fully capture the
+available information about Kms. This issue is particularly pertinent for
 systems biologists who need to construct informative prior distributions for
 kinetic models. For these users it is more important to know which possible Km
 values are ruled out by the data in BRENDA than it is to know which make that
@@ -68,10 +68,6 @@ protein structure limits the amount of Kms for which predictions can be
 obtained. Again taking the point of view of a systems biologist attempting to
 construct informative prior distributions, this is a severe problem as coverage
 is at least as important a consideration for this application as precision.
-
-Another problem with the current state of the art, which to our knowledge has
-not yet been addressed, is that of modelling data from BRENDA about non-Km
-kinetic parameters, such as Kcats.
 
 [RESPECTFUL MODELLING FRAMEWORK]
 
@@ -328,7 +324,6 @@ the possible predictive performance given plausible parameter values.
 * Discussion
 * References
 #+PRINT_BIBLIOGRAPHY:
-
 
 * Challenges                                                       :noexport:
 
