@@ -19,8 +19,10 @@ clean-results:
 	$(RM) results/runs/*/*/splits/*.nc
 	$(RM) results/runs/*/*/splits/*.pkl
 
+clean-raw-data:
+	$(RM) data/raw/*.csv
+
 clean-prepared-data:
-	$(RM) data/prepared/km_preprocessed.csv
 	$(RM) -r $(shell find data/prepared/* -type d -maxdepth 0)
 
-clean-all: clean-stan clean-results
+clean-all: clean-prepared-data clean-stan clean-results

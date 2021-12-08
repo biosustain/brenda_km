@@ -43,7 +43,7 @@ DIMS = {
 RENAMING_DICT = {
     "ecNumber": "ec4",
     "kmValue": "km",
-    "kcatKmValue": "kcat",
+    "turnoverNumber": "kcat",
     "ligandStructureId": "ligand_structure_id",
 }
 
@@ -163,7 +163,9 @@ def add_columns_to_reports(r: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
     )
     for ec in [1, 2, 3]:
         out["ec" + str(ec)] = [".".join(s.split(".")[:ec]) for s in out["ec4"]]
-    out["log_km"] = np.log(out["km"])
+    for col in ["km", "kcat"]:
+        if col in out.columns:
+            out[f"log_{col}"] = np.log(out[col])
     out["sub_type"] = (
         out["substrate"].where(lambda s: s.isin(COFACTORS)).fillna("other")
     )
@@ -173,7 +175,7 @@ def add_columns_to_reports(r: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def get_lits(reports: pd.DataFrame) -> pd.DataFrame:
+def get_lits(reports: pd.DataFrame, response_col: str) -> pd.DataFrame:
     """get dataframe of study/km combinations ("lits")
 
     :param reports: dataframe of reports
@@ -183,9 +185,9 @@ def get_lits(reports: pd.DataFrame) -> pd.DataFrame:
         {
             **{c: g[c].first() for c in LIT_FCTS},
             **{
-                "y": g["log_km"].median(),
+                "y": g[response_col].median(),
                 "n": g.size(),
-                "sd": g["log_km"].std(),
+                "sd": g[response_col].std(),
             },
         }
     ).reset_index(drop=True)
@@ -282,7 +284,7 @@ def prepare_data(pi: PrepareDataInput) -> PrepareDataOutput:
         .pipe(correct_report_dtypes, response_col=pi.response_col)
         .loc[filter_reports_for_pi]
     )
-    lits = get_lits(reports)
+    lits = get_lits(reports, response_col=pi.response_col)
     coords = get_coords(lits)
     ix_all = range(len(lits))
     splits = list(KFold(pi.number_of_cv_folds, shuffle=True).split(lits))
