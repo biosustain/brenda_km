@@ -1,5 +1,5 @@
-name = "really_simple"
-data_dir = "data/prepared/tenfold"
+name = "really_simple-km"
+data_dir = "data/prepared/km_tenfold"
 stan_file = "src/stan/really_simple.stan"
 # do_not_run = true
 

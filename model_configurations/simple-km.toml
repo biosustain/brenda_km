@@ -1,6 +1,6 @@
-name = "simple"
+name = "simple-km"
 stan_file = "src/stan/simple.stan"
-data_dir = "data/prepared/tenfold"
+data_dir = "data/prepared/km_tenfold"
 # do_not_run = true
 
 [sample_kwargs]

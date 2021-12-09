@@ -1,6 +1,6 @@
 name = "blk-km"
 stan_file = "src/stan/blk.stan"
-data_dir = "data/prepared/tenfold"
+data_dir = "data/prepared/km_tenfold"
 # do_not_run = true
 run_cross_validation = true
 
