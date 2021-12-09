@@ -1,3 +1,5 @@
+"""Run all the configs in the model_configurations folder."""
+
 import json
 import os
 
@@ -26,17 +28,13 @@ def main():
         print(coords["organism"])
         if not mc.do_not_run:
             run_dir = os.path.join(RESULTS_DIR, mc.name)
-            suffs = ["prior", "posterior"]
-            if os.path.exists(
-                os.path.join(mc.data_dir, "stan_input_fake.json")
-            ):
-                suffs += ["fake"]
-            for suff in suffs:
+            modes = ["prior", "posterior", "fake"]
+            for mode in modes:
                 input_json = os.path.join(
-                    mc.data_dir, f"stan_input_{suff}.json"
+                    mc.data_dir, f"stan_input_{mode}.json"
                 )
-                output_dir = os.path.join(run_dir, suff)
-                print(f"\n***Fitting model {mc.name} in {suff} mode...***\n")
+                output_dir = os.path.join(run_dir, mode)
+                print(f"\n***Fitting model {mc.name} in {mode} mode...***\n")
                 _, _ = sample(
                     stan_file=mc.stan_file,
                     input_json=input_json,
