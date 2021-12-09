@@ -56,6 +56,7 @@ CoordDict = Dict[str, List[str]]
 
 @dataclass
 class PrepareDataOutput:
+    name: str
     standict_prior: StanDict
     standict_posterior: StanDict
     standicts_cv: List[StanDict]
@@ -89,7 +90,6 @@ def filter_reports(
         & r[response_col].notnull()
         & r[response_col].ge(0)
         & ~r["ligand_structure_id"].eq(0)
-        & r["organism"].isin(ORGANISMS_TO_INCLUDE)
         & ~r["temperature"].ge(50)
         & ~r["temperature"].le(5)
         & ~r["ph"].ge(9)
@@ -97,7 +97,17 @@ def filter_reports(
     )
     if natural_only:
         base = base & r["is_natural"]
-    return base
+    organisms_to_include = (
+        r.loc[base]
+        .groupby(BIOLOGY_FCTS + ["literature"])["organism"]
+        .first()
+        .groupby("organism")
+        .size()
+        .loc[lambda s: s > 100]
+        .index.values
+    )
+    print(organisms_to_include)
+    return base & r["organism"].isin(organisms_to_include)
 
 
 def process_temperature_column(t: pd.Series) -> pd.Series:
@@ -299,6 +309,7 @@ def prepare_data(
         for train_ix, test_ix in splits
     )
     return PrepareDataOutput(
+        name=name,
         standict_prior=standict_prior,
         standict_posterior=standict_posterior,
         standicts_cv=standicts_cv,

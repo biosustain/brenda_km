@@ -24,8 +24,6 @@ def main():
             coords = json.load(f)
         with open(os.path.join(mc.data_dir, "dims.json"), "r") as f:
             dims = json.load(f)
-
-        print(coords["organism"])
         if not mc.do_not_run:
             run_dir = os.path.join(RESULTS_DIR, mc.name)
             modes = ["prior", "posterior", "fake"]

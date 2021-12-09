@@ -2,8 +2,7 @@
 
 results:
 	python prepare_data.py
-	python generate_fake_data.py
-	python sample.py
+	python generate_results.py
 
 clean-stan:
 	$(RM) $(shell find ./src/stan -perm +100 -type f)
