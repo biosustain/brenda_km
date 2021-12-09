@@ -65,16 +65,6 @@ class PrepareDataOutput:
     splits: Iterable[Tuple]
 
 
-@dataclass
-class PrepareDataInput:
-    name: str
-    raw_reports: pd.DataFrame
-    number_of_cv_folds: int
-    response_col: str
-    natural_only: bool
-    natural_ligands: pd.DataFrame
-
-
 def replace_nulls_with_empty_set(s: pd.Series) -> pd.Series:
     """Work around not being able to pass sets to pd.Series.fillna."""
     return pd.Series(np.where(s.notnull(), s, frozenset()), index=s.index)
@@ -263,7 +253,14 @@ def listify_dict(d: Dict) -> StanDict:
     return out
 
 
-def prepare_data(pi: PrepareDataInput) -> PrepareDataOutput:
+def prepare_data(
+    name: str,
+    raw_reports: pd.DataFrame,
+    natural_ligands: pd.DataFrame,
+    number_of_cv_folds: int,
+    response_col: str,
+    natural_only: bool,
+) -> PrepareDataOutput:
 
     """Get a dataframe of literature/biology groups.
 
@@ -275,19 +272,19 @@ def prepare_data(pi: PrepareDataInput) -> PrepareDataOutput:
     # get dataframe of reports
     filter_reports_for_pi = partial(
         filter_reports,
-        natural_only=pi.natural_only,
-        response_col=pi.response_col,
+        natural_only=natural_only,
+        response_col=response_col,
     )
     reports = (
-        pi.raw_reports.copy()
-        .pipe(add_columns_to_reports, nat=pi.natural_ligands)
-        .pipe(correct_report_dtypes, response_col=pi.response_col)
+        raw_reports.copy()
+        .pipe(add_columns_to_reports, nat=natural_ligands)
+        .pipe(correct_report_dtypes, response_col=response_col)
         .loc[filter_reports_for_pi]
     )
-    lits = get_lits(reports, response_col=pi.response_col)
+    lits = get_lits(reports, response_col=response_col)
     coords = get_coords(lits)
     ix_all = range(len(lits))
-    splits = list(KFold(pi.number_of_cv_folds, shuffle=True).split(lits))
+    splits = list(KFold(number_of_cv_folds, shuffle=True).split(lits))
     get_standict_xv = partial(
         get_standict, lits=lits, coords=coords, likelihood=True
     )
