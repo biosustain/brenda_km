@@ -1,0 +1,17 @@
+name = "final-km"
+stan_file = "src/stan/final.stan"
+data_dir = "data/prepared/km_tenfold"
+# do_not_run = true
+run_cross_validation = true
+
+[sample_kwargs]
+show_progress = true
+save_warmup = false
+iter_warmup = 800
+iter_sampling = 800
+max_treedepth = 11
+chains = 4
+refresh = 1
+
+[sample_kwargs_cross_validation]
+chains = 1
