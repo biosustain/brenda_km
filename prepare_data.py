@@ -92,6 +92,7 @@ def generate_prepared_data():
             natural_only=pc["natural_only"],
         )
         po.df.to_csv(os.path.join(output_dir, "input_df.csv"))
+        po.reports.to_csv(os.path.join(output_dir, "filtered_reports.csv"))
         write_stan_json(input_file_posterior, po.standict_posterior)
         write_stan_json(input_file_prior, po.standict_prior)
         for i, si in enumerate(po.standicts_cv):

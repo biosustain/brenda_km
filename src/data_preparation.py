@@ -62,6 +62,7 @@ class PrepareDataOutput:
     standicts_cv: List[StanDict]
     coords: Dict[str, Any]
     dims: Dict[str, Any]
+    reports: pd.DataFrame
     df: pd.DataFrame
     splits: Iterable[Tuple]
 
@@ -106,7 +107,6 @@ def filter_reports(
         .loc[lambda s: s > 100]
         .index.values
     )
-    print(organisms_to_include)
     return base & r["organism"].isin(organisms_to_include)
 
 
@@ -313,6 +313,7 @@ def prepare_data(
         standict_prior=standict_prior,
         standict_posterior=standict_posterior,
         standicts_cv=standicts_cv,
+        reports=reports,
         coords=coords,
         dims=DIMS,
         df=lits,
