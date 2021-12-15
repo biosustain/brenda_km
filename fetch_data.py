@@ -17,6 +17,7 @@ from src.fetching import (
     fetch_brenda_natural_substrates,
     fetch_brenda_reports,
     fetch_expasy_ec_numbers,
+    fetch_hmdb_metabolite_concentrations,
     fetch_sabio_reports,
 )
 
@@ -30,6 +31,9 @@ OUTPUT_FILEPATHS = {
         "data", "raw", "brenda_kcat_reports.csv"
     ),
     "sabio_reports": os.path.join("data", "raw", "sabio_reports.csv"),
+    "hmdb_metabolite_concentrations": os.path.join(
+        "data", "raw", "hmdb_metabolite_concentrations.csv"
+    ),
 }
 BRENDA_CHUNKSIZE = 100
 SABIO_CHUNKSIZE = 500
@@ -98,6 +102,16 @@ def main():
             sabio = pd.concat([sabio, chunk_df], ignore_index=True)
         sabio.to_csv(fpath)
         print(f"Saved {len(sabio)} sabio reports to {fpath}")
+
+    if not os.path.exists(OUTPUT_FILEPATHS["hmdb_metabolite_concentrations"]):
+        fpath = OUTPUT_FILEPATHS["hmdb_metabolite_concentrations"]
+        print("Fetching natural human metabolite concentrations...")
+        conc_df = fetch_hmdb_metabolite_concentrations()
+        conc_df.to_csv(fpath)
+        print(
+            f"Saved {len(conc_df)} natural human metabolite concentration "
+            f"records to {fpath}"
+        )
 
 
 if __name__ == "__main__":
