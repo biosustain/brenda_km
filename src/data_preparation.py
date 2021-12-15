@@ -291,7 +291,7 @@ def prepare_data(
         .pipe(correct_report_dtypes, response_col=response_col)
         .loc[filter_reports_for_pi]
     )
-    lits = get_lits(reports, response_col=response_col)
+    lits = get_lits(reports, response_col="log_" + response_col)
     coords = get_coords(lits)
     ix_all = range(len(lits))
     splits = list(KFold(number_of_cv_folds, shuffle=True).split(lits))
