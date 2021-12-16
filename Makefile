@@ -9,14 +9,7 @@ clean-stan:
 	$(RM) ./src/stan/*.hpp
 
 clean-results:
-	$(RM) results/runs/*/*/*.csv
-	$(RM) results/runs/*/*/*.txt
-	$(RM) results/runs/*/*/*.nc
-	$(RM) results/runs/*/*/*.pkl
-	$(RM) results/runs/*/*/splits/*.csv
-	$(RM) results/runs/*/*/splits/*.txt
-	$(RM) results/runs/*/*/splits/*.nc
-	$(RM) results/runs/*/*/splits/*.pkl
+	$(RM) -r results/runs/*/
 
 clean-raw-data:
 	$(RM) data/raw/*.csv
