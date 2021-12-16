@@ -2,7 +2,6 @@
 
 import json
 import os
-from glob import glob
 
 import numpy as np
 import pandas as pd
@@ -16,6 +15,9 @@ PREP_CONFIGS = [
     {
         "name": "km_tenfold",
         "raw_reports_file": os.path.join(RAW_DIR, "brenda_km_reports.csv"),
+        "raw_hmdb_metabolite_concentrations": os.path.join(
+            RAW_DIR, "hmdb_metabolite_concentrations.csv"
+        ),
         "number_of_cv_folds": 10,
         "response_col": "km",
         "natural_only": True,
@@ -26,6 +28,9 @@ PREP_CONFIGS = [
     {
         "name": "kcat_tenfold",
         "raw_reports_file": os.path.join(RAW_DIR, "brenda_kcat_reports.csv"),
+        "raw_hmdb_metabolite_concentrations": os.path.join(
+            RAW_DIR, "hmdb_metabolite_concentrations.csv"
+        ),
         "number_of_cv_folds": 10,
         "response_col": "kcat",
         "natural_only": True,
@@ -71,6 +76,13 @@ def generate_prepared_data():
         raw_reports = pd.read_csv(pc["raw_reports_file"], index_col=0)
         print(f"Reading natural ligands data from {pc['natural_ligands_file']}")
         natural_ligands = pd.read_csv(pc["natural_ligands_file"], index_col=0)
+        print(
+            "Reading hmdb metabolite concentrations from "
+            f"{pc['raw_hmdb_metabolite_concentrations']}"
+        )
+        raw_hmdb_metabolite_concentrations = pd.read_csv(
+            pc["raw_hmdb_metabolite_concentrations"], index_col=0
+        )
         print("Preparing Stan input files...")
         print(f"\tPreparing Stan input {pc['name']}...")
         output_dir = os.path.join(PREPARED_DIR, pc["name"])
@@ -81,17 +93,20 @@ def generate_prepared_data():
         )
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
-            print(splits_dir)
             os.mkdir(splits_dir)
         po = prepare_data(
             name=pc["name"],
             raw_reports=raw_reports,
+            raw_hmdb_metabolite_concentrations=raw_hmdb_metabolite_concentrations,
             natural_ligands=natural_ligands,
             number_of_cv_folds=pc["number_of_cv_folds"],
             response_col=pc["response_col"],
             natural_only=pc["natural_only"],
         )
         po.df.to_csv(os.path.join(output_dir, "input_df.csv"))
+        po.hmdb_metabolite_concentrations.to_csv(
+            os.path.join(output_dir, "hmdb_metabolite_concentrations.csv")
+        )
         po.reports.to_csv(os.path.join(output_dir, "filtered_reports.csv"))
         write_stan_json(input_file_posterior, po.standict_posterior)
         write_stan_json(input_file_prior, po.standict_prior)

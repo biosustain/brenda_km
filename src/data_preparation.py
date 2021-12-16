@@ -7,6 +7,7 @@ from typing import Any, Dict, Iterable, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
+from matplotlib.pyplot import connect
 from sklearn.model_selection import KFold
 
 from src.util import make_columns_lower_case
@@ -63,6 +64,7 @@ class PrepareDataOutput:
     coords: Dict[str, Any]
     dims: Dict[str, Any]
     reports: pd.DataFrame
+    hmdb_metabolite_concentrations: pd.DataFrame
     df: pd.DataFrame
     splits: Iterable[Tuple]
 
@@ -253,7 +255,7 @@ def listify_dict(d: Dict) -> StanDict:
         if not isinstance(k, str):
             raise ValueError(f"key {str(k)} is not a string!")
         elif isinstance(v, pd.Series):
-            out[k] = v.values.tolist()
+            out[k] = v.to_list()
         elif isinstance(v, np.ndarray):
             out[k] = v.tolist()
         elif isinstance(v, (list, int, float)):
@@ -263,9 +265,26 @@ def listify_dict(d: Dict) -> StanDict:
     return out
 
 
+def prepare_hmdb_metabolite_concentrations(raw: pd.DataFrame) -> pd.DataFrame:
+    concentration_regex = fr"^({NUMBER_REGEX})"
+    conc = (
+        raw["concentration_value"]
+        .str.extract(concentration_regex)[0]
+        .astype(float)
+    )
+    cond = (
+        raw["concentration_units"].eq("uM")
+        & raw["subject_age"].str.contains("Adult")
+        & raw["subject_condition"].eq("Normal")
+        & conc.notnull()
+    )
+    return raw.loc[cond].copy().assign(concentration_uM=conc)
+
+
 def prepare_data(
     name: str,
     raw_reports: pd.DataFrame,
+    raw_hmdb_metabolite_concentrations: pd.DataFrame,
     natural_ligands: pd.DataFrame,
     number_of_cv_folds: int,
     response_col: str,
@@ -291,6 +310,9 @@ def prepare_data(
         .pipe(correct_report_dtypes, response_col=response_col)
         .loc[filter_reports_for_pi]
     )
+    hmdb_metabolite_concentrations = prepare_hmdb_metabolite_concentrations(
+        raw_hmdb_metabolite_concentrations
+    )
     lits = get_lits(reports, response_col="log_" + response_col)
     coords = get_coords(lits)
     ix_all = range(len(lits))
@@ -314,6 +336,7 @@ def prepare_data(
         standict_posterior=standict_posterior,
         standicts_cv=standicts_cv,
         reports=reports,
+        hmdb_metabolite_concentrations=hmdb_metabolite_concentrations,
         coords=coords,
         dims=DIMS,
         df=lits,
