@@ -1,25 +1,16 @@
-"""Provides a function prepare_data."""
+"""Provides functions prepare_data_x and dataclass PrepareDataOutput."""
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import partial
 from typing import Any, Dict, Iterable, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from matplotlib.pyplot import connect
 from sklearn.model_selection import KFold
 
 from src.util import make_columns_lower_case
 
-ORGANISMS_TO_INCLUDE = [
-    "Escherichia coli",
-    "Homo sapiens",
-    "Saccharomyces cerevisiae",
-]
-BIOLOGY_FCTS = ["ec4", "organism", "substrate"]
-LIT_FCTS = BIOLOGY_FCTS + ["ec_sub", "org_sub", "literature", "biology"]
-EXTRA_NULL_VALUES = ["more", -999]
 NUMBER_REGEX = r"\d*\.?\d+"
 TEMP_REGEX = (
     fr"({NUMBER_REGEX}-{NUMBER_REGEX}|{NUMBER_REGEX}) ?(&ordm;|&deg;)[Cc]"
@@ -37,15 +28,10 @@ COFACTORS = [
 ]
 DIMS = {
     "a_substrate": ["substrate"],
-    "a_ec_sub": ["ec_sub"],
+    "a_ec4_sub": ["ec4_sub"],
+    "a_enz_sub": ["enz_sub"],
     "a_org_sub": ["org_sub"],
     "log_km": ["biology"],
-}
-RENAMING_DICT = {
-    "ecNumber": "ec4",
-    "kmValue": "km",
-    "turnoverNumber": "kcat",
-    "ligandStructureId": "ligand_structure_id",
 }
 
 THIS_FILE = os.path.dirname(os.path.abspath(__file__))
@@ -58,58 +44,44 @@ CoordDict = Dict[str, List[str]]
 @dataclass
 class PrepareDataOutput:
     name: str
-    standict_prior: StanDict
-    standict_posterior: StanDict
-    standicts_cv: List[StanDict]
     coords: Dict[str, Any]
-    dims: Dict[str, Any]
     reports: pd.DataFrame
-    hmdb_metabolite_concentrations: pd.DataFrame
-    df: pd.DataFrame
-    splits: Iterable[Tuple]
+    lits: pd.DataFrame
+    dims: Dict[str, Any]
+    number_of_cv_folds: int
+    standict_prior: StanDict = field(init=False)
+    standict_posterior: StanDict = field(init=False)
+    standicts_cv: List[StanDict] = field(init=False)
+    splits: Iterable[Tuple] = field(init=False)
+
+    def __post_init__(self):
+        ix_all = range(len(self.lits))
+        self.splits = list(
+            KFold(self.number_of_cv_folds, shuffle=True).split(self.lits)
+        )
+        get_standict_xv = partial(
+            get_standict, lits=self.lits, coords=self.coords, likelihood=True
+        )
+        get_standict_main = partial(
+            get_standict,
+            lits=self.lits,
+            coords=self.coords,
+            train_ix=ix_all,
+            test_ix=ix_all,
+        )
+        self.standict_prior, self.standict_posterior = (
+            get_standict_main(likelihood=likelihood)
+            for likelihood in (False, True)
+        )
+        self.standicts_cv = list(
+            get_standict_xv(train_ix=train_ix, test_ix=test_ix)
+            for train_ix, test_ix in self.splits
+        )
 
 
 def replace_nulls_with_empty_set(s: pd.Series) -> pd.Series:
     """Work around not being able to pass sets to pd.Series.fillna."""
     return pd.Series(np.where(s.notnull(), s, frozenset()), index=s.index)
-
-
-def filter_reports(
-    r: pd.DataFrame, natural_only: bool, response_col: str
-) -> pd.Series:
-    """Get a boolean series indicating whether to keep each report.
-
-    :param r: DataFrame of reports. Note that dtypes of the temperature and ph
-    columns must be float.
-
-    :param natural_only: Whether or not to exclude reports with non-natural
-    substrates.
-
-    :param response_col: The response variable, probably "km" or "kcat"
-
-    """
-    base = (
-        r[BIOLOGY_FCTS].notnull().all(axis=1).astype(bool)
-        & r[response_col].notnull()
-        & r[response_col].ge(0)
-        & ~r["ligand_structure_id"].eq(0)
-        & ~r["temperature"].ge(50)
-        & ~r["temperature"].le(5)
-        & ~r["ph"].ge(9)
-        & ~r["ph"].le(4)
-    )
-    if natural_only:
-        base = base & r["is_natural"]
-    organisms_to_include = (
-        r.loc[base]
-        .groupby(BIOLOGY_FCTS + ["literature"])["organism"]
-        .first()
-        .groupby("organism")
-        .size()
-        .loc[lambda s: s > 100]
-        .index.values
-    )
-    return base & r["organism"].isin(organisms_to_include)
 
 
 def process_temperature_column(t: pd.Series) -> pd.Series:
@@ -123,15 +95,16 @@ def process_temperature_column(t: pd.Series) -> pd.Series:
     return t.str.split("-").explode().astype(float).groupby(level=0).mean()
 
 
-def correct_report_dtypes(r: pd.DataFrame, response_col: str):
+def correct_brenda_dtypes(r: pd.DataFrame):
     """Make sure the columns have the right dtypes
 
     :param r: dataframe of reports
     """
     df_out = r.copy()
-    float_cols = ["ph", "mols", "temperature", response_col]
+    float_cols = ["ph", "mols", "temperature", "km", "kcat"]
     for col in float_cols:
-        df_out[col] = r[col].astype(float)
+        if col in r.columns:
+            df_out[col] = r[col].astype(float)
     return df_out
 
 
@@ -144,16 +117,29 @@ def get_natural_ligands_col(r: pd.DataFrame, nat: pd.DataFrame):
     )["ligandStructureId"].pipe(replace_nulls_with_empty_set)
 
 
-def add_columns_to_reports(r: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
+def correct_brenda_colnames(raw: pd.DataFrame) -> pd.DataFrame:
+    return raw.rename(
+        columns={
+            "ecNumber": "ec4",
+            "kmValue": "km",
+            "turnoverNumber": "kcat",
+            "ligandStructureId": "ligand_structure_id",
+        }
+    ).pipe(make_columns_lower_case)
+
+
+def correct_brenda_nulls(reports: pd.DataFrame) -> pd.DataFrame:
+    return reports.replace(["more", -999], np.nan)
+
+
+def add_columns_to_brenda_reports(
+    r: pd.DataFrame, nat: pd.DataFrame
+) -> pd.DataFrame:
     """Add new columns to a table of reports
 
     :param r: Dataframe of reports
     """
-    out = (
-        r.rename(columns=RENAMING_DICT)
-        .replace(EXTRA_NULL_VALUES, np.nan)
-        .pipe(make_columns_lower_case)
-    )
+    out = r.copy()
     out["natural_ligands"] = get_natural_ligands_col(out, nat)
     out["is_natural"] = out.apply(
         lambda row: row["ligand_structure_id"] in row["natural_ligands"], axis=1
@@ -165,49 +151,72 @@ def add_columns_to_reports(r: pd.DataFrame, nat: pd.DataFrame) -> pd.DataFrame:
     )
     for ec in [1, 2, 3]:
         out["ec" + str(ec)] = [".".join(s.split(".")[:ec]) for s in out["ec4"]]
-    for col in ["km", "kcat"]:
-        if col in out.columns:
-            out[f"log_{col}"] = np.log(out[col])
-    out["sub_type"] = (
-        out["substrate"].where(lambda s: s.isin(COFACTORS)).fillna("other")
-    )
-    out["biology"] = out[BIOLOGY_FCTS].astype(str).apply("|".join, axis=1)
-    out["ec_sub"] = out["ec4"].astype(str).str.cat(out["substrate"], sep="|")
-    out["org_sub"] = out["organism"].str.cat(out["substrate"], sep="|")
     return out
 
 
-def get_lits(reports: pd.DataFrame, response_col: str) -> pd.DataFrame:
+def preprocess_brenda_kms(
+    raw_reports: pd.DataFrame, natural_ligands: pd.DataFrame
+) -> pd.DataFrame:
+    return (
+        raw_reports.pipe(correct_brenda_nulls)
+        .pipe(correct_brenda_colnames)
+        .pipe(add_columns_to_brenda_reports, natural_ligands)
+        .pipe(correct_brenda_dtypes)
+    )
+
+
+def prepare_data_brenda_km(
+    name: str,
+    raw_reports: pd.DataFrame,
+    natural_ligands: pd.DataFrame,
+    number_of_cv_folds: int = 10,
+) -> PrepareDataOutput:
     """get dataframe of study/km combinations ("lits")
 
     :param reports: dataframe of reports
     """
-    g = reports.groupby(BIOLOGY_FCTS + ["literature"])
-    lits = pd.DataFrame(
-        {
-            **{c: g[c].first() for c in LIT_FCTS},
-            **{
-                "y": g[response_col].median(),
-                "n": g.size(),
-                "sd": g[response_col].std(),
-            },
-        }
-    ).reset_index(drop=True)
-    for fct in LIT_FCTS:
+    reports = preprocess_brenda_kms(raw_reports, natural_ligands)
+    biology_cols = ["organism", "ec4", "substrate"]
+    lit_cols = biology_cols + ["literature"]
+    cond = (
+        reports[biology_cols].notnull().all(axis=1).astype(bool)
+        & reports["km"].notnull()
+        & reports["km"].ge(0)
+        & ~reports["ligand_structure_id"].eq(0)
+        & ~reports["temperature"].ge(50)
+        & ~reports["temperature"].le(5)
+        & ~reports["ph"].ge(9)
+        & ~reports["ph"].le(4)
+        & reports["is_natural"]
+    )
+    reports["y"] = np.log(reports["km"])
+    lits = (
+        reports.loc[cond]
+        .groupby(lit_cols)["y"]
+        .median()
+        .reset_index()
+        .loc[lambda df: df.groupby("organism")["y"].transform("size") > 100]
+        .reset_index()
+    )
+    coords = {}
+    lits["literature"] = lits["literature"].astype(str)
+    lits["biology"] = lits[biology_cols].apply("|".join, axis=1)
+    lits["ec4_sub"] = lits["ec4"].str.cat(lits["substrate"], sep="|")
+    lits["org_sub"] = lits["organism"].str.cat(lits["substrate"], sep="|")
+    fcts = biology_cols + ["ec4_sub", "org_sub", "literature", "biology"]
+    for fct in fcts:
         lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
-    return lits
-
-
-def get_coords(lits: pd.DataFrame) -> CoordDict:
-    """Get a dictionary of Stan and arviz compatible coords
-
-    :param lits: Dataframe of lits (see function get_lits)
-    """
-    coords = {c: pd.factorize(lits[c])[1].tolist() for c in LIT_FCTS}
-    coords_with_unknowns = ["substrate", "ec_sub", "org_sub"]
-    for coord in coords_with_unknowns:
+        coords[fct] = pd.factorize(lits[fct])[1].tolist()
+    for coord in ["substrate", "ec4_sub", "org_sub"]:
         coords[coord] += [f"unknown {coord}"]
-    return coords
+    return PrepareDataOutput(
+        name=name,
+        lits=lits,
+        coords=coords,
+        reports=reports,
+        dims=DIMS,
+        number_of_cv_folds=number_of_cv_folds,
+    )
 
 
 def get_standict(
@@ -225,14 +234,14 @@ def get_standict(
     :param: train_ix: List of indexes of training lits
     :param: test_ix: List of indexes of test lits
     """
-    return listify_dict(
+    out = listify_dict(
         {
             "N_biology": lits["biology"].nunique(),
             "N_substrate": len(coords["substrate"]),
-            "N_ec_sub": len(coords["ec_sub"]),
+            "N_ec4_sub": len(coords["ec4_sub"]),
             "N_org_sub": len(coords["org_sub"]),
             "substrate": lits.groupby("biology")["substrate_stan"].first(),
-            "ec_sub": lits.groupby("biology")["ec_sub_stan"].first(),
+            "ec4_sub": lits.groupby("biology")["ec4_sub_stan"].first(),
             "org_sub": lits.groupby("biology")["org_sub_stan"].first(),
             "N_train": len(train_ix),
             "N_test": len(test_ix),
@@ -243,6 +252,17 @@ def get_standict(
             "likelihood": int(likelihood),
         }
     )
+    if "enz_sub" in coords.keys():
+        out = {
+            **out,
+            **listify_dict(
+                {
+                    "N_enz_sub": len(coords["enz_sub"]),
+                    "enz_sub": lits.groupby("biology")["enz_sub_stan"].first(),
+                }
+            ),
+        }
+    return out
 
 
 def listify_dict(d: Dict) -> StanDict:
@@ -265,7 +285,7 @@ def listify_dict(d: Dict) -> StanDict:
     return out
 
 
-def prepare_hmdb_metabolite_concentrations(raw: pd.DataFrame) -> pd.DataFrame:
+def prepare_hmdb_concs(raw: pd.DataFrame) -> pd.DataFrame:
     concentration_regex = fr"^({NUMBER_REGEX})"
     conc = (
         raw["concentration_value"]
@@ -281,64 +301,80 @@ def prepare_hmdb_metabolite_concentrations(raw: pd.DataFrame) -> pd.DataFrame:
     return raw.loc[cond].copy().assign(concentration_uM=conc)
 
 
-def prepare_data(
+def _contains(s1: pd.Series, s2: pd.Series) -> pd.Series:
+    return pd.Series([t in v for t, v in zip(s2, s1)])
+
+
+def preprocess_sabio(raw: pd.DataFrame) -> pd.DataFrame:
+    return raw.rename(
+        columns={
+            "Substrate": "natural_substrates",
+            "EnzymeType": "enzyme_type",
+            "PubMedID": "literature",
+            "Organism": "organism",
+            "UniprotID": "uniprot_id",
+            "ECNumber": "ec4",
+            "parameter.type": "parameter_type",
+            "parameter.associatedSpecies": "substrate",
+            "parameter.startValue": "start_value",
+            "parameter.endValue": "end_value",
+            "parameter.standardDeviation": "sd",
+            "parameter.unit": "unit",
+        }
+    ).assign(
+        value=lambda df: df[["start_value", "end_value"]].mean(axis=1),
+        y=lambda df: np.log(df["value"]),
+    )
+
+
+def prepare_data_sabio_km(
     name: str,
     raw_reports: pd.DataFrame,
-    raw_hmdb_metabolite_concentrations: pd.DataFrame,
-    natural_ligands: pd.DataFrame,
-    number_of_cv_folds: int,
-    response_col: str,
-    natural_only: bool,
+    number_of_cv_folds: int = 10,
 ) -> PrepareDataOutput:
-
-    """Get a dataframe of literature/biology groups.
-
-    Uses the Borger, Liebermeister and Klipp framework.
-
-    :param pi: A PrepareDataInput object
-
-    """
-    # get dataframe of reports
-    filter_reports_for_pi = partial(
-        filter_reports,
-        natural_only=natural_only,
-        response_col=response_col,
+    pp = preprocess_sabio(raw_reports)
+    biology_cols = ["organism", "uniprot_id", "substrate"]
+    lit_cols = biology_cols + ["literature"]
+    cond = (
+        pp["parameter_type"].eq("Km")
+        & pp["enzyme_type"].str.contains("wildtype")
+        & pp["value"].notnull()
+        & pp["literature"].notnull()
+        & _contains(
+            pp["natural_substrates"].fillna(""), pp["substrate"].fillna("")
+        )
     )
-    reports = (
-        raw_reports.copy()
-        .pipe(add_columns_to_reports, nat=natural_ligands)
-        .pipe(correct_report_dtypes, response_col=response_col)
-        .loc[filter_reports_for_pi]
+    lits = (
+        pp.loc[cond]
+        .groupby(lit_cols)
+        .agg({"y": "median", "ec4": "first"})
+        .reset_index()
+        .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
+        .reset_index()
     )
-    hmdb_metabolite_concentrations = prepare_hmdb_metabolite_concentrations(
-        raw_hmdb_metabolite_concentrations
-    )
-    lits = get_lits(reports, response_col="log_" + response_col)
-    coords = get_coords(lits)
-    ix_all = range(len(lits))
-    splits = list(KFold(number_of_cv_folds, shuffle=True).split(lits))
-    get_standict_xv = partial(
-        get_standict, lits=lits, coords=coords, likelihood=True
-    )
-    get_standict_main = partial(
-        get_standict, lits=lits, coords=coords, train_ix=ix_all, test_ix=ix_all
-    )
-    standict_prior, standict_posterior = (
-        get_standict_main(likelihood=likelihood) for likelihood in (False, True)
-    )
-    standicts_cv = list(
-        get_standict_xv(train_ix=train_ix, test_ix=test_ix)
-        for train_ix, test_ix in splits
-    )
+    lits["literature"] = lits["literature"].astype(int).astype(str)
+    lits["biology"] = lits[biology_cols].apply("|".join, axis=1)
+    lits["ec4_sub"] = lits["ec4"].str.cat(lits["substrate"], sep="|")
+    lits["enz_sub"] = lits["uniprot_id"].str.cat(lits["substrate"], sep="|")
+    lits["org_sub"] = lits["organism"].str.cat(lits["substrate"], sep="|")
+    fcts = biology_cols + [
+        "ec4_sub",
+        "enz_sub",
+        "org_sub",
+        "literature",
+        "biology",
+    ]
+    coords = {}
+    for fct in fcts:
+        lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
+        coords[fct] = pd.factorize(lits[fct])[1].tolist()
+    for coord in ["substrate", "ec4_sub", "enz_sub", "org_sub"]:
+        coords[coord] += [f"unknown {coord}"]
     return PrepareDataOutput(
         name=name,
-        standict_prior=standict_prior,
-        standict_posterior=standict_posterior,
-        standicts_cv=standicts_cv,
-        reports=reports,
-        hmdb_metabolite_concentrations=hmdb_metabolite_concentrations,
+        lits=lits,
         coords=coords,
+        reports=pp.loc[cond],
         dims=DIMS,
-        df=lits,
-        splits=splits,
+        number_of_cv_folds=number_of_cv_folds,
     )

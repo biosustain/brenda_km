@@ -1,8 +1,8 @@
-name = "final-kcat"
-stan_file = "src/stan/final.stan"
-data_dir = "data/prepared/kcat_tenfold"
-# do_not_run = true
-run_cross_validation = true
+name = "sabio-km-blk"
+stan_file = "src/stan/blk.stan"
+data_dir = "data/prepared/sabio_km"
+do_not_run = true
+run_cross_validation = false
 
 [sample_kwargs]
 show_progress = true

@@ -1,8 +1,8 @@
-name = "blk-kcat"
+name = "brenda-km-blk"
 stan_file = "src/stan/blk.stan"
-data_dir = "data/prepared/kcat_tenfold"
-# do_not_run = true
-run_cross_validation = true
+data_dir = "data/prepared/brenda_km"
+do_not_run = true
+run_cross_validation = false
 
 [sample_kwargs]
 show_progress = true

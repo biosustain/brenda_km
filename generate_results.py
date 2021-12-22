@@ -26,22 +26,27 @@ def main():
             dims = json.load(f)
         if not mc.do_not_run:
             run_dir = os.path.join(RESULTS_DIR, mc.name)
-            modes = ["prior", "posterior", "fake"]
+            if not os.path.exists(run_dir):
+                os.mkdir(run_dir)
+            modes = ["posterior", "fake", "prior"]
             for mode in modes:
                 input_json = os.path.join(
                     mc.data_dir, f"stan_input_{mode}.json"
                 )
                 output_dir = os.path.join(run_dir, mode)
+                if not os.path.exists(output_dir):
+                    os.mkdir(output_dir)
                 print(f"\n***Fitting model {mc.name} in {mode} mode...***\n")
-                _, _ = sample(
+                idata = sample(
                     stan_file=mc.stan_file,
                     input_json=input_json,
-                    output_dir=output_dir,
                     coords=coords,
                     dims=dims,
                     sample_kwargs=mc.sample_kwargs,
-                    print_mode=True,
                 )
+                idata_file = os.path.join(output_dir, f"idata.nc")
+                print(f"\n***Writing inference data to {idata_file}***\n")
+                idata.to_netcdf(idata_file)
             if mc.run_cross_validation:
                 splits_dir = os.path.join(mc.data_dir, "splits")
                 if mc.sample_kwargs_cross_validation is None:
@@ -57,15 +62,16 @@ def main():
                         run_dir, "splits", f.split(".")[0]
                     )
                     input_json = os.path.join(splits_dir, f)
-                    _, _ = sample(
+                    idata = sample(
                         stan_file=mc.stan_file,
                         input_json=input_json,
-                        output_dir=output_dir,
                         coords=coords,
                         dims=dims,
                         sample_kwargs=sample_kwargs,
-                        print_mode=False,
                     )
+                    idata_file = os.path.join(output_dir, f"idata.nc")
+                    print(f"\n***Writing inference data to {idata_file}***\n")
+                    idata.to_netcdf(idata_file)
 
 
 if __name__ == "__main__":
