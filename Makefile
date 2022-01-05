@@ -3,6 +3,7 @@
 results:
 	python prepare_data.py
 	python generate_results.py
+	python analyse.py
 
 plots:
 	python analyse.py
