@@ -4,17 +4,21 @@ results:
 	python prepare_data.py
 	python generate_results.py
 
+plots:
+	python analyse.py
+
 clean-stan:
-	$(RM) $(shell find ./src/stan -perm +100 -type f)
+	$(RM) $(shell find ./src/stan -perm +100 -type f) # remove binary files
 	$(RM) ./src/stan/*.hpp
 
 clean-results:
 	$(RM) -r results/runs/*/
 
-clean-raw-data:
-	$(RM) data/raw/*.csv
-
 clean-prepared-data:
-	$(RM) -r $(shell find data/prepared/* -type d -maxdepth 0)
+	$(RM) -r data/prepared/*/
+
+clean-plots:
+	$(RM) results/plots/*.png
+	$(RM) results/plots/*.svg
 
 clean-all: clean-prepared-data clean-stan clean-results
