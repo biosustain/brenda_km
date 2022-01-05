@@ -1,0 +1,370 @@
+#+title: Statistical analysis of kinetic parameter data from online databases
+#+author: Teddy Groves and Areti Tsigkinopoulou
+#+filetags: :work:
+#+startup: overview
+#+cite_export: csl ~/Zotero/styles/ieee.csl
+#+LATEX_HEADER: \usepackage{indentfirst}
+
+#+begin_abstract
+We fit a range of Bayesian regression models to kinetic parameter data from the
+BRENDA and SABIO-RK databases, report the results and provide tools for
+reproducing the results and using them in a systems biology workflow. We
+illustrate the intended use of our results with case studies.
+#+end_abstract
+
+* Notes                                                            :noexport:
+This is a draft of the paper for the [[id:0329A0AE-E75A-4BF5-A8C0-F9669E9EC68F][BRENDA project]] that I am working on with
+Areti.
+
+* Introduction
+The choice of appropriate parameters for biological models has been a recurring
+issue for computational biologists in the recent years. As computational models
+become increasingly prominent in the current research
+[cite:@lopatkinPredictiveBiologyModelling2020;@khoshnawMathematicalModellingCoronavirus2020;@tokicLargescaleKineticMetabolic2020]
+and lead the way to biological breakthroughs, the use of high quality parameter
+values is becoming essential. In view of these developments, there have been
+various efforts to address this issue by employing different
+strategies. Although the most popular approach is the estimation of parameters
+through optimization methods
+[cite:@khodayariGenomescaleEscherichiaColi2016;@saaFormulationConstructionAnalysis2017],
+ensemble modelling strategies are rapidly gaining ground in the field of systems
+biology
+[cite:@tsigkinopoulouRespectfulModelingAddressing2017;@hussainAutomatedParameterEstimation2015;@zhuPredictingSimulationParameters2012;@mourikPredictionUncertaintyAssessment2014]
+along with the development of tools to define informative parameter priors
+[cite:@saaGeneralFrameworkThermodynamically2015;@mukherjeeNetworkInferenceUsing2008]. At
+the same time, machine learning methods have recently been gaining popularity as
+a tool for interpreting the large amount of existing biological data
+[cite:@bakerMechanisticModelsMachine2018;@xuMachineLearningComplex2019;@zitnikMachineLearningIntegrating2019]
+and have also been employed for the prediction of parameter values (mostly Km
+values) in biological models
+[cite:@yanPredictingKmValues2012;@krollDeepLearningAllows2021;@liDeepLearningBased2021].
+
+By taking into the account the existing issues with model parameterisation and
+in an effort to address them, we have previously developed a standardized
+protocol for the definition of appropriate parameter lognormal distributions
+based on information retrieved from different sources and in accordance with the
+modeller’s beliefs about the reliability of each experimental value
+[cite:@tsigkinopoulouDefiningInformativePriors2018]. This protocol was a
+significant step towards making ensemble modelling more accessible and promoting
+interdisciplinary collaborations. However, there were some remaining issues to
+be addressed. Firstly, the protocol should take into account the surrounding
+parameter landscape (phylogenetically related species, enzyme sub-classes etc.)
+in order to avoid having the prior distribution being too narrow or focused only
+on one particular area. Furthermore, it should avoid over-reliance on a limited
+set of experimental reports.
+
+In order to resolve these problems and additionally make the protocol fully
+automated, we devised a novel method for generating appropriate prior
+distributions for kinetic parameters. Using previous work by Liebermeister and
+Klipp as a starting point [cite:@borgerPredictionEnzymeKinetic2006], we
+developed a hierarchical Bayesian regression model in order to perform a
+statistical analysis of parameter reports from the BRENDA
+[cite:@BRENDASOAPAccess] and SABIO-RK
+[cite:@wittigSABIORKDatabaseBiochemical2012] databases. The results of this
+analysis can be used in our existing protocol to rationalise parameter weights,
+or as part of another protocol.  In order to make it easier to access and review
+the information in BRENDA, we also provided an online interface through which
+our model’s results can easily be reviewed and extracted.
+
+* State of the art
+The problem of modelling kinetic parameter data from online databases has
+previously been addressed in several studies.
+
+[cite:@borgerPredictionEnzymeKinetic2006] models logarithmic-scale measurements
+$y_{ijk}$ of a Km value for substrate $i$, ec number $j$ and organism $k$ using
+the following ANOVA-style regression model:
+
+\begin{equation}
+y_ijk \sim N(\mu_i + \alpha_ij + \beta_ik, \sigma)
+\end{equation}
+
+In this expression the term $\mu$ represents substrate-specific effects, whereas
+the terms $\alpha$ and $\beta$ respectively represent substrate-ec number and
+substrate-organism interaction effects. $\sigma$ represents the accuracy of the
+measurement apparatus.
+
+The authors fit this measurement model to a subset of BRENDA data using maximum
+likelihood estimation, obtain out of sample predictions using leave-one-out
+cross validation and investigate patterns in the results.
+
+This approach is limited by inability to incorporate prior information about the
+plausible values of the main effects or their general trends. In addition, the
+analysis produces point estimates: it does not attempt to fully capture the
+available information about Kms. This issue is particularly pertinent for
+systems biologists who need to construct informative prior distributions for
+kinetic models. For these users it is more important to know which possible Km
+values are ruled out by the data in BRENDA than it is to know which make that
+data most likely. Below we show that both of these issues with the approach in
+[19] can be addressed by incorporating a hierarchical Bayesian component.
+
+[cite:@krollDeepLearningAllows2021] and [cite:@liDeepLearningBased2021] predict
+kinetic parameters from BRENDA and other sources by taking into account protein
+and substrate structure information using neural networks. Exploiting this
+information allows for improved out of sample predictive performance compared to
+models that do not use it.
+
+However, this approach does not avoid the issues with lack of prior information
+and inaptness for downstream prior modelling that we highlight above. In
+addition, the need for information about protein structure limits the amount of
+kinetic parameters for which predictions can be obtained. Again taking the point
+of view of a systems biologist attempting to construct informative prior
+distributions, this is a severe problem as coverage is at least as important a
+consideration for this application as precision.
+
+* Method
+** Data fetching
+We fetched data from the SABIO-RK [cite:@wittigSABIORKDatabaseBiochemical2012]
+and BRENDA [cite:@changBRENDAELIXIRCore2021] databases using their publicly
+available APIs. We also fetched a list of all EC numbers from the Expasy
+database [cite:@duvaudExpasySwissBioinformatics2021]. In the project repository,
+see the script ~fetch_data.py~ and the library file ~fetching.py~ for code used
+to fetch data and the directory ~data/raw/~ for the results.
+
+** Data processing
+We made several significant data processing choices. See the library file
+~data_preparation.py~ for code used to implement these choices.
+
+*** Filtering
+For each dataset and kinetic parameter, we removed all reports which failed to
+satisfy any of the following conditions:
+
+- The kinetic parameter value must be a number
+- The literature reference must not be missing
+- The substrate must be catalysed naturally by the enzyme
+- The enzyme must be from a wild organism
+- The temperature, if recorded, must be between 5 and 50 degrees C 
+- The pH, if recorded, must be between 4 and 9
+- The organism must be have data from at least 50 separate study/biology
+  (i.e. organism:substrate:ec4 for BRENDA or organism:substrate:enzyme for
+  SABIO-RK) combinations that satisfy all the other conditions.
+
+*** Grouping
+Instead of modelling reports directly, we chose to group together reports with
+the same biology and study, treating the median log-scale km as a single
+observation. We took this decision because of the presence in both datasets of
+different kinds of study. In some cases - presumably when the aim of a study was
+to discover the sensitivity of a kinetic parameter to changes in conditions -
+many reports with the same enzyme, organism, substrate and study are available,
+with a range of different kinetic parameter values and different experimental
+conditions recorded in the ~commentary~ field. In other cases a study will
+report only a single value for one kinetic parameter.
+
+Due to this discrepancy it seemed wrong to treat reports from better populated
+studies as equivalent to reports from more concise studies. While taking the
+median for a given study/biology combination before modelling destroys
+information, we judged that it would lead to more realistic results than
+treating each report as an observation, especially since we chose not to
+attempt to model the effects of experimental conditions.
+
+** Statistical model
+We used a Bayesian hierarchical regression model to describe all data. Since
+both Km and Kcat parameters are constrained to be positive, we modelled them on
+natural logarithmic scale, using the same approach taken in
+[cite:@borgerPredictionEnzymeKinetic2006]. Our model includes a global mean
+parameter $\mu$, hierarchical substrate-specific intercept parameters $a^{sub}$
+and hierarchical intercept parameters $a^{enz:sub}$, $a^{ec4:sub}$ and
+$a^{org:sub}$ specific to interactions of substrate and enzyme, ec4 number and
+organism respectively. In addition we used a student-T measurement model with
+latent standard deviation and degrees of freedom $\sigma$ and $\nu$.
+
+We chose assigned semi-informative prior distributions based on the
+pre-experimental information. In particular, the prior for the measurement
+distribution degrees of freedom parameter $\nu$ follows the recommendation in
+[cite:@juarezModelBasedClusteringNonGaussian2010] and is truncated below at
+zero, reflecting our view that the measurement distribution should not be
+excessively heavy-tailed.
+
+The full model specification in tilde notation is as follows:
+
+\begin{align*}
+\ln y &\sim ST(\nu,
+               \mu + a^{sub} + a^{enz:sub} + a^{ec4:sub} + a^{org:sub},
+               \sigma) \\
+\nu &\sim \Gamma(2, 0.1)[1, \infty] \\
+\sigma &\sim N(0, 2)[0, \infty] \\
+\mu &\sim N(-2, 1) \\
+a^{sub} &\sim N(0, \tau^{sub}) \\
+a^{enz:sub} &\sim N(0, \tau^{enz:sub}) \\
+a^{ec4:sub} &\sim N(0, \tau^{ec4:sub}) \\
+a^{org:sub} &\sim N(0, \tau^{org:sub}) \\
+\tau^{sub} &\sim N(0, 1) \\
+\tau^{enz:sub} &\sim N(0, 1) \\
+\tau^{ec4:sub} &\sim N(0, 1) \\
+\tau^{org:sub} &\sim N(0, 1) \\
+\end{align*}
+
+This model can be expressed as the following Stan program (see
+[cite:@carpenterStanProbabilisticProgramming2017]):
+
+#+begin_src stan :eval no
+/* Extends the BLK model for more specific data from the SABIO-rk database */
+
+data {
+  int<lower=1> N_train;
+  int<lower=1> N_test;
+  int<lower=1> N_biology;
+  int<lower=1> N_substrate;
+  int<lower=1> N_ec4_sub;
+  int<lower=1> N_enz_sub;
+  int<lower=1> N_org_sub;
+  int<lower=1,upper=N_ec4_sub> ec4_sub[N_biology];
+  int<lower=1,upper=N_enz_sub> enz_sub[N_biology];
+  int<lower=1,upper=N_org_sub> org_sub[N_biology];
+  int<lower=1,upper=N_substrate> substrate[N_biology];
+  array[N_train] int<lower=1,upper=N_biology> biology_train;
+  vector[N_train] y_train;
+  array[N_test] int<lower=1,upper=N_biology> biology_test;
+  vector[N_test] y_test;
+  int<lower=0,upper=1> likelihood;
+}
+parameters {
+  real<lower=1> nu;
+  real mu;
+  real<lower=0> sigma;
+  real<lower=0> tau_substrate;
+  real<lower=0> tau_ec4_sub;
+  real<lower=0> tau_enz_sub;
+  real<lower=0> tau_org_sub;
+  vector<multiplier=tau_substrate>[N_substrate] a_substrate;
+  vector<multiplier=tau_ec4_sub>[N_ec4_sub] a_ec4_sub;
+  vector<multiplier=tau_enz_sub>[N_enz_sub] a_enz_sub;
+  vector<multiplier=tau_org_sub>[N_org_sub] a_org_sub;
+}
+transformed parameters {
+  vector[N_biology] log_km =
+    mu
+    + a_substrate[substrate]
+    + a_ec4_sub[ec4_sub]
+    + a_enz_sub[enz_sub]
+    + a_org_sub[org_sub];
+}
+model {
+  if (likelihood){y_train ~ student_t(nu, log_km[biology_train], sigma);}
+  nu ~ gamma(2, 0.1);
+  sigma ~ normal(0, 2);
+  mu ~ normal(-2, 1);
+  a_substrate ~ normal(0, tau_substrate);
+  a_ec4_sub ~ normal(0, tau_ec4_sub);
+  a_enz_sub ~ normal(0, tau_enz_sub);
+  a_org_sub ~ normal(0, tau_org_sub);
+  tau_org_sub ~ normal(0, 1);
+  tau_ec4_sub ~ normal(0, 1);
+  tau_enz_sub ~ normal(0, 1);
+  tau_substrate ~ normal(0, 1);
+}
+generated quantities {
+  vector[N_test] llik;
+  vector[N_test] yrep;
+  for (n in 1:N_test){
+    llik[n] = student_t_lpdf(y_test[n] | nu, log_km[biology_test[n]], sigma);
+    yrep[n] = student_t_rng(nu, log_km[biology_test[n]], sigma);
+  }
+}
+#+end_src
+
+For the BRENDA data, we used the same model but removed the enzyme-substrate
+interaction parameters as BRENDA does not provide enzyme-specific information.
+
+** Model validation
+We used a number of standard methods to test our models' validity, aiming to
+follow the method described in [cite:@gelmanBayesianWorkflow2020]. To verify the
+computation we used standard MCMC convergence metrics and fit our model to fake
+data. To assess model specification we performed graphical prior and posterior
+predictive checks and both approximate and exact cross validation, using some
+simple test models for comparison.
+
+*** Computation
+For each MCMC run we used arviz [cite:@kumarArviZUnifiedLibrary2019] to
+calculate the improved \hat{R} statistic following the method in
+[cite:@vehtariRankNormalizationFoldingLocalization2021] and to check for
+divergent transitions. If the \hat{R} statistic was sufficiently close to 1
+(i.e. +/- 0.03) and there were no post-warmup divergent transitions we judged
+that the computation was likely to have been successful in the sense that the
+draws can be treated as samples from the target distribution.
+
+To further validate the computation we also fit the model to fake data generated
+using the model assumptions and a plausible configuration of parameters. We used
+graphical posterior predictive checks to assess whether the true parameters were
+approximately recovered in the posterior distribution. See supplementary
+material for graphical posterior predictive checks with fake data.
+
+*** Comparison models
+Ideally we would compare the results of our models with previously published
+attempts to model the same data. However this was not practical in our case for
+two reasons. First, other results are typically derived from different raw
+datasets, and rely on different data filtering and summarising decisions. In
+particular, we have not previously seen the problem of whether and how to
+aggregate results from the same study addressed in detail. Second, the other
+results typically assessed model specification by comparing observed data to
+point predictions generated by their models. Applying this procedure to our
+models would give an incomplete picture, since a single point cannot adequately
+summarise the full posterior predictive distribution. In addition, it would not
+align with the priorities of our intended users, namely systems biologists
+constructing prior distributions for the purpose of ensemble modelling, who we
+imagine care more about the extremes of the distributions than central
+estimates.
+
+Due to this lack, we constructed two simple models purely for comparison with
+our main model. The first model, which we called the "really simple" model,
+removes all latent random variables from the main model's predictor, except for
+the global mean parameter \mu. The second model, which we called the "simple"
+model, includes a single vector of hierarchical parameters at the finest
+available granularity, i.e. organism:substrate:ec4 for BRENDA data and
+organism:substrate:enzyme for SABIO-RK data. See supplemental information for
+full model specifications in the form of tilde notation and Stan programs.
+
+Our thinking was that the really simple model and simple models represent
+relative extremes of underfitting and overfitting. A well-specified model should
+be able to make better predictions than both, unless the data are very
+surprisingly uninformative.
+
+*** Graphical posterior predictive checks
+Figure [[fig:ppckmsabio]] below shows our main model's marginal posterior
+predictive 1%-99% interval for each observation, alongside the observed
+value. Ideally exactly 98% of observations should be covered, and whether or not
+an observation is covered should not be systematically predictable.
+
+#+CAPTION: Marginal posterior predictive distributions for main model fit to SABIO Km data
+#+NAME: fig:ppckmsabio
+[[./results/plots/ppc_km_sabio_enz.png]]
+
+In contrast figure [[fig:ppc_km_sabio_comp]] are graphical posterior predictive checks for the really simple
+and simple models.
+
+#+CAPTION: Marginal posterior predictive distributions for simple and really simple models fit to SABIO Km data
+#+NAME: fig:ppc_km_sabio_comp
+[[./results/plots/ppc_km_sabio_enz_simple.png]]
+
+*** Cross validation
+For a quantitative compliment to the graphical posterior predictive checks, we
+used cross-validation to assess our models' out-of-sample predictive
+performance. For exploratory comparison we calculated each model's approximate
+leave-one-out expected log predictive density using the method set out in
+[cite:@vehtariPracticalBayesianModel2017] and implemented in
+[cite:@kumarArviZUnifiedLibrary2019]. To address cases where diagnostics
+suggested that the approximate leave-one-out algorithm was likely to be
+unreliable we also carried out exact tenfold cross-validation.
+
+The results were as follows:
+
+** Web app
+* Results
+** Marginal distributions of interesting parameters
+** Comparison of estimated Kms with physiological metabolite concentrations
+#+CAPTION: Comparison of model predictions with physiological metabolite concentrations from HMDB
+#+LABEL: hmdb
+[[./results/plots/hmdb_comparison.png]]
+
+** NADH vs NADPH
+
+#+CAPTION: Comparison of modelled and measured Km parameters for NADH and NADPH
+#+LABEL: nadhnadph
+[[./results/plots/nadh_comparison.png]]
+
+** BRENDA vs SABIO-RK
+
+* Case studies
+* Discussion
+* References
+
+#+PRINT_BIBLIOGRAPHY:
