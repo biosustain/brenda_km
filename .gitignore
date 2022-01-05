@@ -10,3 +10,8 @@ brenda_venv
 .DS_Store
 *pycache*
 .venv*
+writing/*
+.#*
+data/prepared/*
+src/stan/*
+!src/stan/*.stan
