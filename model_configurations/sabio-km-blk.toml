@@ -1,8 +1,8 @@
 name = "sabio-km-blk"
 stan_file = "src/stan/blk.stan"
 data_dir = "data/prepared/sabio_km"
-do_not_run = true
-run_cross_validation = false
+do_not_run = false
+run_cross_validation = true
 
 [sample_kwargs]
 show_progress = true

@@ -1,7 +1,7 @@
-name = "sabio-km-enz"
-stan_file = "src/stan/enz.stan"
+name = "sabio-km-simple"
+stan_file = "src/stan/simple.stan"
 data_dir = "data/prepared/sabio_km"
-# do_not_run = true
+do_not_run = false
 run_cross_validation = true
 
 [sample_kwargs]
