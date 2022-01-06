@@ -3,7 +3,10 @@
 import json
 import os
 
+import arviz as az
 import toml
+import xarray
+from xarray.core.dataset import Dataset
 
 from src.model_configuration import ModelConfiguration
 from src.sampling import sample
@@ -33,9 +36,6 @@ def main():
                 input_json = os.path.join(
                     mc.data_dir, f"stan_input_{mode}.json"
                 )
-                output_dir = os.path.join(run_dir, mode)
-                if not os.path.exists(output_dir):
-                    os.mkdir(output_dir)
                 print(f"\n***Fitting model {mc.name} in {mode} mode...***\n")
                 idata = sample(
                     stan_file=mc.stan_file,
@@ -44,13 +44,10 @@ def main():
                     dims=dims,
                     sample_kwargs=mc.sample_kwargs,
                 )
-                idata_file = os.path.join(output_dir, f"idata.nc")
+                idata_file = os.path.join(run_dir, f"{mode}.nc")
                 print(f"\n***Writing inference data to {idata_file}***\n")
                 idata.to_netcdf(idata_file)
             if mc.run_cross_validation:
-                cv_dir = os.path.join(run_dir, "splits")
-                if not os.path.exists(cv_dir):
-                    os.mkdir(cv_dir)
                 if mc.sample_kwargs_cross_validation is None:
                     sample_kwargs = mc.sample_kwargs
                 else:
@@ -58,22 +55,23 @@ def main():
                         **mc.sample_kwargs,
                         **mc.sample_kwargs_cross_validation,
                     }
-
-                for f in sorted(os.listdir(cv_dir)):
-                    output_dir = os.path.join(cv_dir, f.split(".")[0])
-                    if not os.path.exists(output_dir):
-                        os.mkdir(output_dir)
-                    input_json = os.path.join(cv_dir, f)
-                    idata = sample(
+                lliks = []
+                cv_input_dir = os.path.join(mc.data_dir, "stan_inputs_cv")
+                for f in sorted(os.listdir(cv_input_dir)):
+                    input_json_file = os.path.join(cv_input_dir, f)
+                    llik = sample(
                         stan_file=mc.stan_file,
-                        input_json=input_json,
+                        input_json=input_json_file,
                         coords=coords,
                         dims=dims,
                         sample_kwargs=sample_kwargs,
-                    )
-                    idata_file = os.path.join(output_dir, f"idata.nc")
-                    print(f"\n***Writing inference data to {idata_file}***\n")
-                    idata.to_netcdf(idata_file)
+                    ).get("log_likelihood")
+                    lliks.append(llik)
+                full_llik = xarray.concat(lliks, dim="ix_test")
+                cv_idata = az.InferenceData(log_likelihood=full_llik)
+                idata_file = os.path.join(run_dir, "cv.nc")
+                print(f"\n***Writing inference data to {idata_file}***\n")
+                cv_idata.to_netcdf(idata_file)
 
 
 if __name__ == "__main__":

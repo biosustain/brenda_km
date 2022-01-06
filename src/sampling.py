@@ -23,6 +23,8 @@ def sample(
     model = CmdStanModel(stan_file=stan_file)
     with open(input_json, "r") as f:
         stan_input = json.load(f)
+    coords["ix_train"] = [i - 1 for i in stan_input["ix_train"]]
+    coords["ix_test"] = [i - 1 for i in stan_input["ix_test"]]
     mcmc = model.sample(data=stan_input, **sample_kwargs)
     return az.from_cmdstanpy(
         posterior=mcmc,

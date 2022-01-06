@@ -75,10 +75,10 @@ def generate_prepared_data():
     prepare_data_outputs = [brenda_km_data, sabio_km_data]
     for po in prepare_data_outputs:
         output_dir = os.path.join(PREPARED_DIR, po.name)
-        splits_dir = os.path.join(output_dir, "splits")
+        cv_dir = os.path.join(output_dir, "stan_inputs_cv")
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
-            os.mkdir(splits_dir)
+            os.mkdir(cv_dir)
         input_file_prior, input_file_posterior = (
             os.path.join(output_dir, f"stan_input_{s}.json")
             for s in ["prior", "posterior"]
@@ -88,14 +88,12 @@ def generate_prepared_data():
         write_stan_json(input_file_posterior, po.standict_posterior)
         write_stan_json(input_file_prior, po.standict_prior)
         for i, si in enumerate(po.standicts_cv):
-            f = os.path.join(splits_dir, f"split_{str(i)}.json")
+            f = os.path.join(cv_dir, f"split_{str(i)}.json")
             write_stan_json(f, si)
         with open(os.path.join(output_dir, "coords.json"), "w") as f:
             json.dump(po.coords, f)
         with open(os.path.join(output_dir, "dims.json"), "w") as f:
             json.dump(po.dims, f)
-        with open(os.path.join(output_dir, "split_ixs.json"), "w") as f:
-            json.dump([(a.tolist(), b.tolist()) for a, b in po.splits], f)
     return prepare_data_outputs
 
 
@@ -133,8 +131,7 @@ def generate_fake_data(pos: List[PrepareDataOutput]):
             print(f"min {param}:", min(params[param]))
             print(f"max {param}:", max(params[param]))
         input_fake = input_orig.copy()
-        input_fake["y_train"] = generated_y
-        input_fake["y_test"] = generated_y
+        input_fake["y"] = generated_y
         write_stan_json(fake_input_file, input_fake)
         write_stan_json(fake_param_file, params)
 

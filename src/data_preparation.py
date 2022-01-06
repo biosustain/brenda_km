@@ -3,7 +3,7 @@
 import os
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Any, Dict, Iterable, List, Tuple, Union
+from typing import Any, Dict, List, Union
 
 import numpy as np
 import pandas as pd
@@ -32,6 +32,8 @@ DIMS = {
     "a_enz_sub": ["enz_sub"],
     "a_org_sub": ["org_sub"],
     "log_km": ["biology"],
+    "llik": ["ix_test"],
+    "yrep": ["ix_test"],
 }
 
 THIS_FILE = os.path.dirname(os.path.abspath(__file__))
@@ -52,13 +54,16 @@ class PrepareDataOutput:
     standict_prior: StanDict = field(init=False)
     standict_posterior: StanDict = field(init=False)
     standicts_cv: List[StanDict] = field(init=False)
-    splits: Iterable[Tuple] = field(init=False)
 
     def __post_init__(self):
-        ix_all = range(len(self.lits))
-        self.splits = list(
-            KFold(self.number_of_cv_folds, shuffle=True).split(self.lits)
-        )
+        ix_all = list(range(len(self.lits)))
+        splits = []
+        for train, test in KFold(self.number_of_cv_folds, shuffle=True).split(
+            self.lits
+        ):
+            assert isinstance(train, np.ndarray)
+            assert isinstance(test, np.ndarray)
+            splits.append([list(train), list(test)])
         get_standict_xv = partial(
             get_standict, lits=self.lits, coords=self.coords, likelihood=True
         )
@@ -73,10 +78,10 @@ class PrepareDataOutput:
             get_standict_main(likelihood=likelihood)
             for likelihood in (False, True)
         )
-        self.standicts_cv = list(
+        self.standicts_cv = [
             get_standict_xv(train_ix=train_ix, test_ix=test_ix)
-            for train_ix, test_ix in self.splits
-        )
+            for train_ix, test_ix in splits
+        ]
 
 
 def replace_nulls_with_empty_set(s: pd.Series) -> pd.Series:
@@ -245,10 +250,12 @@ def get_standict(
             "org_sub": lits.groupby("biology")["org_sub_stan"].first(),
             "N_train": len(train_ix),
             "N_test": len(test_ix),
+            "N": len(list(set(train_ix + test_ix))),
             "biology_train": lits.loc[train_ix, "biology_stan"],
             "biology_test": lits.loc[test_ix, "biology_stan"],
-            "y_train": lits.loc[train_ix, "y"],
-            "y_test": lits.loc[test_ix, "y"],
+            "ix_train": [i + 1 for i in train_ix],
+            "ix_test": [i + 1 for i in test_ix],
+            "y": lits["y"],
             "likelihood": int(likelihood),
         }
     )
