@@ -48,7 +48,9 @@ def main():
                 print(f"\n***Writing inference data to {idata_file}***\n")
                 idata.to_netcdf(idata_file)
             if mc.run_cross_validation:
-                splits_dir = os.path.join(mc.data_dir, "splits")
+                cv_dir = os.path.join(run_dir, "splits")
+                if not os.path.exists(cv_dir):
+                    os.mkdir(cv_dir)
                 if mc.sample_kwargs_cross_validation is None:
                     sample_kwargs = mc.sample_kwargs
                 else:
@@ -57,11 +59,11 @@ def main():
                         **mc.sample_kwargs_cross_validation,
                     }
 
-                for f in sorted(os.listdir(splits_dir)):
-                    output_dir = os.path.join(
-                        run_dir, "splits", f.split(".")[0]
-                    )
-                    input_json = os.path.join(splits_dir, f)
+                for f in sorted(os.listdir(cv_dir)):
+                    output_dir = os.path.join(cv_dir, f.split(".")[0])
+                    if not os.path.exists(output_dir):
+                        os.mkdir(output_dir)
+                    input_json = os.path.join(cv_dir, f)
                     idata = sample(
                         stan_file=mc.stan_file,
                         input_json=input_json,
