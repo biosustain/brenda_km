@@ -1,4 +1,4 @@
-"""Read the data in RAW_DATA_DIR and save prepared data to PREPARED_DATA_DIR."""
+"""Read the data in RAW_DIR and save prepared data to PREPARED_DIR."""
 
 import json
 import os

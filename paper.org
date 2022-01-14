@@ -318,6 +318,12 @@ relative extremes of underfitting and overfitting. A well-specified model should
 be able to make better predictions than both, unless the data are very
 surprisingly uninformative.
 
+In addition to these comparison models, we also compared our final model with a
+Bayesian version of the model in [cite:@borgerPredictionEnzymeKinetic2006],
+which we obtained simply by removing the parameters $a^{enz:sub}$ and
+$\tau^{enz:sub}$ from our final model. We included this extra test in order to
+verify whether including enzyme-specific parameters was worthwhile.
+
 *** Graphical posterior predictive checks
 Figure [[fig:ppckmsabio]] below shows our main model's marginal posterior
 predictive 1%-99% interval for each observation, alongside the observed
@@ -350,18 +356,91 @@ The results were as follows:
 ** Web app
 * Results
 ** Marginal distributions of interesting parameters
+We begin by looking at the marginal distributions of the model's standard
+deviation parameters. Comparing these indicates which effects varied the
+most. The comparison in figure [[fig:taus]] shows that the most important
+hierarchical parameter is the substrate effect, followed by the ec4/substrate
+interaction, the enzyme/substrate interaction and finally the organism/substrate
+interaction. The three larger taus are all clearly greater than the estimated
+measurement error ~sigma~, whereas there is overlap between the marginal
+distributions for ~sigma~ and ~tau_org_sub~.
+
+#+CAPTION: Comparison of hierarchical standard deviation parameters
+#+LABEL: fig:taus
+[[./results/plots/sd_posteriors.png]]
+
 ** Comparison of estimated Kms with physiological metabolite concentrations
+Several sources suggest that the Km parameter for a particular organism,
+substrate and enzyme should have the same order of magnitude as the typical
+physiological concentration of that substrate. [ANOTHER REFERENCE HERE?] For example
+[cite:@borgerPredictionEnzymeKinetic2006] write
+
+#+begin_quote
+...we may hypothesize that KM values are adjusted to the order of magnitude of
+the substrate concentration. If this is the case and if a metabolite exhibits a
+particularly high concentration in a certain organism, then all corresponding KM
+values should also tend to be increased.
+#+end_quote
+
+In order to test whether this is the case, we obtained data about some
+physiological metabolite concentrations and compared these with the
+corresponding Km measurements and marginal posterior distributions from our
+model. Figure [[fig:hmdb]] shows the results.
+
 #+CAPTION: Comparison of model predictions with physiological metabolite concentrations from HMDB
-#+LABEL: hmdb
+#+LABEL: fig:hmdb
 [[./results/plots/hmdb_comparison.png]]
+
+From the graph it is clear that the first part of the hypothesis is correct, at
+least for the metabolites for which we were able to obtain both physiological
+concentrations and Km measurements: both are generally in the same order of
+magnitude. However, while enzymes with higher physiological concentrations tend
+to have higher Km values, this relationship is fairly weak.
+
+This is reflected in our model's marginal posterior distribution for the
+parameter $\tau^{org:sub}$, which concentrates closer to zero than any of the
+other hierarchical standard deviation parameters [CHECK THIS IS TRUE], as can be
+seen in figure [[fig:taus]]
 
 ** NADH vs NADPH
 
+[What is the expected result??]
+
+Figure [[fig:nadh]] shows histograms of measured Km parameters from the SABIO-RK
+dataset for NADH and NADPH binding enzymes alongside histograms of our final
+model's posterior samples for these parameters. We can see that the measurements
+for NADPH tended to be higher, and this difference is also present in the posterior
+distributions.
+
 #+CAPTION: Comparison of modelled and measured Km parameters for NADH and NADPH
-#+LABEL: nadhnadph
-[[./results/plots/nadh_comparison.png]]
+#+LABEL: fig:nadh
+[[./results/plots/nadh.png]]
 
 ** BRENDA vs SABIO-RK
+
+Another use for our analysis is to compare the information in the two databases.
+
+It was not clear in advance which would be more useful. On the one hand, the
+SABIO-RK data provides more specific information about the measured enzyme -
+UNIPROT ids are available for most Km measurements. BRENDA provides only the EC4
+number, which is much less specific. On the other hand, experimental conditions
+like temperature and pH are available for BRENDA measurements but not, to our
+knowledge, from the SABIO-RK database. Both of these factors could affect the
+model performance - more specific information could lead to better predictions,
+whereas missing temperature and pH information could lead to bias due to
+anomalous data not being excluded.
+
+Dirctly comparing the results for BRENDA and SABIO-RK is tricky, however,
+because the two databases use different, not necessarily compatible labelling
+strategies.
+
+Figure [[fig:brenda_sabio_comparison]] compares the marginal distributions of km
+parameters from our best SABIO-RK and BRENDA models, in order to try and
+determine which provides more information.
+
+#+CAPTION: Comparison of measured and modelled Km parameter distributions in BRENDA and SABIO-RK
+#+LABEL: fig:brenda_sabio_comparison
+[[./results/plots/log_km_comparison.png]]
 
 * Case studies
 * Discussion
