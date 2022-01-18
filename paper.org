@@ -418,17 +418,18 @@ distributions.
 
 ** BRENDA vs SABIO-RK
 
-Another use for our analysis is to compare the information in the two databases.
-
-It was not clear in advance which would be more useful. On the one hand, the
-SABIO-RK data provides more specific information about the measured enzyme -
-UNIPROT ids are available for most Km measurements. BRENDA provides only the EC4
-number, which is much less specific. On the other hand, experimental conditions
-like temperature and pH are available for BRENDA measurements but not, to our
-knowledge, from the SABIO-RK database. Both of these factors could affect the
-model performance - more specific information could lead to better predictions,
-whereas missing temperature and pH information could lead to bias due to
-anomalous data not being excluded.
+It was not clear in advance which dataset - SABIO-RK or BRENDA - would yield
+more useful results for our intended usecase. On the one hand, the SABIO-RK data
+provides more specific information about the measured enzyme - UNIPROT ids are
+available for most Km measurements. BRENDA provides only the EC4 number, which
+is much less specific. On the other hand, experimental conditions like
+temperature and pH are available for BRENDA measurements but not, to our
+knowledge, from the SABIO-RK database. In addition, at the time of writing there
+are more reports in the BRENDA dataset: [EXACT NUMBERS HERE]. All of these
+factors could affect the model performance - more specific information could
+lead to better predictions; missing temperature and pH information could lead to
+bias due to anomalous data not being excluded; a larger dataset will in general
+tend to be more informative.
 
 Dirctly comparing the results for BRENDA and SABIO-RK is tricky, however,
 because the two databases use different, not necessarily compatible labelling
