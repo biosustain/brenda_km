@@ -28,6 +28,8 @@ SABIO_FIELDS = [
     "Parameter",
 ]
 SABIO_PARAMETER_TYPES = ["Km", "kcat"]
+SABIO_TEMPERATURE_RANGE = "[15 TO 45]"
+SABIO_PH_RANGE = "[5 TO 9]"
 
 
 def fetch_expasy_ec_numbers() -> List[str]:
@@ -113,14 +115,22 @@ def fetch_brenda_reports(
 
 
 def fetch_sabio_data_for_ec_number(ec_number: str) -> pd.DataFrame:
-    query = {"fields[]": SABIO_FIELDS, "q": f"ECNumber:{ec_number}"}
+    query_string = (
+        f"ECNumber:{ec_number}"
+        f" AND TemperatureRange:{SABIO_TEMPERATURE_RANGE}"
+        f" AND pHValueRange:{SABIO_PH_RANGE}"
+    )
+    query = {"fields[]": SABIO_FIELDS, "q": query_string}
     request = requests.post(SABIO_URL, params=query)
     request.raise_for_status()  # raise if 404 error
-    return (
+    out = (
         pd.read_csv(StringIO(request.text), sep="\t")
         .loc[lambda df: df["parameter.type"].isin(SABIO_PARAMETER_TYPES)]
         .copy()
     )
+    if len(out) == 0:
+        out = pd.DataFrame({"ECNumber": [ec_number]})
+    return out
 
 
 def fetch_sabio_reports(ec_numbers) -> pd.DataFrame:

@@ -12,13 +12,14 @@ from time import sleep
 from typing import List
 
 import pandas as pd
+from tqdm.std import tqdm
 
 from src.fetching import (
     fetch_brenda_natural_substrates,
     fetch_brenda_reports,
     fetch_expasy_ec_numbers,
     fetch_hmdb_metabolite_concentrations,
-    fetch_sabio_reports,
+    fetch_sabio_data_for_ec_number,
 )
 
 OUTPUT_FILEPATHS = {
@@ -93,15 +94,26 @@ def main():
         km.to_csv(fpath)
         print(f"Saved {len(km)} kms to {fpath}")
 
-    if not os.path.exists(OUTPUT_FILEPATHS["sabio_reports"]):
-        fpath = OUTPUT_FILEPATHS["sabio_reports"]
-        print("Fetching SABIO reports...")
+    print("Fetching SABIO reports...")
+    fpath_sabio = OUTPUT_FILEPATHS["sabio_reports"]
+    try:
+        sabio = pd.read_csv(fpath_sabio, index_col=0)
+        saved_ecs = list(sabio["ECNumber"].unique())
+        print(f"Found {len(sabio)} existing SABIO reports...")
+    except FileNotFoundError:
         sabio = pd.DataFrame([])
-        for chunk in split_list_into_chunks(ec_numbers, SABIO_CHUNKSIZE):
-            chunk_df = fetch_sabio_reports(chunk)
-            sabio = pd.concat([sabio, chunk_df], ignore_index=True)
-        sabio.to_csv(fpath)
-        print(f"Saved {len(sabio)} sabio reports to {fpath}")
+        saved_ecs = []
+        print("Found no existing SABIO reports...")
+    ec_numbers_to_fetch = [ec for ec in ec_numbers if ec not in saved_ecs]
+    pbar = tqdm(ec_numbers_to_fetch)
+    for ec_number in pbar:
+        pbar.set_description(f"Fetching data for EC {ec_number}")
+        ec_df = fetch_sabio_data_for_ec_number(ec_number)
+        sabio = pd.concat([sabio, ec_df], ignore_index=True)
+        sabio.to_csv(fpath_sabio)
+        sleep(0.2)
+    n_sabio = sabio["parameter.startValue"].notnull().sum()
+    print(f"Saved {n_sabio} sabio reports to {fpath_sabio}")
 
     if not os.path.exists(OUTPUT_FILEPATHS["hmdb_metabolite_concentrations"]):
         fpath = OUTPUT_FILEPATHS["hmdb_metabolite_concentrations"]
