@@ -112,8 +112,8 @@ def main():
         sabio = pd.concat([sabio, ec_df], ignore_index=True)
         sabio.to_csv(fpath_sabio)
         sleep(0.2)
-    n_sabio = sabio["parameter.startValue"].notnull().sum()
-    print(f"Saved {n_sabio} sabio reports to {fpath_sabio}")
+    sabio.to_csv(fpath_sabio)
+    print(f"Saved {len(sabio)} sabio reports to {fpath_sabio}")
 
     if not os.path.exists(OUTPUT_FILEPATHS["hmdb_metabolite_concentrations"]):
         fpath = OUTPUT_FILEPATHS["hmdb_metabolite_concentrations"]

@@ -416,28 +416,55 @@ distributions.
 #+LABEL: fig:nadh
 [[./results/plots/nadh.png]]
 
-** BRENDA vs SABIO-RK
+** Which dataset to use?
 
-It was not clear in advance which dataset - SABIO-RK or BRENDA - would yield
-more useful results for our intended usecase. On the one hand, the SABIO-RK data
-provides more specific information about the measured enzyme - UNIPROT ids are
-available for most Km measurements. BRENDA provides only the EC4 number, which
-is much less specific. On the other hand, experimental conditions like
-temperature and pH are available for BRENDA measurements but not, to our
-knowledge, from the SABIO-RK database. In addition, at the time of writing there
-are more reports in the BRENDA dataset: [EXACT NUMBERS HERE]. All of these
-factors could affect the model performance - more specific information could
-lead to better predictions; missing temperature and pH information could lead to
-bias due to anomalous data not being excluded; a larger dataset will in general
-tend to be more informative.
+Our results make it possible to compare the SABIO-RK and BRENDA datasets,
+allowing practitioners to make more informed modelling decisions.
 
-Dirctly comparing the results for BRENDA and SABIO-RK is tricky, however,
-because the two databases use different, not necessarily compatible labelling
-strategies.
+The SABIO-RK dataset provides more specific information than the BRENDA
+datase. UNIPROT ids are available for most Km measurements, whereas the most
+specific enzyme-level information in the BRENDA dataset is the EC4 number. In
+addition, in contrast to BRENDA, the SABIO-RK dataset provides information about
+temperature, substrate, literature reference, enzyme, pH and strain type in
+interoperable formats and without the need for potentially error-prone string
+operations.
+
+As a result of this extra information, the model fit to the SABIO-RK data is
+more specific, allowing modellers to obtain priors that reflect measurements of
+the exact enzyme they wish to model while still appropriately taking into
+account measurements of related enyzmes. In addition, the SABIO model excludes
+some sources of bias, such as reports from non-wildtype strains and atypical
+conditions that are not accounted for in the BRENDA model.
+
+The SABIO dataset is worse than the BRENDA dataset in one respect, however: at
+the time of writing there are far more reports in the BRENDA dataset. [EXACT
+NUMBERS HERE]. The model fit to the BRENDA dataset is therefore able to take
+into account more information than is available to the SABIO-RK model.
+
+There are therefore potentially conflicting factors to take into account when
+deciding which dataset to use in a given case. SABIO should be favoured in cases
+where it provides a lot of information for a given parameter or conversely when
+the information in BRENDA is too coarse or likely to be biased. In other cases
+BRENDA is likely preferable.
+
+Our results make it easier to assess which of these two scenarios apply. The
+information available for a given km is captured by the marginal posterior
+distribution for that parameter - if the marginal posterior distribution for a
+parameter in the SABIO model is very narrow, this means that the SABIO dataset
+contains a lot of information about that parameter. In order to assess the
+liklihood of the BRENDA dataset being too coarse for a parameter whose enzyme
+shares an EC number, the marginal prior distributions of the common parameters
+can be compared. If they are very different, it is likely better to use the more
+specific SABIO results. Finally, in order to assess the likelihood of bias in
+the BRENDA data, our webapp provides links to the source documents for any
+parameter measurement.
 
 Figure [[fig:brenda_sabio_comparison]] compares the marginal distributions of km
-parameters from our best SABIO-RK and BRENDA models, in order to try and
-determine which provides more information.
+parameters from our best SABIO-RK and BRENDA models. Clearly there is a general
+tendency for the BRENDA kms to be higher than the SABIO kms, reflecting the fact
+that the SABIO dataset was curated to exclude non-wildtype measurements. The
+marginal posterior distributions in the BRENDA model tend to be narrower,
+reflecting the larger input dataset.
 
 #+CAPTION: Comparison of measured and modelled Km parameter distributions in BRENDA and SABIO-RK
 #+LABEL: fig:brenda_sabio_comparison

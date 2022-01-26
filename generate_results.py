@@ -6,7 +6,6 @@ import os
 import arviz as az
 import toml
 import xarray
-from xarray.core.dataset import Dataset
 
 from src.model_configuration import ModelConfiguration
 from src.sampling import sample
@@ -31,7 +30,8 @@ def main():
             run_dir = os.path.join(RESULTS_DIR, mc.name)
             if not os.path.exists(run_dir):
                 os.mkdir(run_dir)
-            modes = ["posterior", "fake", "prior"]
+            modes = ["posterior"]
+            # modes = ["posterior", "fake", "prior"]
             for mode in modes:
                 input_json = os.path.join(
                     mc.data_dir, f"stan_input_{mode}.json"
@@ -43,6 +43,7 @@ def main():
                     coords=coords,
                     dims=dims,
                     sample_kwargs=mc.sample_kwargs,
+                    diagnose=True,
                 )
                 idata_file = os.path.join(run_dir, f"{mode}.nc")
                 print(f"\n***Writing inference data to {idata_file}***\n")
@@ -65,6 +66,7 @@ def main():
                         coords=coords,
                         dims=dims,
                         sample_kwargs=sample_kwargs,
+                        diagnose=False,
                     ).get("log_likelihood")
                     lliks.append(llik)
                 full_llik = xarray.concat(lliks, dim="ix_test")

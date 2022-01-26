@@ -60,40 +60,45 @@ def plot_nadh_comparison(posterior: Dataset, lits: pd.DataFrame) -> Figure:
 
 
 def plot_log_km_comparison(
-    posterior_sabio: Dataset,
-    posterior_brenda: Dataset,
-    lits_sabio: pd.DataFrame,
-    lits_brenda: pd.DataFrame,
+    posterior_sabio: Dataset, posterior_brenda: Dataset
 ) -> Figure:
     posteriors = posterior_sabio, posterior_brenda
-    datasets = lits_sabio, lits_brenda
-    titles = ["SABIO-RK", "BRENDA"]
-    f, axes = plt.subplots(1, 2, figsize=[15, 5], sharey=True)
+    names = ["SABIO-RK", "BRENDA"]
+    colors = ["tab:blue", "tab:orange"]
+    f, axes = plt.subplots(1, 2, figsize=[15, 5])
     axes = axes.ravel()
-    for posterior, df, ax, title in zip(posteriors, datasets, axes, titles):
+    bins = np.linspace(0, 20, 50)
+    xlow, xhigh = axes[1].get_xlim()
+    for posterior, name, color in zip(posteriors, names, colors):
         qs = (
             posterior["log_km"]
             .quantile([0.01, 0.5, 0.99], dim=["chain", "draw"])
             .to_series()
             .unstack("quantile")
             .rename(columns={0.01: "low", 0.5: "med", 0.99: "high"})
+            .assign(width=lambda df: df["high"].subtract(df["low"]))
             .sort_values("med")
         )
-        xlow, xhigh = ax.get_xlim()
+        axes[0].hist(
+            qs["width"], bins=bins, label=name, density=True, alpha=0.6
+        )
         x = np.linspace(xlow, xhigh, len(qs))
-        df_x = pd.Series(x, index=qs.index).reindex(df["biology"])
-        ax.vlines(
+        axes[1].vlines(
             x,
             qs["low"],
             qs["high"],
-            color="tab:blue",
+            color=color,
             zorder=0,
-            label="1%-99% posterior interval",
+            label=name,
+            linewidths=0.05,
         )
-        # ax.scatter(df_x, df["y"], color="black", s=5, label="Measured value")
-        ax.set_title(title)
-        ax.set_xticks([])
-        ax.set_ylabel("Km value, $\ln$ scale")
-        ax.legend(frameon=False)
+    axes[0].set_title(
+        "Histograms of 1%-99% $\ln$ scale marginal Km distribution widths"
+    )
+    axes[1].set_title("1%-99% $\ln$ scale marginal Km distributions")
+    axes[1].set_xticks([])
+    axes[1].set_ylabel("Km value, $\ln$ scale")
+    axes[0].legend(frameon=False)
+    axes[1].legend(frameon=False)
     plt.tight_layout()
     return f

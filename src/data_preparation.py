@@ -1,9 +1,8 @@
 """Provides functions prepare_data_x and dataclass PrepareDataOutput."""
 
-import os
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Any, Dict, List, Union
+from typing import Any, Callable, Dict, List, Union
 
 import numpy as np
 import pandas as pd
@@ -35,8 +34,8 @@ DIMS = {
     "llik": ["ix_test"],
     "yrep": ["ix_test"],
 }
-
-THIS_FILE = os.path.dirname(os.path.abspath(__file__))
+TEMPERATURE_RANGE = 10.0, 45.0
+PH_RANGE = 5.0, 9.0
 
 # types
 StanDict = Dict[str, Union[float, int, List[float], List[int]]]
@@ -51,6 +50,7 @@ class PrepareDataOutput:
     lits: pd.DataFrame
     dims: Dict[str, Any]
     number_of_cv_folds: int
+    standict_function: Callable
     standict_prior: StanDict = field(init=False)
     standict_posterior: StanDict = field(init=False)
     standicts_cv: List[StanDict] = field(init=False)
@@ -65,10 +65,13 @@ class PrepareDataOutput:
             assert isinstance(test, np.ndarray)
             splits.append([list(train), list(test)])
         get_standict_xv = partial(
-            get_standict, lits=self.lits, coords=self.coords, likelihood=True
+            self.standict_function,
+            lits=self.lits,
+            coords=self.coords,
+            likelihood=True,
         )
         get_standict_main = partial(
-            get_standict,
+            self.standict_function,
             lits=self.lits,
             coords=self.coords,
             train_ix=ix_all,
@@ -82,11 +85,6 @@ class PrepareDataOutput:
             get_standict_xv(train_ix=train_ix, test_ix=test_ix)
             for train_ix, test_ix in splits
         ]
-
-
-def replace_nulls_with_empty_set(s: pd.Series) -> pd.Series:
-    """Work around not being able to pass sets to pd.Series.fillna."""
-    return pd.Series(np.where(s.notnull(), s, frozenset()), index=s.index)
 
 
 def process_temperature_column(t: pd.Series) -> pd.Series:
@@ -114,12 +112,16 @@ def correct_brenda_dtypes(r: pd.DataFrame):
 
 
 def get_natural_ligands_col(r: pd.DataFrame, nat: pd.DataFrame):
-    return r.join(
-        nat.groupby(["ecNumber", "organism"])["ligandStructureId"].apply(
-            frozenset
-        ),
-        on=["ec4", "organism"],
-    )["ligandStructureId"].pipe(replace_nulls_with_empty_set)
+    return (
+        r.join(
+            nat.groupby(["ecNumber", "organism"])["ligandStructureId"].apply(
+                frozenset
+            ),
+            on=["ec4", "organism"],
+        )["ligandStructureId"]
+        # next line doesn't use Series.fillna because it doesn't accept sets
+        .where(lambda s: s.notnull(), other=frozenset())
+    )
 
 
 def correct_brenda_colnames(raw: pd.DataFrame) -> pd.DataFrame:
@@ -188,13 +190,17 @@ def prepare_data_brenda_km(
         & reports["km"].notnull()
         & reports["km"].ge(0)
         & ~reports["ligand_structure_id"].eq(0)
-        & ~reports["temperature"].ge(50)
-        & ~reports["temperature"].le(5)
-        & ~reports["ph"].ge(9)
-        & ~reports["ph"].le(4)
+        & (
+            reports["temperature"].isnull()
+            | reports["temperature"].astype(float).between(*TEMPERATURE_RANGE)
+        )
+        & (
+            reports["ph"].isnull()
+            | reports["ph"].astype(float).between(*PH_RANGE)
+        )
         & reports["is_natural"]
     )
-    reports["y"] = np.log(reports["km"])
+    reports["y"] = np.log(reports["km"].values)
     lits = (
         reports.loc[cond]
         .groupby(lit_cols)["y"]
@@ -221,10 +227,11 @@ def prepare_data_brenda_km(
         reports=reports,
         dims=DIMS,
         number_of_cv_folds=number_of_cv_folds,
+        standict_function=get_standict_brenda,
     )
 
 
-def get_standict(
+def get_standict_brenda(
     lits: pd.DataFrame,
     coords: CoordDict,
     likelihood: bool,
@@ -239,7 +246,7 @@ def get_standict(
     :param: train_ix: List of indexes of training lits
     :param: test_ix: List of indexes of test lits
     """
-    out = listify_dict(
+    return listify_dict(
         {
             "N_biology": lits["biology"].nunique(),
             "N_substrate": len(coords["substrate"]),
@@ -259,17 +266,45 @@ def get_standict(
             "likelihood": int(likelihood),
         }
     )
-    if "enz_sub" in coords.keys():
-        out = {
-            **out,
-            **listify_dict(
-                {
-                    "N_enz_sub": len(coords["enz_sub"]),
-                    "enz_sub": lits.groupby("biology")["enz_sub_stan"].first(),
-                }
-            ),
+
+
+def get_standict_sabio(
+    lits: pd.DataFrame,
+    coords: CoordDict,
+    likelihood: bool,
+    train_ix: List[int],
+    test_ix: List[int],
+) -> StanDict:
+    """Get a Stan input
+
+    :param lits: Dataframe of lits
+    :param coords: Dictionary of coordinates
+    :param likelihood: Whether or not to run in likelihood mode
+    :param: train_ix: List of indexes of training lits
+    :param: test_ix: List of indexes of test lits
+    """
+    return listify_dict(
+        {
+            "N_biology": lits["biology"].nunique(),
+            "N_substrate": len(coords["substrate"]),
+            "N_ec4_sub": len(coords["ec4_sub"]),
+            "N_org_sub": len(coords["org_sub"]),
+            "N_enz_sub": len(coords["enz_sub"]),
+            "substrate": lits.groupby("biology")["substrate_stan"].first(),
+            "ec4_sub": lits.groupby("biology")["ec4_sub_stan"].first(),
+            "org_sub": lits.groupby("biology")["org_sub_stan"].first(),
+            "enz_sub": lits.groupby("biology")["enz_sub_stan"].first(),
+            "N_train": len(train_ix),
+            "N_test": len(test_ix),
+            "N": len(list(set(train_ix + test_ix))),
+            "biology_train": lits.loc[train_ix, "biology_stan"],
+            "biology_test": lits.loc[test_ix, "biology_stan"],
+            "ix_train": [i + 1 for i in train_ix],
+            "ix_test": [i + 1 for i in test_ix],
+            "y": lits["y"],
+            "likelihood": int(likelihood),
         }
-    return out
+    )
 
 
 def listify_dict(d: Dict) -> StanDict:
@@ -312,8 +347,12 @@ def _contains(s1: pd.Series, s2: pd.Series) -> pd.Series:
     return pd.Series([t in v for t, v in zip(s2, s1)])
 
 
-def preprocess_sabio(raw: pd.DataFrame) -> pd.DataFrame:
-    return raw.rename(
+def prepare_data_sabio_km(
+    name: str,
+    raw_reports: pd.DataFrame,
+    number_of_cv_folds: int = 10,
+) -> PrepareDataOutput:
+    pp = raw_reports.rename(
         columns={
             "Substrate": "natural_substrates",
             "EnzymeType": "enzyme_type",
@@ -327,47 +366,50 @@ def preprocess_sabio(raw: pd.DataFrame) -> pd.DataFrame:
             "parameter.endValue": "end_value",
             "parameter.standardDeviation": "sd",
             "parameter.unit": "unit",
+            "Temperature": "temperature",
+            "pH": "ph",
         }
-    ).assign(
-        value=lambda df: df[["start_value", "end_value"]].mean(axis=1),
-        y=lambda df: np.log(df["value"]),
-    )
-
-
-def prepare_data_sabio_km(
-    name: str,
-    raw_reports: pd.DataFrame,
-    number_of_cv_folds: int = 10,
-) -> PrepareDataOutput:
-    pp = preprocess_sabio(raw_reports)
-    biology_cols = ["organism", "uniprot_id", "substrate"]
+    ).replace("-", np.nan)
+    biology_cols = ["organism", "ec4", "uniprot_id", "substrate"]
     lit_cols = biology_cols + ["literature"]
     cond = (
         pp["parameter_type"].eq("Km")
         & pp["enzyme_type"].str.contains("wildtype")
-        & pp["value"].notnull()
+        & pp["start_value"].notnull()
+        & pp["start_value"].gt(0)
+        & (
+            pp["temperature"].isnull()
+            | pp["temperature"].astype(float).between(*TEMPERATURE_RANGE)
+        )
+        & (pp["ph"].isnull() | pp["ph"].astype(float).between(*PH_RANGE))
         & pp["literature"].notnull()
         & _contains(
             pp["natural_substrates"].fillna(""), pp["substrate"].fillna("")
         )
     )
+    reports = pp.loc[cond].copy()
+    reports["y"] = np.log(reports[["start_value", "end_value"]]).mean(axis=1)
     lits = (
-        pp.loc[cond]
-        .groupby(lit_cols)
-        .agg({"y": "median", "ec4": "first"})
+        reports.loc[cond]
+        .groupby(lit_cols, dropna=False)
+        .agg({"y": "median"})
         .reset_index()
         .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
         .reset_index()
     )
     lits["literature"] = lits["literature"].astype(int).astype(str)
-    lits["biology"] = lits[biology_cols].apply("|".join, axis=1)
+    lits["biology"] = lits[biology_cols].fillna("").apply("|".join, axis=1)
     lits["ec4_sub"] = lits["ec4"].str.cat(lits["substrate"], sep="|")
-    lits["enz_sub"] = lits["uniprot_id"].str.cat(lits["substrate"], sep="|")
+    lits["enz_sub"] = np.where(
+        lits["uniprot_id"].notnull(),
+        lits["uniprot_id"].str.cat(lits["substrate"], sep="|"),
+        np.nan,
+    )
     lits["org_sub"] = lits["organism"].str.cat(lits["substrate"], sep="|")
     fcts = biology_cols + [
         "ec4_sub",
-        "enz_sub",
         "org_sub",
+        "enz_sub",
         "literature",
         "biology",
     ]
@@ -381,7 +423,8 @@ def prepare_data_sabio_km(
         name=name,
         lits=lits,
         coords=coords,
-        reports=pp.loc[cond],
+        reports=reports,
         dims=DIMS,
         number_of_cv_folds=number_of_cv_folds,
+        standict_function=get_standict_sabio,
     )

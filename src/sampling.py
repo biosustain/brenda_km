@@ -17,6 +17,7 @@ def sample(
     input_json: str,
     coords: dict,
     dims: dict,
+    diagnose: bool,
     sample_kwargs: dict,
 ) -> InferenceData:
     """Run cmdstanpy.CmdStanModel.sample and return an InferenceData."""
@@ -26,6 +27,8 @@ def sample(
     coords["ix_train"] = [i - 1 for i in stan_input["ix_train"]]
     coords["ix_test"] = [i - 1 for i in stan_input["ix_test"]]
     mcmc = model.sample(data=stan_input, **sample_kwargs)
+    if diagnose:
+        print(mcmc.diagnose())
     return az.from_cmdstanpy(
         posterior=mcmc,
         log_likelihood="llik",

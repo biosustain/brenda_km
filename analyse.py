@@ -3,10 +3,7 @@
 import os
 
 import arviz as az
-import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
-from matplotlib import ticker
 from xarray.core.dataset import Dataset
 
 from prepare_data import PREPARED_DIR as PD
@@ -19,7 +16,6 @@ RUN_DIRS = list(
         [os.path.join(RUN_DIR_PARENT, d) for d in os.listdir(RUN_DIR_PARENT)],
     )
 )
-HMDB_PATH = os.path.join(PD, "hmdb_concs.csv")
 
 
 def flatten_columns(df: pd.DataFrame, sep="_") -> pd.DataFrame:
@@ -54,7 +50,6 @@ def main():
         os.path.basename(d): az.from_netcdf(os.path.join(d, "posterior.nc"))
         for d in RUN_DIRS
     }
-    hmdb = pd.read_csv(HMDB_PATH)
     input_dfs = {
         "sabio-km": pd.read_csv(os.path.join(PD, "sabio_km", "lits.csv")),
         "brenda-km": pd.read_csv(os.path.join(PD, "brenda_km", "lits.csv")),
@@ -75,10 +70,9 @@ def main():
     f.savefig(os.path.join("results", "plots", "nadh.png"))
 
     # log km comparison
-    f = plot_log_km_comparison(
-        posterior_km,
-        posterior_km_brenda,
-        input_dfs["sabio-km"],
-        input_dfs["brenda-km"],
-    )
+    f = plot_log_km_comparison(posterior_km, posterior_km_brenda)
     f.savefig(os.path.join("results", "plots", "log_km_comparison.png"))
+
+
+if __name__ == "__main__":
+    main()
