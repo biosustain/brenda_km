@@ -1,15 +1,15 @@
 brenda km
 ==============================
 
-Statistical models of kinetic parameter data from BRENDA
+Statistical models of kinetic parameter data from the BRENDA and SABIO-RK databases.
 
 
 Fetching data
 =============
 
-Raw km data from BRENDA can be found in the file `data/raw/brenda_km_measurements.csv`.
+Raw data can be found in the folder `data/raw/`.
 
-This data was fetched using the script `fetch_brenda_data.py`. In order to run
+This data was fetched using the script `fetch_data.py`. In order to run
 this script, you will need to
 [register](https://www.brenda-enzymes.org/register.php) with BRENDA and set
 environment variables `BRENDA_EMAIL` and `BRENDA_PASSWORD` appropriately. You
