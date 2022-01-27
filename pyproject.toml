@@ -37,10 +37,12 @@ disable = "C0330, C0326"
 max-line-length = "80"
 
 [tool.pyright]
-include = ["src"]
+# include = ["src"]
+ignore = [".venv_km"]
 reportMissingImports = true
 reportMissingTypeStubs = false
 disableOrganizeImports = false
 useLibraryCodeForTypes = true
-venv = "~/.venvs/brenda"
+venvPath = "."
+venv = ".venv_km"
 pythonPlatform = "Darwin"

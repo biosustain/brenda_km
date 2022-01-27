@@ -11,7 +11,7 @@ data {
   int<lower=1> N_org_sub;
   int<lower=1,upper=N_ec4_sub> ec4_sub[N_biology];
   int<lower=1,upper=N_org_sub> org_sub[N_biology];
-  int<lower=0,upper=N_biology> enz_sub[N_biology];
+  int<lower=0,upper=N_enz_sub> enz_sub[N_biology];
   int<lower=1,upper=N_substrate> substrate[N_biology];
   array[N_train] int<lower=1,upper=N_biology> biology_train;
   array[N_train] int<lower=1,upper=N> ix_train;
@@ -19,7 +19,6 @@ data {
   array[N_test] int<lower=1,upper=N> ix_test;
   vector[N] y;
   int<lower=0,upper=1> likelihood;
-
 }
 parameters {
   real<lower=1> nu;
@@ -38,7 +37,6 @@ transformed parameters {
   vector[N_biology] log_km = mu + a_substrate[substrate] + a_ec4_sub[ec4_sub] + a_org_sub[org_sub];
   for (b in 1:N_biology){
     log_km[b] += enz_sub[b] > 0 ? a_enz_sub[enz_sub[b]] : 0;
-
   }
 }
 model {
@@ -47,7 +45,7 @@ model {
   }
   nu ~ gamma(2, 0.1);
   sigma ~ normal(0, 2);
-  mu ~ normal(-4, 3);
+  mu ~ normal(-1, 2);
   a_substrate ~ normal(0, tau_substrate);
   a_ec4_sub ~ normal(0, tau_ec4_sub);
   a_enz_sub ~ normal(0, tau_enz_sub);

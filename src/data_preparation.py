@@ -201,12 +201,15 @@ def prepare_data_brenda_km(
         & reports["is_natural"]
     )
     reports["y"] = np.log(reports["km"].values)
+    reports["biology"] = (
+        reports[biology_cols].fillna("").apply("|".join, axis=1)
+    )
     lits = (
         reports.loc[cond]
-        .groupby(lit_cols)["y"]
-        .median()
+        .groupby(lit_cols)
+        .agg({"y": "median", "biology": "first"})
         .reset_index()
-        .loc[lambda df: df.groupby("organism")["y"].transform("size") > 100]
+        .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
         .reset_index()
     )
     coords = {}
@@ -352,9 +355,10 @@ def prepare_data_sabio_km(
     raw_reports: pd.DataFrame,
     number_of_cv_folds: int = 10,
 ) -> PrepareDataOutput:
+    assert isinstance(raw_reports, pd.DataFrame)
     pp = raw_reports.rename(
         columns={
-            "Substrate": "natural_substrates",
+            "Substrate": "reaction_substrates",
             "EnzymeType": "enzyme_type",
             "PubMedID": "literature",
             "Organism": "organism",
@@ -370,6 +374,7 @@ def prepare_data_sabio_km(
             "pH": "ph",
         }
     ).replace("-", np.nan)
+    assert isinstance(pp, pd.DataFrame)
     biology_cols = ["organism", "ec4", "uniprot_id", "substrate"]
     lit_cols = biology_cols + ["literature"]
     cond = (
@@ -377,28 +382,32 @@ def prepare_data_sabio_km(
         & pp["enzyme_type"].str.contains("wildtype")
         & pp["start_value"].notnull()
         & pp["start_value"].gt(0)
+        & pp["unit"].eq("M")
         & (
             pp["temperature"].isnull()
             | pp["temperature"].astype(float).between(*TEMPERATURE_RANGE)
         )
         & (pp["ph"].isnull() | pp["ph"].astype(float).between(*PH_RANGE))
         & pp["literature"].notnull()
-        & _contains(
-            pp["natural_substrates"].fillna(""), pp["substrate"].fillna("")
-        )
     )
     reports = pp.loc[cond].copy()
-    reports["y"] = np.log(reports[["start_value", "end_value"]]).mean(axis=1)
+    reports["y"] = np.log(
+        reports[["start_value", "end_value"]]
+        # multiply by 1000 to convert from M to mM
+        .multiply(1000)
+    ).mean(axis=1)
+    reports["biology"] = (
+        reports[biology_cols].fillna("").apply("|".join, axis=1)
+    )
     lits = (
         reports.loc[cond]
         .groupby(lit_cols, dropna=False)
-        .agg({"y": "median"})
+        .agg({"y": "median", "biology": "first"})
         .reset_index()
         .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
         .reset_index()
     )
     lits["literature"] = lits["literature"].astype(int).astype(str)
-    lits["biology"] = lits[biology_cols].fillna("").apply("|".join, axis=1)
     lits["ec4_sub"] = lits["ec4"].str.cat(lits["substrate"], sep="|")
     lits["enz_sub"] = np.where(
         lits["uniprot_id"].notnull(),

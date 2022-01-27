@@ -44,6 +44,12 @@ def flatten_columns(df: pd.DataFrame, sep="_") -> pd.DataFrame:
     return new
 
 
+def load_df(f):
+    out = pd.read_csv(f)
+    assert isinstance(out, pd.DataFrame)
+    return out
+
+
 def main():
     # load data
     posteriors = {
@@ -51,8 +57,8 @@ def main():
         for d in RUN_DIRS
     }
     input_dfs = {
-        "sabio-km": pd.read_csv(os.path.join(PD, "sabio_km", "lits.csv")),
-        "brenda-km": pd.read_csv(os.path.join(PD, "brenda_km", "lits.csv")),
+        "sabio-km": load_df(os.path.join(PD, "sabio_km", "lits.csv")),
+        "brenda-km": load_df(os.path.join(PD, "brenda_km", "lits.csv")),
     }
     posterior_km = posteriors["sabio-km-enz"].get("posterior")
     posterior_km_brenda = posteriors["brenda-km-blk"].get("posterior")

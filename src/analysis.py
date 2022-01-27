@@ -2,6 +2,7 @@
 
 from typing import List
 
+import arviz as az
 import numpy as np
 import pandas as pd
 from arviz.plots.forestplot import plot_forest
@@ -102,3 +103,27 @@ def plot_log_km_comparison(
     axes[1].legend(frameon=False)
     plt.tight_layout()
     return f
+
+
+def generate_summary_df(
+    idata: az.InferenceData, lits: pd.DataFrame, is_enz: bool
+):
+    posterior = idata.get("posterior")
+    cd = ["chain", "draw"]
+    assert isinstance(posterior, Dataset)
+    quantiles = (
+        posterior["log_km"]
+        .quantile([0.01, 0.5, 0.99], dim=cd)
+        .to_series()
+        .unstack("quantile")
+        .add_prefix("q_")
+    )
+    mean = posterior["log_km"].mean(dim=cd).to_series().rename("posterior_mean")
+    assert isinstance(mean, pd.Series)
+    biofcts = ["organism", "substrate", "ec4"]
+    if is_enz:
+        biofcts += ["uniprot_id"]
+    out = quantiles.join(mean)
+    for fct in biofcts:
+        out = out.join(lits.groupby("biology")[fct].first())
+    return out.reset_index()

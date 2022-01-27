@@ -132,8 +132,8 @@ satisfy any of the following conditions:
 - The literature reference must not be missing
 - The substrate must be catalysed naturally by the enzyme
 - The enzyme must be from a wild organism
-- The temperature, if recorded, must be between 5 and 50 degrees C 
-- The pH, if recorded, must be between 4 and 9
+- The temperature, if recorded, must be between 10 and 45 degrees C 
+- The pH, if recorded, must be between 5 and 9
 - The organism must be have data from at least 50 separate study/biology
   (i.e. organism:substrate:ec4 for BRENDA or organism:substrate:enzyme for
   SABIO-RK) combinations that satisfy all the other conditions.
@@ -182,7 +182,7 @@ The full model specification in tilde notation is as follows:
                \sigma) \\
 \nu &\sim \Gamma(2, 0.1)[1, \infty] \\
 \sigma &\sim N(0, 2)[0, \infty] \\
-\mu &\sim N(-2, 1) \\
+\mu &\sim N(-1, 2) \\
 a^{sub} &\sim N(0, \tau^{sub}) \\
 a^{enz:sub} &\sim N(0, \tau^{enz:sub}) \\
 a^{ec4:sub} &\sim N(0, \tau^{ec4:sub}) \\
@@ -197,9 +197,8 @@ This model can be expressed as the following Stan program (see
 [cite:@carpenterStanProbabilisticProgramming2017]):
 
 #+begin_src stan :eval no
-/* Extends the BLK model for more specific data from the SABIO-rk database */
-
 data {
+  int<lower=1> N;
   int<lower=1> N_train;
   int<lower=1> N_test;
   int<lower=1> N_biology;
@@ -208,13 +207,14 @@ data {
   int<lower=1> N_enz_sub;
   int<lower=1> N_org_sub;
   int<lower=1,upper=N_ec4_sub> ec4_sub[N_biology];
-  int<lower=1,upper=N_enz_sub> enz_sub[N_biology];
   int<lower=1,upper=N_org_sub> org_sub[N_biology];
+  int<lower=0,upper=N_enz_sub> enz_sub[N_biology];
   int<lower=1,upper=N_substrate> substrate[N_biology];
   array[N_train] int<lower=1,upper=N_biology> biology_train;
-  vector[N_train] y_train;
+  array[N_train] int<lower=1,upper=N> ix_train;
   array[N_test] int<lower=1,upper=N_biology> biology_test;
-  vector[N_test] y_test;
+  array[N_test] int<lower=1,upper=N> ix_test;
+  vector[N] y;
   int<lower=0,upper=1> likelihood;
 }
 parameters {
@@ -231,18 +231,18 @@ parameters {
   vector<multiplier=tau_org_sub>[N_org_sub] a_org_sub;
 }
 transformed parameters {
-  vector[N_biology] log_km =
-    mu
-    + a_substrate[substrate]
-    + a_ec4_sub[ec4_sub]
-    + a_enz_sub[enz_sub]
-    + a_org_sub[org_sub];
+  vector[N_biology] log_km = mu + a_substrate[substrate] + a_ec4_sub[ec4_sub] + a_org_sub[org_sub];
+  for (b in 1:N_biology){
+    log_km[b] += enz_sub[b] > 0 ? a_enz_sub[enz_sub[b]] : 0;
+  }
 }
 model {
-  if (likelihood){y_train ~ student_t(nu, log_km[biology_train], sigma);}
+  if (likelihood){
+    y[ix_train] ~ student_t(nu, log_km[biology_train], sigma);
+  }
   nu ~ gamma(2, 0.1);
   sigma ~ normal(0, 2);
-  mu ~ normal(-2, 1);
+  mu ~ normal(-1, 2);
   a_substrate ~ normal(0, tau_substrate);
   a_ec4_sub ~ normal(0, tau_ec4_sub);
   a_enz_sub ~ normal(0, tau_enz_sub);
@@ -256,7 +256,7 @@ generated quantities {
   vector[N_test] llik;
   vector[N_test] yrep;
   for (n in 1:N_test){
-    llik[n] = student_t_lpdf(y_test[n] | nu, log_km[biology_test[n]], sigma);
+    llik[n] = student_t_lpdf(y[ix_test[n]] | nu, log_km[biology_test[n]], sigma);
     yrep[n] = student_t_rng(nu, log_km[biology_test[n]], sigma);
   }
 }

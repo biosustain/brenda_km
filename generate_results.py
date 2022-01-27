@@ -4,9 +4,11 @@ import json
 import os
 
 import arviz as az
+import pandas as pd
 import toml
 import xarray
 
+from src.analysis import generate_summary_df
 from src.model_configuration import ModelConfiguration
 from src.sampling import sample
 
@@ -48,6 +50,15 @@ def main():
                 idata_file = os.path.join(run_dir, f"{mode}.nc")
                 print(f"\n***Writing inference data to {idata_file}***\n")
                 idata.to_netcdf(idata_file)
+                # Generate summary table
+                lits = pd.read_csv(os.path.join(mc.data_dir, "lits.csv"))
+                assert isinstance(lits, pd.DataFrame)
+                summary_file = os.path.join(run_dir, f"{mode}_summary.csv")
+                is_enz = "enz" in mc.data_dir
+                summary = generate_summary_df(idata, lits, is_enz)
+                print(f"\n***Writing summary table to {summary_file}***\n")
+                summary.to_csv(summary_file)
+
             if mc.run_cross_validation:
                 if mc.sample_kwargs_cross_validation is None:
                     sample_kwargs = mc.sample_kwargs

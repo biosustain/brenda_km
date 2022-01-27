@@ -1,0 +1,17 @@
+name = "brenda-km-blk"
+stan_file = "src/stan/blk.stan"
+data_dir = "data/prepared/brenda_km"
+# do_not_run = true
+run_cross_validation = false
+
+[sample_kwargs]
+show_progress = true
+save_warmup = false
+iter_warmup = 800
+iter_sampling = 800
+max_treedepth = 11
+chains = 4
+refresh = 1
+
+[sample_kwargs_cross_validation]
+chains = 1
