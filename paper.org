@@ -2,8 +2,8 @@
 #+author: Teddy Groves and Areti Tsigkinopoulou
 #+filetags: :work:
 #+startup: overview
-#+cite_export: csl ~/Zotero/styles/ieee.csl
-#+LATEX_HEADER: \usepackage{indentfirst}
+#+cite_export: csl ieee.csl
+#+LATEX_HEADER: \usepackage{parskip}
 
 #+begin_abstract
 We fit a range of Bayesian regression models to kinetic parameter data from the
@@ -171,7 +171,7 @@ We chose assigned semi-informative prior distributions based on the
 pre-experimental information. In particular, the prior for the measurement
 distribution degrees of freedom parameter $\nu$ follows the recommendation in
 [cite:@juarezModelBasedClusteringNonGaussian2010] and is truncated below at
-zero, reflecting our view that the measurement distribution should not be
+one, reflecting our view that the measurement distribution should not be
 excessively heavy-tailed.
 
 The full model specification in tilde notation is as follows:
@@ -367,7 +367,18 @@ distributions for ~sigma~ and ~tau_org_sub~.
 
 #+CAPTION: Comparison of hierarchical standard deviation parameters
 #+LABEL: fig:taus
+#+ATTR_ORG: :width 600
 [[./results/plots/sd_posteriors.png]]
+
+Figure [[fig:brenda_sabio_comparison]] compares the marginal distributions of km
+parameters from our best SABIO-RK and BRENDA models. The marginal posterior
+distributions in the BRENDA model tend to be narrower, reflecting the larger
+input dataset.
+
+#+CAPTION: Comparison of measured and modelled Km parameter distributions in BRENDA and SABIO-RK
+#+LABEL: fig:brenda_sabio_comparison
+#+ATTR_ORG: :width 600
+[[./results/plots/log_km_comparison.png]]
 
 ** Comparison of estimated Kms with physiological metabolite concentrations
 Several sources suggest that the Km parameter for a particular organism,
@@ -404,8 +415,6 @@ seen in figure [[fig:taus]]
 
 ** NADH vs NADPH
 
-[What is the expected result??]
-
 Figure [[fig:nadh]] shows histograms of measured Km parameters from the SABIO-RK
 dataset for NADH and NADPH binding enzymes alongside histograms of our final
 model's posterior samples for these parameters. We can see that the measurements
@@ -414,18 +423,25 @@ distributions.
 
 #+CAPTION: Comparison of modelled and measured Km parameters for NADH and NADPH
 #+LABEL: fig:nadh
+#+ATTR_ORG: :width 600
 [[./results/plots/nadh.png]]
 
-** Which dataset to use?
+** Cofactor vs substrate
+We tested whether there tended to be a systematic difference between the km of
+an enzyme's main substrate and that of a cofactor.
+
+We XXX as 
+
+** Which results to use?
 
 Our results make it possible to compare the SABIO-RK and BRENDA datasets,
 allowing practitioners to make more informed modelling decisions.
 
 The SABIO-RK dataset provides more specific information than the BRENDA
-datase. UNIPROT ids are available for most Km measurements, whereas the most
+datase. UNIPROT ids are available for many Km measurements, whereas the most
 specific enzyme-level information in the BRENDA dataset is the EC4 number. In
 addition, in contrast to BRENDA, the SABIO-RK dataset provides information about
-temperature, substrate, literature reference, enzyme, pH and strain type in
+substrate, literature reference, enzyme, temperature, pH and strain type in
 interoperable formats and without the need for potentially error-prone string
 operations.
 
@@ -433,8 +449,8 @@ As a result of this extra information, the model fit to the SABIO-RK data is
 more specific, allowing modellers to obtain priors that reflect measurements of
 the exact enzyme they wish to model while still appropriately taking into
 account measurements of related enyzmes. In addition, the SABIO model excludes
-some sources of bias, such as reports from non-wildtype strains and atypical
-conditions that are not accounted for in the BRENDA model.
+some potential sources of bias, such as reports from non-wildtype strains and
+atypical conditions that are not accounted for in the BRENDA model.
 
 The SABIO dataset is worse than the BRENDA dataset in one respect, however: at
 the time of writing there are far more reports in the BRENDA dataset. [EXACT
@@ -442,10 +458,14 @@ NUMBERS HERE]. The model fit to the BRENDA dataset is therefore able to take
 into account more information than is available to the SABIO-RK model.
 
 There are therefore potentially conflicting factors to take into account when
-deciding which dataset to use in a given case. SABIO should be favoured in cases
-where it provides a lot of information for a given parameter or conversely when
-the information in BRENDA is too coarse or likely to be biased. In other cases
-BRENDA is likely preferable.
+deciding which dataset to use in a given case. A further complication is that,
+due to the lack of interoperable identifiers in the BRENDA dataset, it is
+difficult to directly compare the which yields better predctions.
+
+In our judgment the best approach given these circumstances is to favour the
+SABIO-RK results in cases where they provides a lot of information for a given
+parameter or when the information in BRENDA is too coarse or likely to be
+biased. In other cases the BRENDA results should be preferred.
 
 Our results make it easier to assess which of these two scenarios apply. The
 information available for a given km is captured by the marginal posterior
@@ -458,17 +478,6 @@ can be compared. If they are very different, it is likely better to use the more
 specific SABIO results. Finally, in order to assess the likelihood of bias in
 the BRENDA data, our webapp provides links to the source documents for any
 parameter measurement.
-
-Figure [[fig:brenda_sabio_comparison]] compares the marginal distributions of km
-parameters from our best SABIO-RK and BRENDA models. Clearly there is a general
-tendency for the BRENDA kms to be higher than the SABIO kms, reflecting the fact
-that the SABIO dataset was curated to exclude non-wildtype measurements. The
-marginal posterior distributions in the BRENDA model tend to be narrower,
-reflecting the larger input dataset.
-
-#+CAPTION: Comparison of measured and modelled Km parameter distributions in BRENDA and SABIO-RK
-#+LABEL: fig:brenda_sabio_comparison
-[[./results/plots/log_km_comparison.png]]
 
 * Case studies
 * Discussion

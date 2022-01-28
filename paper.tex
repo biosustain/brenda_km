@@ -1,4 +1,4 @@
-% Created 2022-01-20 Thu 12:40
+% Created 2022-01-28 Fri 15:03
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -12,7 +12,7 @@
 \usepackage{amssymb}
 \usepackage{capt-of}
 \usepackage{hyperref}
-\usepackage{indentfirst}
+\usepackage{parskip}
 \author{Teddy Groves and Areti Tsigkinopoulou}
 \date{\today}
 \title{Statistical analysis of kinetic parameter data from online databases}
@@ -21,14 +21,14 @@
  pdftitle={Statistical analysis of kinetic parameter data from online databases},
  pdfkeywords={},
  pdfsubject={},
- pdfcreator={Emacs 29.0.50 (Org mode 9.5)}, 
+ pdfcreator={Emacs 28.0.91 (Org mode 9.5.2)}, 
  pdflang={English}}
-\usepackage[notquote]{hanging}
-\begin{document}\makeatletter
+\makeatletter
 \newcommand{\citeprocitem}[2]{\hyper@linkstart{cite}{citeproc_bib_item_#1}#2\hyper@linkend}
 \makeatother
 
-
+\usepackage[notquote]{hanging}
+\begin{document}
 
 \maketitle
 \tableofcontents
@@ -41,28 +41,35 @@ illustrate the intended use of our results with case studies.
 \end{abstract}
 
 \section{Introduction}
-\label{sec:org9123447}
+\label{sec:orge672a8a}
 The choice of appropriate parameters for biological models has been a recurring
 issue for computational biologists in the recent years. As computational models
-become increasingly prominent in the current research \citeprocitem{1}{[1]}–\citeprocitem{3}{[3]}
+become increasingly prominent in the current research
+\citeprocitem{1}{[1]}–\citeprocitem{3}{[3]}
 and lead the way to biological breakthroughs, the use of high quality parameter
 values is becoming essential. In view of these developments, there have been
 various efforts to address this issue by employing different
 strategies. Although the most popular approach is the estimation of parameters
-through optimization methods \citeprocitem{4}{[4]}, \citeprocitem{5}{[5]},
+through optimization methods
+\citeprocitem{4}{[4]}, \citeprocitem{5}{[5]},
 ensemble modelling strategies are rapidly gaining ground in the field of systems
-biology \citeprocitem{6}{[6]}–\citeprocitem{9}{[9]}
-along with the development of tools to define informative parameter priors \citeprocitem{10}{[10]}, \citeprocitem{11}{[11]}. At
+biology
+\citeprocitem{6}{[6]}–\citeprocitem{9}{[9]}
+along with the development of tools to define informative parameter priors
+\citeprocitem{10}{[10]}, \citeprocitem{11}{[11]}. At
 the same time, machine learning methods have recently been gaining popularity as
-a tool for interpreting the large amount of existing biological data \citeprocitem{12}{[12]}–\citeprocitem{14}{[14]}
+a tool for interpreting the large amount of existing biological data
+\citeprocitem{12}{[12]}–\citeprocitem{14}{[14]}
 and have also been employed for the prediction of parameter values (mostly Km
-values) in biological models \citeprocitem{15}{[15]}–\citeprocitem{17}{[17]}.
+values) in biological models
+\citeprocitem{15}{[15]}–\citeprocitem{17}{[17]}.
 
 By taking into the account the existing issues with model parameterisation and
 in an effort to address them, we have previously developed a standardized
 protocol for the definition of appropriate parameter lognormal distributions
 based on information retrieved from different sources and in accordance with the
-modeller’s beliefs about the reliability of each experimental value \citeprocitem{18}{[18]}. This protocol was a
+modeller’s beliefs about the reliability of each experimental value
+\citeprocitem{18}{[18]}. This protocol was a
 significant step towards making ensemble modelling more accessible and promoting
 interdisciplinary collaborations. However, there were some remaining issues to
 be addressed. Firstly, the protocol should take into account the surrounding
@@ -76,14 +83,16 @@ automated, we devised a novel method for generating appropriate prior
 distributions for kinetic parameters. Using previous work by Liebermeister and
 Klipp as a starting point \citeprocitem{19}{[19]}, we
 developed a hierarchical Bayesian regression model in order to perform a
-statistical analysis of parameter reports from the BRENDA \citeprocitem{20}{[20]} and SABIO-RK \citeprocitem{21}{[21]} databases. The results of this
+statistical analysis of parameter reports from the BRENDA
+\citeprocitem{20}{[20]} and SABIO-RK
+\citeprocitem{21}{[21]} databases. The results of this
 analysis can be used in our existing protocol to rationalise parameter weights,
 or as part of another protocol.  In order to make it easier to access and review
 the information in BRENDA, we also provided an online interface through which
 our model’s results can easily be reviewed and extracted.
 
 \section{State of the art}
-\label{sec:org502960c}
+\label{sec:org03911f4}
 The problem of modelling kinetic parameter data from online databases has
 previously been addressed in several studies.
 
@@ -129,9 +138,9 @@ distributions, this is a severe problem as coverage is at least as important a
 consideration for this application as precision.
 
 \section{Method}
-\label{sec:org21ec188}
+\label{sec:org39772cb}
 \subsection{Data fetching}
-\label{sec:orgb834723}
+\label{sec:orgb256582}
 We fetched data from the SABIO-RK \citeprocitem{21}{[21]}
 and BRENDA \citeprocitem{22}{[22]} databases using their publicly
 available APIs. We also fetched a list of all EC numbers from the Expasy
@@ -140,12 +149,12 @@ see the script \texttt{fetch\_data.py} and the library file \texttt{fetching.py}
 to fetch data and the directory \texttt{data/raw/} for the results.
 
 \subsection{Data processing}
-\label{sec:org29c1dbe}
+\label{sec:org892ca55}
 We made several significant data processing choices. See the library file
 \texttt{data\_preparation.py} for code used to implement these choices.
 
 \subsubsection{Filtering}
-\label{sec:orgeb3fb80}
+\label{sec:orgc974c1b}
 For each dataset and kinetic parameter, we removed all reports which failed to
 satisfy any of the following conditions:
 
@@ -154,15 +163,15 @@ satisfy any of the following conditions:
 \item The literature reference must not be missing
 \item The substrate must be catalysed naturally by the enzyme
 \item The enzyme must be from a wild organism
-\item The temperature, if recorded, must be between 5 and 50 degrees C
-\item The pH, if recorded, must be between 4 and 9
+\item The temperature, if recorded, must be between 10 and 45 degrees C
+\item The pH, if recorded, must be between 5 and 9
 \item The organism must be have data from at least 50 separate study/biology
 (i.e. organism:substrate:ec4 for BRENDA or organism:substrate:enzyme for
 SABIO-RK) combinations that satisfy all the other conditions.
 \end{itemize}
 
 \subsubsection{Grouping}
-\label{sec:org4f0c10d}
+\label{sec:orga809439}
 Instead of modelling reports directly, we chose to group together reports with
 the same biology and study, treating the median log-scale km as a single
 observation. We took this decision because of the presence in both datasets of
@@ -181,10 +190,11 @@ treating each report as an observation, especially since we chose not to
 attempt to model the effects of experimental conditions.
 
 \subsection{Statistical model}
-\label{sec:org6de2f17}
+\label{sec:org880e178}
 We used a Bayesian hierarchical regression model to describe all data. Since
 both Km and Kcat parameters are constrained to be positive, we modelled them on
-natural logarithmic scale, using the same approach taken in \citeprocitem{19}{[19]}. Our model includes a global mean
+natural logarithmic scale, using the same approach taken in
+\citeprocitem{19}{[19]}. Our model includes a global mean
 parameter \(\mu\), hierarchical substrate-specific intercept parameters \(a^{sub}\)
 and hierarchical intercept parameters \(a^{enz:sub}\), \(a^{ec4:sub}\) and
 \(a^{org:sub}\) specific to interactions of substrate and enzyme, ec4 number and
@@ -193,8 +203,9 @@ latent standard deviation and degrees of freedom \(\sigma\) and \(\nu\).
 
 We chose assigned semi-informative prior distributions based on the
 pre-experimental information. In particular, the prior for the measurement
-distribution degrees of freedom parameter \(\nu\) follows the recommendation in \citeprocitem{24}{[24]} and is truncated below at
-zero, reflecting our view that the measurement distribution should not be
+distribution degrees of freedom parameter \(\nu\) follows the recommendation in
+\citeprocitem{24}{[24]} and is truncated below at
+one, reflecting our view that the measurement distribution should not be
 excessively heavy-tailed.
 
 The full model specification in tilde notation is as follows:
@@ -205,7 +216,7 @@ The full model specification in tilde notation is as follows:
                \sigma) \\
 \nu &\sim \Gamma(2, 0.1)[1, \infty] \\
 \sigma &\sim N(0, 2)[0, \infty] \\
-\mu &\sim N(-2, 1) \\
+\mu &\sim N(-1, 2) \\
 a^{sub} &\sim N(0, \tau^{sub}) \\
 a^{enz:sub} &\sim N(0, \tau^{enz:sub}) \\
 a^{ec4:sub} &\sim N(0, \tau^{ec4:sub}) \\
@@ -216,12 +227,12 @@ a^{org:sub} &\sim N(0, \tau^{org:sub}) \\
 \tau^{org:sub} &\sim N(0, 1) \\
 \end{align*}
 
-This model can be expressed as the following Stan program (see \citeprocitem{25}{[25]}):
+This model can be expressed as the following Stan program (see
+\citeprocitem{25}{[25]}):
 
 \begin{verbatim}
-/* Extends the BLK model for more specific data from the SABIO-rk database */
-
 data {
+  int<lower=1> N;
   int<lower=1> N_train;
   int<lower=1> N_test;
   int<lower=1> N_biology;
@@ -230,13 +241,14 @@ data {
   int<lower=1> N_enz_sub;
   int<lower=1> N_org_sub;
   int<lower=1,upper=N_ec4_sub> ec4_sub[N_biology];
-  int<lower=1,upper=N_enz_sub> enz_sub[N_biology];
   int<lower=1,upper=N_org_sub> org_sub[N_biology];
+  int<lower=0,upper=N_enz_sub> enz_sub[N_biology];
   int<lower=1,upper=N_substrate> substrate[N_biology];
   array[N_train] int<lower=1,upper=N_biology> biology_train;
-  vector[N_train] y_train;
+  array[N_train] int<lower=1,upper=N> ix_train;
   array[N_test] int<lower=1,upper=N_biology> biology_test;
-  vector[N_test] y_test;
+  array[N_test] int<lower=1,upper=N> ix_test;
+  vector[N] y;
   int<lower=0,upper=1> likelihood;
 }
 parameters {
@@ -253,18 +265,18 @@ parameters {
   vector<multiplier=tau_org_sub>[N_org_sub] a_org_sub;
 }
 transformed parameters {
-  vector[N_biology] log_km =
-    mu
-    + a_substrate[substrate]
-    + a_ec4_sub[ec4_sub]
-    + a_enz_sub[enz_sub]
-    + a_org_sub[org_sub];
+  vector[N_biology] log_km = mu + a_substrate[substrate] + a_ec4_sub[ec4_sub] + a_org_sub[org_sub];
+  for (b in 1:N_biology){
+    log_km[b] += enz_sub[b] > 0 ? a_enz_sub[enz_sub[b]] : 0;
+  }
 }
 model {
-  if (likelihood){y_train ~ student_t(nu, log_km[biology_train], sigma);}
+  if (likelihood){
+    y[ix_train] ~ student_t(nu, log_km[biology_train], sigma);
+  }
   nu ~ gamma(2, 0.1);
   sigma ~ normal(0, 2);
-  mu ~ normal(-2, 1);
+  mu ~ normal(-1, 2);
   a_substrate ~ normal(0, tau_substrate);
   a_ec4_sub ~ normal(0, tau_ec4_sub);
   a_enz_sub ~ normal(0, tau_enz_sub);
@@ -278,7 +290,7 @@ generated quantities {
   vector[N_test] llik;
   vector[N_test] yrep;
   for (n in 1:N_test){
-    llik[n] = student_t_lpdf(y_test[n] | nu, log_km[biology_test[n]], sigma);
+    llik[n] = student_t_lpdf(y[ix_test[n]] | nu, log_km[biology_test[n]], sigma);
     yrep[n] = student_t_rng(nu, log_km[biology_test[n]], sigma);
   }
 }
@@ -288,7 +300,7 @@ For the BRENDA data, we used the same model but removed the enzyme-substrate
 interaction parameters as BRENDA does not provide enzyme-specific information.
 
 \subsection{Model validation}
-\label{sec:org9a4e03e}
+\label{sec:org9deef6f}
 We used a number of standard methods to test our models' validity, aiming to
 follow the method described in \citeprocitem{26}{[26]}. To verify the
 computation we used standard MCMC convergence metrics and fit our model to fake
@@ -297,9 +309,10 @@ predictive checks and both approximate and exact cross validation, using some
 simple test models for comparison.
 
 \subsubsection{Computation}
-\label{sec:org13b81c3}
+\label{sec:orga7a514d}
 For each MCMC run we used arviz \citeprocitem{27}{[27]} to
-calculate the improved \hat{R} statistic following the method in \citeprocitem{28}{[28]} and to check for
+calculate the improved \hat{R} statistic following the method in
+\citeprocitem{28}{[28]} and to check for
 divergent transitions. If the \hat{R} statistic was sufficiently close to 1
 (i.e. +/- 0.03) and there were no post-warmup divergent transitions we judged
 that the computation was likely to have been successful in the sense that the
@@ -312,7 +325,7 @@ approximately recovered in the posterior distribution. See supplementary
 material for graphical posterior predictive checks with fake data.
 
 \subsubsection{Comparison models}
-\label{sec:org44dd353}
+\label{sec:org658e9aa}
 Ideally we would compare the results of our models with previously published
 attempts to model the same data. However this was not practical in our case for
 two reasons. First, other results are typically derived from different raw
@@ -349,8 +362,8 @@ which we obtained simply by removing the parameters \(a^{enz:sub}\) and
 verify whether including enzyme-specific parameters was worthwhile.
 
 \subsubsection{Graphical posterior predictive checks}
-\label{sec:org802ecca}
-Figure \ref{fig:org169524e} below shows our main model's marginal posterior
+\label{sec:org817e718}
+Figure \ref{fig:org0bd517d} below shows our main model's marginal posterior
 predictive 1\%-99\% interval for each observation, alongside the observed
 value. Ideally exactly 98\% of observations should be covered, and whether or not
 an observation is covered should not be systematically predictable.
@@ -358,38 +371,40 @@ an observation is covered should not be systematically predictable.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/ppc_km_sabio_enz.png}
-\caption{\label{fig:org169524e}Marginal posterior predictive distributions for main model fit to SABIO Km data}
+\caption{\label{fig:org0bd517d}Marginal posterior predictive distributions for main model fit to SABIO Km data}
 \end{figure}
 
-In contrast figure \ref{fig:orgfb00340} are graphical posterior predictive checks for the really simple
+In contrast figure \ref{fig:org0eeb67b} are graphical posterior predictive checks for the really simple
 and simple models.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/ppc_km_sabio_enz_simple.png}
-\caption{\label{fig:orgfb00340}Marginal posterior predictive distributions for simple and really simple models fit to SABIO Km data}
+\caption{\label{fig:org0eeb67b}Marginal posterior predictive distributions for simple and really simple models fit to SABIO Km data}
 \end{figure}
 
 \subsubsection{Cross validation}
-\label{sec:orgef84cd3}
+\label{sec:org545da5c}
 For a quantitative compliment to the graphical posterior predictive checks, we
 used cross-validation to assess our models' out-of-sample predictive
 performance. For exploratory comparison we calculated each model's approximate
-leave-one-out expected log predictive density using the method set out in \citeprocitem{29}{[29]} and implemented in \citeprocitem{27}{[27]}. To address cases where diagnostics
+leave-one-out expected log predictive density using the method set out in
+\citeprocitem{29}{[29]} and implemented in
+\citeprocitem{27}{[27]}. To address cases where diagnostics
 suggested that the approximate leave-one-out algorithm was likely to be
 unreliable we also carried out exact tenfold cross-validation.
 
 The results were as follows:
 
 \subsection{Web app}
-\label{sec:org2b5a253}
+\label{sec:org90ac148}
 \section{Results}
-\label{sec:orgb55063c}
+\label{sec:org0dac0a5}
 \subsection{Marginal distributions of interesting parameters}
-\label{sec:orgb4ce400}
+\label{sec:org7d66e87}
 We begin by looking at the marginal distributions of the model's standard
 deviation parameters. Comparing these indicates which effects varied the
-most. The comparison in figure \ref{fig:org2ba4151} shows that the most important
+most. The comparison in figure \ref{fig:org87fd0cc} shows that the most important
 hierarchical parameter is the substrate effect, followed by the ec4/substrate
 interaction, the enzyme/substrate interaction and finally the organism/substrate
 interaction. The three larger taus are all clearly greater than the estimated
@@ -399,14 +414,26 @@ distributions for \texttt{sigma} and \texttt{tau\_org\_sub}.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/sd_posteriors.png}
-\caption{\label{fig:org2ba4151}Comparison of hierarchical standard deviation parameters}
+\caption{\label{fig:org87fd0cc}Comparison of hierarchical standard deviation parameters}
+\end{figure}
+
+Figure \ref{fig:org9c32565} compares the marginal distributions of km
+parameters from our best SABIO-RK and BRENDA models. The marginal posterior
+distributions in the BRENDA model tend to be narrower, reflecting the larger
+input dataset.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.9\linewidth]{./results/plots/log_km_comparison.png}
+\caption{\label{fig:org9c32565}Comparison of measured and modelled Km parameter distributions in BRENDA and SABIO-RK}
 \end{figure}
 
 \subsection{Comparison of estimated Kms with physiological metabolite concentrations}
-\label{sec:orgf7b0675}
+\label{sec:orgf96003e}
 Several sources suggest that the Km parameter for a particular organism,
 substrate and enzyme should have the same order of magnitude as the typical
-physiological concentration of that substrate. [ANOTHER REFERENCE HERE?] For example \citeprocitem{19}{[19]} write
+physiological concentration of that substrate. [ANOTHER REFERENCE HERE?] For example
+\citeprocitem{19}{[19]} write
 
 \begin{quote}
 \ldots{}we may hypothesize that KM values are adjusted to the order of magnitude of
@@ -418,12 +445,12 @@ values should also tend to be increased.
 In order to test whether this is the case, we obtained data about some
 physiological metabolite concentrations and compared these with the
 corresponding Km measurements and marginal posterior distributions from our
-model. Figure \ref{fig:org5701bf2} shows the results.
+model. Figure \ref{fig:orga8d7e8c} shows the results.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/hmdb_comparison.png}
-\caption{\label{fig:org5701bf2}Comparison of model predictions with physiological metabolite concentrations from HMDB}
+\caption{\label{fig:orga8d7e8c}Comparison of model predictions with physiological metabolite concentrations from HMDB}
 \end{figure}
 
 From the graph it is clear that the first part of the hypothesis is correct, at
@@ -435,14 +462,12 @@ to have higher Km values, this relationship is fairly weak.
 This is reflected in our model's marginal posterior distribution for the
 parameter \(\tau^{org:sub}\), which concentrates closer to zero than any of the
 other hierarchical standard deviation parameters [CHECK THIS IS TRUE], as can be
-seen in figure \ref{fig:org2ba4151}
+seen in figure \ref{fig:org87fd0cc}
 
 \subsection{NADH vs NADPH}
-\label{sec:org92a3f6d}
+\label{sec:orgbf6cfd7}
 
-[What is the expected result??]
-
-Figure \ref{fig:org7b8e3d0} shows histograms of measured Km parameters from the SABIO-RK
+Figure \ref{fig:org5160100} shows histograms of measured Km parameters from the SABIO-RK
 dataset for NADH and NADPH binding enzymes alongside histograms of our final
 model's posterior samples for these parameters. We can see that the measurements
 for NADPH tended to be higher, and this difference is also present in the posterior
@@ -451,20 +476,27 @@ distributions.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/nadh.png}
-\caption{\label{fig:org7b8e3d0}Comparison of modelled and measured Km parameters for NADH and NADPH}
+\caption{\label{fig:org5160100}Comparison of modelled and measured Km parameters for NADH and NADPH}
 \end{figure}
 
-\subsection{BRENDA vs SABIO-RK}
-\label{sec:orgcae16de}
+\subsection{Cofactor vs substrate}
+\label{sec:org17699d8}
+We tested whether there tended to be a systematic difference between the km of
+an enzyme's main substrate and that of a cofactor.
+
+We XXX as 
+
+\subsection{Which results to use?}
+\label{sec:org604b259}
 
 Our results make it possible to compare the SABIO-RK and BRENDA datasets,
 allowing practitioners to make more informed modelling decisions.
 
 The SABIO-RK dataset provides more specific information than the BRENDA
-datase. UNIPROT ids are available for most Km measurements, whereas the most
+datase. UNIPROT ids are available for many Km measurements, whereas the most
 specific enzyme-level information in the BRENDA dataset is the EC4 number. In
 addition, in contrast to BRENDA, the SABIO-RK dataset provides information about
-temperature, substrate, literature reference, enzyme, pH and strain type in
+substrate, literature reference, enzyme, temperature, pH and strain type in
 interoperable formats and without the need for potentially error-prone string
 operations.
 
@@ -472,8 +504,8 @@ As a result of this extra information, the model fit to the SABIO-RK data is
 more specific, allowing modellers to obtain priors that reflect measurements of
 the exact enzyme they wish to model while still appropriately taking into
 account measurements of related enyzmes. In addition, the SABIO model excludes
-some sources of bias, such as reports from non-wildtype strains and atypical
-conditions that are not accounted for in the BRENDA model.
+some potential sources of bias, such as reports from non-wildtype strains and
+atypical conditions that are not accounted for in the BRENDA model.
 
 The SABIO dataset is worse than the BRENDA dataset in one respect, however: at
 the time of writing there are far more reports in the BRENDA dataset. [EXACT
@@ -481,10 +513,14 @@ NUMBERS HERE]. The model fit to the BRENDA dataset is therefore able to take
 into account more information than is available to the SABIO-RK model.
 
 There are therefore potentially conflicting factors to take into account when
-deciding which dataset to use in a given case. SABIO should be favoured in cases
-where it provides a lot of information for a given parameter or conversely when
-the information in BRENDA is too coarse or likely to be biased. In other cases
-BRENDA is likely preferable.
+deciding which dataset to use in a given case. A further complication is that,
+due to the lack of interoperable identifiers in the BRENDA dataset, it is
+difficult to directly compare the which yields better predctions.
+
+In our judgment the best approach given these circumstances is to favour the
+SABIO-RK results in cases where they provides a lot of information for a given
+parameter or when the information in BRENDA is too coarse or likely to be
+biased. In other cases the BRENDA results should be preferred.
 
 Our results make it easier to assess which of these two scenarios apply. The
 information available for a given km is captured by the marginal posterior
@@ -498,81 +534,68 @@ specific SABIO results. Finally, in order to assess the likelihood of bias in
 the BRENDA data, our webapp provides links to the source documents for any
 parameter measurement.
 
-Figure \ref{fig:orgdc7a843} compares the marginal distributions of km
-parameters from our best SABIO-RK and BRENDA models. Clearly there is a general
-tendency for the BRENDA kms to be higher than the SABIO kms, reflecting the fact
-that the SABIO dataset was curated to exclude non-wildtype measurements. The
-marginal posterior distributions in the BRENDA model tend to be narrower,
-reflecting the larger input dataset.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=.9\linewidth]{./results/plots/log_km_comparison.png}
-\caption{\label{fig:orgdc7a843}Comparison of measured and modelled Km parameter distributions in BRENDA and SABIO-RK}
-\end{figure}
-
 \section{Case studies}
-\label{sec:org09980f5}
+\label{sec:org0d6b013}
 \section{Discussion}
-\label{sec:orgc78dc85}
+\label{sec:orgf4e5edd}
 \section{References}
-\label{sec:org53c82c6}
+\label{sec:orgb6ee6b6}
 
-\hypertarget{citeproc_bib_item_1}{[1] A. J. Lopatkin and J. J. Collins, “Predictive Biology: Modelling, Understanding and Harnessing Microbial Complexity,” \textit{Nature Reviews. Microbiology}, vol. 18, no. 9, pp. 507–520, Sep. 2020, doi: \href{https://doi.org/10.1038/s41579-020-0372-5}{10.1038/s41579-020-0372-5}.}
+\hypertarget{citeproc_bib_item_1}{[1] A. J. Lopatkin and J. J. Collins, “Predictive biology: Modelling, understanding and harnessing microbial complexity,” \textit{Nature reviews. microbiology}, vol. 18, no. 9, pp. 507–520, Sep. 2020, doi: \href{https://doi.org/10.1038/s41579-020-0372-5}{10.1038/s41579-020-0372-5}.}
 
-\hypertarget{citeproc_bib_item_2}{[2] S. Khoshnaw, R. Salih, and S. Sulaimany, “Mathematical Modelling for Coronavirus Disease (COVID-19) in Predicting Future Behaviours and Sensitivity Analysis,” \textit{Mathematical Modelling of Natural Phenomena}, vol. 15, May 2020, doi: \href{https://doi.org/10.1051/mmnp/2020020}{10.1051/mmnp/2020020}.}
+\hypertarget{citeproc_bib_item_2}{[2] S. Khoshnaw, R. Salih, and S. Sulaimany, “Mathematical Modelling for Coronavirus Disease (COVID-19) in Predicting Future Behaviours and Sensitivity Analysis,” \textit{Mathematical modelling of natural phenomena}, vol. 15, May 2020, doi: \href{https://doi.org/10.1051/mmnp/2020020}{10.1051/mmnp/2020020}.}
 
-\hypertarget{citeproc_bib_item_3}{[3] M. Tokic, V. Hatzimanikatis, and L. Miskovic, “Large-Scale Kinetic Metabolic Models of Pseudomonas Putida KT2440 for Consistent Design of Metabolic Engineering Strategies,” \textit{Biotechnology for Biofuels}, vol. 13, p. 33, 2020, doi: \href{https://doi.org/10.1186/s13068-020-1665-7}{10.1186/s13068-020-1665-7}.}
+\hypertarget{citeproc_bib_item_3}{[3] M. Tokic, V. Hatzimanikatis, and L. Miskovic, “Large-scale kinetic metabolic models of Pseudomonas putida KT2440 for consistent design of metabolic engineering strategies,” \textit{Biotechnology for biofuels}, vol. 13, p. 33, 2020, doi: \href{https://doi.org/10.1186/s13068-020-1665-7}{10.1186/s13068-020-1665-7}.}
 
-\hypertarget{citeproc_bib_item_4}{[4] A. Khodayari and C. D. Maranas, “A Genome-Scale Escherichia Coli Kinetic Metabolic Model k-Ecoli457 Satisfying Flux Data for Multiple Mutant Strains,” \textit{Nature Communications}, vol. 7, no. 1, Dec. 2016, doi: \href{https://doi.org/10.1038/ncomms13806}{10.1038/ncomms13806}.}
+\hypertarget{citeproc_bib_item_4}{[4] A. Khodayari and C. D. Maranas, “A genome-scale Escherichia coli kinetic metabolic model k-ecoli457 satisfying flux data for multiple mutant strains,” \textit{Nature communications}, vol. 7, no. 1, Dec. 2016, doi: \href{https://doi.org/10.1038/ncomms13806}{10.1038/ncomms13806}.}
 
-\hypertarget{citeproc_bib_item_5}{[5] P. A. Saa and L. K. Nielsen, “Formulation, Construction and Analysis of Kinetic Models of Metabolism: A Review of Modelling Frameworks,” \textit{Biotechnology Advances}, vol. 35, no. 8, pp. 981–1003, Dec. 2017, doi: \href{https://doi.org/10.1016/j.biotechadv.2017.09.005}{10.1016/j.biotechadv.2017.09.005}.}
+\hypertarget{citeproc_bib_item_5}{[5] P. A. Saa and L. K. Nielsen, “Formulation, construction and analysis of kinetic models of metabolism: A review of modelling frameworks,” \textit{Biotechnology advances}, vol. 35, no. 8, pp. 981–1003, Dec. 2017, doi: \href{https://doi.org/10.1016/j.biotechadv.2017.09.005}{10.1016/j.biotechadv.2017.09.005}.}
 
-\hypertarget{citeproc_bib_item_6}{[6] A. Tsigkinopoulou, S. M. Baker, and R. Breitling, “Respectful Modeling: Addressing Uncertainty in Dynamic System Models for Molecular Biology,” \textit{Trends in Biotechnology}, vol. 35, no. 6, pp. 518–529, Jun. 2017, doi: \href{https://doi.org/10.1016/j.tibtech.2016.12.008}{10.1016/j.tibtech.2016.12.008}.}
+\hypertarget{citeproc_bib_item_6}{[6] A. Tsigkinopoulou, S. M. Baker, and R. Breitling, “Respectful Modeling: Addressing Uncertainty in Dynamic System Models for Molecular Biology,” \textit{Trends in biotechnology}, vol. 35, no. 6, pp. 518–529, Jun. 2017, doi: \href{https://doi.org/10.1016/j.tibtech.2016.12.008}{10.1016/j.tibtech.2016.12.008}.}
 
-\hypertarget{citeproc_bib_item_7}{[7] F. Hussain, C. J. Langmead, Q. Mi, J. Dutta-Moscato, Y. Vodovotz, and S. K. Jha, “Automated Parameter Estimation for Biological Models Using Bayesian Statistical Model Checking,” \textit{BMC Bioinformatics}, vol. 16, no. 17, p. S8, Dec. 2015, doi: \href{https://doi.org/10.1186/1471-2105-16-S17-S8}{10.1186/1471-2105-16-S17-S8}.}
+\hypertarget{citeproc_bib_item_7}{[7] F. Hussain, C. J. Langmead, Q. Mi, J. Dutta-Moscato, Y. Vodovotz, and S. K. Jha, “Automated parameter estimation for biological models using Bayesian statistical model checking,” \textit{Bmc bioinformatics}, vol. 16, no. 17, p. S8, Dec. 2015, doi: \href{https://doi.org/10.1186/1471-2105-16-S17-S8}{10.1186/1471-2105-16-S17-S8}.}
 
-\hypertarget{citeproc_bib_item_8}{[8] X. Zhu, M. Welling, F. Jin, and J. Lowengrub, “Predicting Simulation Parameters of Biological Systems Using a Gaussian Process Model,” \textit{Statistical Analysis and Data Mining: The ASA Data Science Journal}, vol. 5, no. 6, pp. 509–522, 2012, doi: \href{https://doi.org/10.1002/sam.11163}{10.1002/sam.11163}.}
+\hypertarget{citeproc_bib_item_8}{[8] X. Zhu, M. Welling, F. Jin, and J. Lowengrub, “Predicting simulation parameters of biological systems using a Gaussian process model,” \textit{Statistical analysis and data mining: The asa data science journal}, vol. 5, no. 6, pp. 509–522, 2012, doi: \href{https://doi.org/10.1002/sam.11163}{10.1002/sam.11163}.}
 
-\hypertarget{citeproc_bib_item_9}{[9] S. van Mourik, C. ter Braak, H. Stigter, and J. Molenaar, “Prediction Uncertainty Assessment of a Systems Biology Model Requires a Sample of the Full Probability Distribution of Its Parameters,” \textit{PeerJ}, vol. 2, p. e433, Jun. 2014, doi: \href{https://doi.org/10.7717/peerj.433}{10.7717/peerj.433}.}
+\hypertarget{citeproc_bib_item_9}{[9] S. van Mourik, C. ter Braak, H. Stigter, and J. Molenaar, “Prediction uncertainty assessment of a systems biology model requires a sample of the full probability distribution of its parameters,” \textit{Peerj}, vol. 2, p. e433, Jun. 2014, doi: \href{https://doi.org/10.7717/peerj.433}{10.7717/peerj.433}.}
 
-\hypertarget{citeproc_bib_item_10}{[10] P. Saa and L. K. Nielsen, “A General Framework for Thermodynamically Consistent Parameterization and Efficient Sampling of Enzymatic Reactions,” \textit{PLOS Computational Biology}, vol. 11, no. 4, p. e1004195, Apr. 2015, doi: \href{https://doi.org/10.1371/journal.pcbi.1004195}{10.1371/journal.pcbi.1004195}.}
+\hypertarget{citeproc_bib_item_10}{[10] P. Saa and L. K. Nielsen, “A General Framework for Thermodynamically Consistent Parameterization and Efficient Sampling of Enzymatic Reactions,” \textit{Plos computational biology}, vol. 11, no. 4, p. e1004195, Apr. 2015, doi: \href{https://doi.org/10.1371/journal.pcbi.1004195}{10.1371/journal.pcbi.1004195}.}
 
-\hypertarget{citeproc_bib_item_11}{[11] S. Mukherjee and T. P. Speed, “Network Inference Using Informative Priors,” \textit{Proceedings of the National Academy of Sciences}, vol. 105, no. 38, pp. 14313–14318, Sep. 2008, doi: \href{https://doi.org/10.1073/pnas.0802272105}{10.1073/pnas.0802272105}.}
+\hypertarget{citeproc_bib_item_11}{[11] S. Mukherjee and T. P. Speed, “Network inference using informative priors,” \textit{Proceedings of the national academy of sciences}, vol. 105, no. 38, pp. 14313–14318, Sep. 2008, doi: \href{https://doi.org/10.1073/pnas.0802272105}{10.1073/pnas.0802272105}.}
 
-\hypertarget{citeproc_bib_item_12}{[12] R. E. Baker, J.-M. Peña, J. Jayamohan, and A. Jérusalem, “Mechanistic Models versus Machine Learning, a Fight Worth Fighting for the Biological Community?,” \textit{Biology Letters}, vol. 14, no. 5, p. 20170660, May 2018, doi: \href{https://doi.org/10.1098/rsbl.2017.0660}{10.1098/rsbl.2017.0660}.}
+\hypertarget{citeproc_bib_item_12}{[12] R. E. Baker, J.-M. Peña, J. Jayamohan, and A. Jérusalem, “Mechanistic models versus machine learning, a fight worth fighting for the biological community?,” \textit{Biology letters}, vol. 14, no. 5, p. 20170660, May 2018, doi: \href{https://doi.org/10.1098/rsbl.2017.0660}{10.1098/rsbl.2017.0660}.}
 
-\hypertarget{citeproc_bib_item_13}{[13] C. Xu and S. A. Jackson, “Machine Learning and Complex Biological Data,” \textit{Genome Biology}, vol. 20, no. 1, p. 76, Apr. 2019, doi: \href{https://doi.org/10.1186/s13059-019-1689-0}{10.1186/s13059-019-1689-0}.}
+\hypertarget{citeproc_bib_item_13}{[13] C. Xu and S. A. Jackson, “Machine learning and complex biological data,” \textit{Genome biology}, vol. 20, no. 1, p. 76, Apr. 2019, doi: \href{https://doi.org/10.1186/s13059-019-1689-0}{10.1186/s13059-019-1689-0}.}
 
-\hypertarget{citeproc_bib_item_14}{[14] M. Zitnik, F. Nguyen, B. Wang, J. Leskovec, A. Goldenberg, and M. M. Hoffman, “Machine Learning for Integrating Data in Biology and Medicine: Principles, Practice, and Opportunities,” \textit{An International Journal on Information Fusion}, vol. 50, pp. 71–91, Oct. 2019, doi: \href{https://doi.org/10.1016/j.inffus.2018.09.012}{10.1016/j.inffus.2018.09.012}.}
+\hypertarget{citeproc_bib_item_14}{[14] M. Zitnik, F. Nguyen, B. Wang, J. Leskovec, A. Goldenberg, and M. M. Hoffman, “Machine Learning for Integrating Data in Biology and Medicine: Principles, Practice, and Opportunities,” \textit{An international journal on information fusion}, vol. 50, pp. 71–91, Oct. 2019, doi: \href{https://doi.org/10.1016/j.inffus.2018.09.012}{10.1016/j.inffus.2018.09.012}.}
 
-\hypertarget{citeproc_bib_item_15}{[15] S.-M. Yan, D.-Q. Shi, H. Nong, and G. Wu, “Predicting Km Values of Beta-Glucosidases Using Cellobiose as Substrate,” \textit{Interdisciplinary Sciences, Computational Life Sciences}, vol. 4, no. 1, pp. 46–53, Mar. 2012, doi: \href{https://doi.org/10.1007/s12539-012-0115-z}{10.1007/s12539-012-0115-z}.}
+\hypertarget{citeproc_bib_item_15}{[15] S.-M. Yan, D.-Q. Shi, H. Nong, and G. Wu, “Predicting Km values of beta-glucosidases using cellobiose as substrate,” \textit{Interdisciplinary sciences, computational life sciences}, vol. 4, no. 1, pp. 46–53, Mar. 2012, doi: \href{https://doi.org/10.1007/s12539-012-0115-z}{10.1007/s12539-012-0115-z}.}
 
-\hypertarget{citeproc_bib_item_16}{[16] A. Kroll, M. K. M. Engqvist, D. Heckmann, and M. J. Lercher, “Deep Learning Allows Genome-Scale Prediction of Michaelis Constants from Structural Features,” \textit{PLoS biology}, vol. 19, no. 10, p. e3001402, Oct. 2021, doi: \href{https://doi.org/10.1371/journal.pbio.3001402}{10.1371/journal.pbio.3001402}.}
+\hypertarget{citeproc_bib_item_16}{[16] A. Kroll, M. K. M. Engqvist, D. Heckmann, and M. J. Lercher, “Deep learning allows genome-scale prediction of Michaelis constants from structural features,” \textit{Plos biology}, vol. 19, no. 10, p. e3001402, Oct. 2021, doi: \href{https://doi.org/10.1371/journal.pbio.3001402}{10.1371/journal.pbio.3001402}.}
 
-\hypertarget{citeproc_bib_item_17}{[17] F. Li \textit{et al.}, “Deep Learning Based Kcat Prediction Enables Improved Enzyme Constrained Model Reconstruction.” Cold Spring Harbor Laboratory, pp. 2021.08.06.455417, Aug. 2021. doi: \href{https://doi.org/10.1101/2021.08.06.455417}{10.1101/2021.08.06.455417}.}
+\hypertarget{citeproc_bib_item_17}{[17] F. Li \textit{et al.}, “Deep learning based kcat prediction enables improved enzyme constrained model reconstruction.” Cold Spring Harbor Laboratory, p. 2021.08.06.455417, Aug. 2021. doi: \href{https://doi.org/10.1101/2021.08.06.455417}{10.1101/2021.08.06.455417}.}
 
-\hypertarget{citeproc_bib_item_18}{[18] A. Tsigkinopoulou, A. Hawari, M. Uttley, and R. Breitling, “Defining Informative Priors for Ensemble Modeling in Systems Biology,” \textit{Nature Protocols}, vol. 13, no. 11, pp. 2643–2663, Nov. 2018, doi: \href{https://doi.org/10.1038/s41596-018-0056-z}{10.1038/s41596-018-0056-z}.}
+\hypertarget{citeproc_bib_item_18}{[18] A. Tsigkinopoulou, A. Hawari, M. Uttley, and R. Breitling, “Defining informative priors for ensemble modeling in systems biology,” \textit{Nature protocols}, vol. 13, no. 11, pp. 2643–2663, Nov. 2018, doi: \href{https://doi.org/10.1038/s41596-018-0056-z}{10.1038/s41596-018-0056-z}.}
 
-\hypertarget{citeproc_bib_item_19}{[19] S. Borger, W. Liebermeister, and E. Klipp, “Prediction of Enzyme Kinetic Parameters Based on Statistical Learning,” \textit{Genome Informatics}, vol. 17, no. 1, pp. 80–87, 2006.}
+\hypertarget{citeproc_bib_item_19}{[19] S. Borger, W. Liebermeister, and E. Klipp, “Prediction of enzyme kinetic parameters based on statistical learning,” \textit{Genome informatics}, vol. 17, no. 1, pp. 80–87, 2006, Accessed: Oct. 15, 2021. [Online]. Available: \url{https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_1585340}}
 
-\hypertarget{citeproc_bib_item_20}{[20] “BRENDA - SOAP Access Help.” https://www.brenda-enzymes.org/soap.php\\#Turnover\\_Number.}
+\hypertarget{citeproc_bib_item_20}{[20] “BRENDA - SOAP access help.” Accessed: Nov. 18, 2021. [Online]. Available: \url{https://www.brenda-enzymes.org/soap.php#Turnover_Number}}
 
-\hypertarget{citeproc_bib_item_21}{[21] U. Wittig \textit{et al.}, “SABIO-RK\textemdash Database for Biochemical Reaction Kinetics,” \textit{Nucleic Acids Research}, vol. 40, no. D1, pp. D790–D796, Jan. 2012, doi: \href{https://doi.org/10.1093/nar/gkr1046}{10.1093/nar/gkr1046}.}
+\hypertarget{citeproc_bib_item_21}{[21] U. Wittig \textit{et al.}, “SABIO-RK database for biochemical reaction kinetics,” \textit{Nucleic acids research}, vol. 40, no. D1, pp. D790–D796, Jan. 2012, doi: \href{https://doi.org/10.1093/nar/gkr1046}{10.1093/nar/gkr1046}.}
 
-\hypertarget{citeproc_bib_item_22}{[22] A. Chang \textit{et al.}, “BRENDA, the ELIXIR Core Data Resource in 2021: New Developments and Updates,” \textit{Nucleic Acids Research}, vol. 49, no. D1, pp. D498–D508, Jan. 2021, doi: \href{https://doi.org/10.1093/nar/gkaa1025}{10.1093/nar/gkaa1025}.}
+\hypertarget{citeproc_bib_item_22}{[22] A. Chang \textit{et al.}, “BRENDA, the ELIXIR core data resource in 2021: New developments and updates,” \textit{Nucleic acids research}, vol. 49, no. D1, pp. D498–D508, Jan. 2021, doi: \href{https://doi.org/10.1093/nar/gkaa1025}{10.1093/nar/gkaa1025}.}
 
-\hypertarget{citeproc_bib_item_23}{[23] S. Duvaud, C. Gabella, F. Lisacek, H. Stockinger, V. Ioannidis, and C. Durinx, “Expasy, the Swiss Bioinformatics Resource Portal, as Designed by Its Users,” \textit{Nucleic Acids Research}, vol. 49, no. W1, pp. W216–W227, Jul. 2021, doi: \href{https://doi.org/10.1093/nar/gkab225}{10.1093/nar/gkab225}.}
+\hypertarget{citeproc_bib_item_23}{[23] S. Duvaud, C. Gabella, F. Lisacek, H. Stockinger, V. Ioannidis, and C. Durinx, “Expasy, the Swiss Bioinformatics Resource Portal, as designed by its users,” \textit{Nucleic acids research}, vol. 49, no. W1, pp. W216–W227, Jul. 2021, doi: \href{https://doi.org/10.1093/nar/gkab225}{10.1093/nar/gkab225}.}
 
-\hypertarget{citeproc_bib_item_24}{[24] M. A. Juárez and M. F. J. Steel, “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions,” \textit{Journal of Business \& Economic Statistics}, vol. 28, no. 1, pp. 52–66, Jan. 2010, doi: \href{https://doi.org/10.1198/jbes.2009.07145}{10.1198/jbes.2009.07145}.}
+\hypertarget{citeproc_bib_item_24}{[24] M. A. Juárez and M. F. J. Steel, “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions,” \textit{Journal of business \& economic statistics}, vol. 28, no. 1, pp. 52–66, Jan. 2010, doi: \href{https://doi.org/10.1198/jbes.2009.07145}{10.1198/jbes.2009.07145}.}
 
-\hypertarget{citeproc_bib_item_25}{[25] B. Carpenter \textit{et al.}, “Stan: A Probabilistic Programming Language,” \textit{Journal of Statistical Software}, vol. 76, no. 1, pp. 1–32, Jan. 2017, doi: \href{https://doi.org/10.18637/jss.v076.i01}{10.18637/jss.v076.i01}.}
+\hypertarget{citeproc_bib_item_25}{[25] B. Carpenter \textit{et al.}, “Stan: A Probabilistic Programming Language,” \textit{Journal of statistical software}, vol. 76, no. 1, pp. 1–32, Jan. 2017, doi: \href{https://doi.org/10.18637/jss.v076.i01}{10.18637/jss.v076.i01}.}
 
-\hypertarget{citeproc_bib_item_26}{[26] A. Gelman \textit{et al.}, “Bayesian Workflow,” \textit{arXiv:2011.01808 [stat]}, Nov. 2020,Available: \href{https://arxiv.org/abs/2011.01808}{https://arxiv.org/abs/2011.01808}}
+\hypertarget{citeproc_bib_item_26}{[26] A. Gelman \textit{et al.}, “Bayesian Workflow,” \textit{Arxiv:2011.01808 [stat]}, Nov. 2020, Accessed: Nov. 05, 2020. [Online]. Available: \url{http://arxiv.org/abs/2011.01808}}
 
-\hypertarget{citeproc_bib_item_27}{[27] R. Kumar, C. Carroll, A. Hartikainen, and O. Martin, “ArviZ a Unified Library for Exploratory Analysis of Bayesian Models in Python,” \textit{Journal of Open Source Software}, vol. 4, no. 33, p. 1143, Jan. 2019, doi: \href{https://doi.org/10.21105/joss.01143}{10.21105/joss.01143}.}
+\hypertarget{citeproc_bib_item_27}{[27] R. Kumar, C. Carroll, A. Hartikainen, and O. Martin, “ArviZ a unified library for exploratory analysis of Bayesian models in Python,” \textit{Journal of open source software}, vol. 4, no. 33, p. 1143, Jan. 2019, doi: \href{https://doi.org/10.21105/joss.01143}{10.21105/joss.01143}.}
 
-\hypertarget{citeproc_bib_item_28}{[28] A. Vehtari, A. Gelman, D. Simpson, B. Carpenter, and P.-C. Bürkner, “Rank-Normalization, Folding, and Localization: An Improved R\textasciicircum for Assessing Convergence of MCMC (with Discussion),” \textit{Bayesian Analysis}, vol. 16, no. 2, pp. 667–718, Jun. 2021, doi: \href{https://doi.org/10.1214/20-BA1221}{10.1214/20-BA1221}.}
+\hypertarget{citeproc_bib_item_28}{[28] A. Vehtari, A. Gelman, D. Simpson, B. Carpenter, and P.-C. Bürkner, “Rank-Normalization, Folding, and Localization: An Improved R for Assessing Convergence of MCMC (with Discussion),” \textit{Bayesian analysis}, vol. 16, no. 2, pp. 667–718, Jun. 2021, doi: \href{https://doi.org/10.1214/20-BA1221}{10.1214/20-BA1221}.}
 
-\hypertarget{citeproc_bib_item_29}{[29] A. Vehtari, A. Gelman, and J. Gabry, “Practical Bayesian Model Evaluation Using Leave-One-out Cross-Validation and WAIC,” \textit{Statistics and Computing}, vol. 27, no. 5, pp. 1413–1432, Sep. 2017, doi: \href{https://doi.org/10.1007/s11222-016-9696-4}{10.1007/s11222-016-9696-4}.}
+\hypertarget{citeproc_bib_item_29}{[29] A. Vehtari, A. Gelman, and J. Gabry, “Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC,” \textit{Statistics and computing}, vol. 27, no. 5, pp. 1413–1432, Sep. 2017, doi: \href{https://doi.org/10.1007/s11222-016-9696-4}{10.1007/s11222-016-9696-4}.}
 \end{document}
