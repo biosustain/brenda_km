@@ -33,9 +33,14 @@ def plot_vars(posterior: Dataset, vars: List[str]) -> Figure:
 
 
 def plot_nadh_comparison(posterior: Dataset, lits: pd.DataFrame) -> Figure:
-    samples = posterior["log_km"].to_series().reset_index()
-    is_nadh = lambda df: df["biology"].str.endswith("NADH")
-    is_nadph = lambda df: df["biology"].str.endswith("NADPH")
+    samples = (
+        posterior["log_km"]
+        .to_dataframe()
+        .rename(columns={"biology_substrate": "substrate"})
+    )
+    assert isinstance(samples, pd.DataFrame)
+    is_nadh = lambda df: df["substrate"] == "NADH"
+    is_nadph = lambda df: df["substrate"] == "NADPH"
     f, axes = plt.subplots(1, 2, figsize=[12, 6], sharex=True)
     axes = axes.ravel()
     f.suptitle(
@@ -105,9 +110,7 @@ def plot_log_km_comparison(
     return f
 
 
-def generate_summary_df(
-    idata: az.InferenceData, lits: pd.DataFrame, is_enz: bool
-):
+def generate_summary_df(idata: az.InferenceData):
     posterior = idata.get("posterior")
     cd = ["chain", "draw"]
     assert isinstance(posterior, Dataset)
@@ -118,12 +121,11 @@ def generate_summary_df(
         .unstack("quantile")
         .add_prefix("q_")
     )
-    mean = posterior["log_km"].mean(dim=cd).to_series().rename("posterior_mean")
-    assert isinstance(mean, pd.Series)
-    biofcts = ["organism", "substrate", "ec4"]
-    if is_enz:
-        biofcts += ["uniprot_id"]
-    out = quantiles.join(mean)
-    for fct in biofcts:
-        out = out.join(lits.groupby("biology")[fct].first())
-    return out.reset_index()
+    mean = (
+        posterior["log_km"]
+        .mean(dim=cd)
+        .to_dataframe()
+        .rename(columns={"log_km": "posterior_mean"})
+    )
+    assert isinstance(mean, pd.DataFrame)
+    return mean.join(quantiles).reset_index()
