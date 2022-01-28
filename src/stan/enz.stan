@@ -25,18 +25,21 @@ parameters {
   real mu;
   real<lower=0> sigma;
   real<lower=0> tau_substrate;
+  real<lower=0> tau_org_sub;
   real<lower=0> tau_ec4_sub;
   real<lower=0> tau_enz_sub;
-  real<lower=0> tau_org_sub;
   vector<multiplier=tau_substrate>[N_substrate] a_substrate;
+  vector<multiplier=tau_org_sub>[N_org_sub] a_org_sub;
   vector<multiplier=tau_ec4_sub>[N_ec4_sub] a_ec4_sub;
   vector<multiplier=tau_enz_sub>[N_enz_sub] a_enz_sub;
-  vector<multiplier=tau_org_sub>[N_org_sub] a_org_sub;
 }
 transformed parameters {
-  vector[N_biology] log_km = mu + a_substrate[substrate] + a_ec4_sub[ec4_sub] + a_org_sub[org_sub];
+  vector[N_biology] log_km = mu
+    + a_substrate[substrate]
+    + a_ec4_sub[ec4_sub]
+    + a_org_sub[org_sub];
   for (b in 1:N_biology){
-    log_km[b] += enz_sub[b] > 0 ? a_enz_sub[enz_sub[b]] : 0;
+    if (enz_sub[b] > 1) log_km[b] += a_enz_sub[enz_sub[b]];
   }
 }
 model {

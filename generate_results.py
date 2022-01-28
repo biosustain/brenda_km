@@ -28,6 +28,8 @@ def main():
             coords = json.load(f)
         with open(os.path.join(mc.data_dir, "dims.json"), "r") as f:
             dims = json.load(f)
+        with open(os.path.join(mc.data_dir, "biology_maps.json"), "r") as f:
+            biology_maps = json.load(f)
         if not mc.do_not_run:
             run_dir = os.path.join(RESULTS_DIR, mc.name)
             if not os.path.exists(run_dir):
@@ -46,6 +48,7 @@ def main():
                     dims=dims,
                     sample_kwargs=mc.sample_kwargs,
                     diagnose=True,
+                    biology_maps=biology_maps,
                 )
                 idata_file = os.path.join(run_dir, f"{mode}.nc")
                 print(f"\n***Writing inference data to {idata_file}***\n")
@@ -54,8 +57,7 @@ def main():
                 lits = pd.read_csv(os.path.join(mc.data_dir, "lits.csv"))
                 assert isinstance(lits, pd.DataFrame)
                 summary_file = os.path.join(run_dir, f"{mode}_summary.csv")
-                is_enz = "enz" in mc.data_dir
-                summary = generate_summary_df(idata, lits, is_enz)
+                summary = generate_summary_df(idata)
                 print(f"\n***Writing summary table to {summary_file}***\n")
                 summary.to_csv(summary_file)
 
@@ -78,6 +80,7 @@ def main():
                         dims=dims,
                         sample_kwargs=sample_kwargs,
                         diagnose=False,
+                        biology_maps=biology_maps,
                     ).get("log_likelihood")
                     lliks.append(llik)
                 full_llik = xarray.concat(lliks, dim="ix_test")

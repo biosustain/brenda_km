@@ -19,6 +19,7 @@ def sample(
     dims: dict,
     diagnose: bool,
     sample_kwargs: dict,
+    biology_maps: dict,
 ) -> InferenceData:
     """Run cmdstanpy.CmdStanModel.sample and return an InferenceData."""
     model = CmdStanModel(stan_file=stan_file)
@@ -29,10 +30,13 @@ def sample(
     mcmc = model.sample(data=stan_input, **sample_kwargs)
     if diagnose:
         print(mcmc.diagnose())
-    return az.from_cmdstanpy(
+    idata = az.from_cmdstanpy(
         posterior=mcmc,
         log_likelihood="llik",
         observed_data=stan_input,
         coords=coords,
         dims=dims,
     )
+    for k, v in biology_maps.items():
+        idata.assign_coords({"biology_" + k: ("biology", v)}, inplace=True)
+    return idata
