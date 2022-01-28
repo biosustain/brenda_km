@@ -51,6 +51,7 @@ class PrepareDataOutput:
     dims: Dict[str, Any]
     number_of_cv_folds: int
     standict_function: Callable
+    biology_maps: Dict[str, List[str]]
     standict_prior: StanDict = field(init=False)
     standict_posterior: StanDict = field(init=False)
     standicts_cv: List[StanDict] = field(init=False)
@@ -218,11 +219,18 @@ def prepare_data_brenda_km(
     lits["ec4_sub"] = lits["ec4"].str.cat(lits["substrate"], sep="|")
     lits["org_sub"] = lits["organism"].str.cat(lits["substrate"], sep="|")
     fcts = biology_cols + ["ec4_sub", "org_sub", "literature", "biology"]
+    fcts_with_unknowns = ["substrate", "ec4_sub", "org_sub"]
     for fct in fcts:
-        lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
-        coords[fct] = pd.factorize(lits[fct])[1].tolist()
-    for coord in ["substrate", "ec4_sub", "org_sub"]:
-        coords[coord] += [f"unknown {coord}"]
+        if fct in fcts_with_unknowns:
+            lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 2
+            coords[fct] = ["unknown"] + pd.factorize(lits[fct])[1].tolist()
+        else:
+            lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
+            coords[fct] = pd.factorize(lits[fct])[1].tolist()
+    biology_maps = {
+        col: lits.groupby("biology")[col].first().tolist()
+        for col in biology_cols
+    }
     return PrepareDataOutput(
         name=name,
         lits=lits,
@@ -231,6 +239,7 @@ def prepare_data_brenda_km(
         dims=DIMS,
         number_of_cv_folds=number_of_cv_folds,
         standict_function=get_standict_brenda,
+        biology_maps=biology_maps,
     )
 
 
@@ -356,7 +365,7 @@ def prepare_data_sabio_km(
     number_of_cv_folds: int = 10,
 ) -> PrepareDataOutput:
     assert isinstance(raw_reports, pd.DataFrame)
-    pp = raw_reports.rename(
+    reports = raw_reports.rename(
         columns={
             "Substrate": "reaction_substrates",
             "EnzymeType": "enzyme_type",
@@ -374,28 +383,34 @@ def prepare_data_sabio_km(
             "pH": "ph",
         }
     ).replace("-", np.nan)
-    assert isinstance(pp, pd.DataFrame)
+    assert isinstance(reports, pd.DataFrame)
     biology_cols = ["organism", "ec4", "uniprot_id", "substrate"]
     lit_cols = biology_cols + ["literature"]
     cond = (
-        pp["parameter_type"].eq("Km")
-        & pp["enzyme_type"].str.contains("wildtype")
-        & pp["start_value"].notnull()
-        & pp["start_value"].gt(0)
-        & pp["unit"].eq("M")
+        reports["parameter_type"].eq("Km")
+        & reports["enzyme_type"].str.contains("wildtype")
+        & reports["start_value"].notnull()
+        & reports["start_value"].gt(0)
+        & reports["unit"].eq("M")
         & (
-            pp["temperature"].isnull()
-            | pp["temperature"].astype(float).between(*TEMPERATURE_RANGE)
+            reports["temperature"].isnull()
+            | reports["temperature"].astype(float).between(*TEMPERATURE_RANGE)
         )
-        & (pp["ph"].isnull() | pp["ph"].astype(float).between(*PH_RANGE))
-        & pp["literature"].notnull()
+        & (
+            reports["ph"].isnull()
+            | reports["ph"].astype(float).between(*PH_RANGE)
+        )
+        & reports["literature"].notnull()
     )
-    reports = pp.loc[cond].copy()
+    reports = reports.loc[cond].copy()
     reports["y"] = np.log(
         reports[["start_value", "end_value"]]
         # multiply by 1000 to convert from M to mM
         .multiply(1000)
     ).mean(axis=1)
+    reports["uniprot_id"] = np.where(
+        reports["uniprot_id"].str.contains(" "), np.nan, reports["uniprot_id"]
+    )
     reports["biology"] = (
         reports[biology_cols].fillna("").apply("|".join, axis=1)
     )
@@ -423,11 +438,18 @@ def prepare_data_sabio_km(
         "biology",
     ]
     coords = {}
+    fcts_with_unknowns = ["substrate", "ec4_sub", "org_sub", "enz_sub"]
     for fct in fcts:
-        lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
-        coords[fct] = pd.factorize(lits[fct])[1].tolist()
-    for coord in ["substrate", "ec4_sub", "enz_sub", "org_sub"]:
-        coords[coord] += [f"unknown {coord}"]
+        if fct in fcts_with_unknowns:
+            lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 2
+            coords[fct] = ["unknown"] + pd.factorize(lits[fct])[1].tolist()
+        else:
+            lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
+            coords[fct] = pd.factorize(lits[fct])[1].tolist()
+    biology_maps = {
+        col: lits.groupby("biology")[col].first().tolist()
+        for col in biology_cols
+    }
     return PrepareDataOutput(
         name=name,
         lits=lits,
@@ -436,4 +458,5 @@ def prepare_data_sabio_km(
         dims=DIMS,
         number_of_cv_folds=number_of_cv_folds,
         standict_function=get_standict_sabio,
+        biology_maps=biology_maps,
     )
