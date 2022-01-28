@@ -1,5 +1,4 @@
 import base64
-import json
 import os
 from typing import Any
 
@@ -8,8 +7,6 @@ import arviz as az
 import numpy as np
 import pandas as pd
 import streamlit as st
-from arviz.data.inference_data import InferenceData
-from genericpath import exists
 from scipy.stats.kde import gaussian_kde
 from xarray import DataArray
 from xarray.core.dataset import Dataset
@@ -63,17 +60,17 @@ def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
 def get_log_km_brenda(
     posterior: Dataset, ec4: str, organism: str, substrate: str
 ) -> DataArray:
-    if substrate not in posterior.coords["substrate"]:
-        substrate = "unknown substrate"
-    ec_sub, org_sub = (
-        f"{s}|{substrate}"
-        if f"{s}|{substrate}" in posterior.coords[coord_name]
-        else "unknown " + coord_name
-        for s, coord_name in [(ec4, "ec4_sub"), (organism, "org_sub")]
-    )
+    # if substrate not in posterior.coords["substrate"]:
+    # substrate = "unknown substrate"
+    ec4_sub = f"{ec4}|{substrate}"
+    if ec4_sub not in posterior.coords["ec4_sub"]:
+        ec4_sub = "unknown"
+    org_sub = f"{organism}|{substrate}"
+    if org_sub not in posterior.coords["org_sub"]:
+        org_sub = "unknown"
     mu = posterior["mu"]
     a_substrate = posterior["a_substrate"].sel({"substrate": substrate})
-    a_ec_sub = posterior["a_ec4_sub"].sel({"ec4_sub": ec_sub})
+    a_ec_sub = posterior["a_ec4_sub"].sel({"ec4_sub": ec4_sub})
     a_org_sub = posterior["a_org_sub"].sel({"org_sub": org_sub})
     return mu + a_substrate + a_ec_sub + a_org_sub
 
@@ -83,7 +80,7 @@ def get_log_km_sabio(
 ):
     enz_sub = f"{uniprot_id}|{substrate}"
     if enz_sub not in posterior.coords["enz_sub"]:
-        enz_sub = "unknown enz_sub"
+        enz_sub = "unknown"
     a_enz_sub = posterior["a_enz_sub"].sel({"enz_sub": enz_sub})
     return get_log_km_brenda(posterior, ec4, organism, substrate) + a_enz_sub
 
@@ -128,8 +125,7 @@ biology_maps = {
     col: lits.groupby("biology")[col].first() for col in BIOLOGY_COLS[db]
 }
 options = {
-    col: [f"Unknown {col}"] + s.unique().tolist()
-    for col, s in biology_maps.items()
+    col: ["unknown"] + s.unique().tolist() for col, s in biology_maps.items()
 }
 
 organism = st.sidebar.selectbox("Organism", options["organism"])
