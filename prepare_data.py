@@ -28,22 +28,13 @@ PREPARED_DIR = os.path.join("data", "prepared")
 # Used to generate fake data
 TRUE_MODEL_FILE = os.path.join("src", "stan", "blk.stan")
 HARDCODED_PARAMS = {
-    "km": {
-        "nu": 4,
-        "mu": -2,
-        "sigma": 0.8,
-        "tau_substrate": 1.6,
-        "tau_ec4_sub": 0.6,
-        "tau_org_sub": 1.1,
-    },
-    "kcat": {
-        "nu": 4,
-        "mu": -2,
-        "sigma": 0.8,
-        "tau_substrate": 1.6,
-        "tau_ec4_sub": 0.6,
-        "tau_org_sub": 1.1,
-    },
+    "nu": 4,
+    "mu": -2,
+    "sigma": 0.8,
+    "tau_substrate": 1.6,
+    "tau_org_sub": 1.1,
+    "tau_ec4_sub": 0.6,
+    "tau_enz_sub": 0.5,
 }
 SAMPLE_KWARGS_SIM = {
     "chains": 1,
@@ -94,6 +85,8 @@ def generate_prepared_data():
             json.dump(po.coords, f)
         with open(os.path.join(output_dir, "dims.json"), "w") as f:
             json.dump(po.dims, f)
+        with open(os.path.join(output_dir, "biology_maps.json"), "w") as f:
+            json.dump(po.biology_maps, f)
     return prepare_data_outputs
 
 
@@ -115,15 +108,13 @@ def generate_fake_data(pos: List[PrepareDataOutput]):
         fake_param_file = os.path.join(directory, "fake_data_params.json")
         with open(original_input_file, "r") as f:
             input_orig = json.load(f)
-        model_type = "km" if "km" in po.name else "kcat"
-        hardcoded_params = HARDCODED_PARAMS[model_type]
         rng_params = {
             f"a_{suff}": np.random.normal(
-                0, hardcoded_params[f"tau_{suff}"], input_orig[f"N_{suff}"]
+                0, HARDCODED_PARAMS[f"tau_{suff}"], input_orig[f"N_{suff}"]
             ).tolist()
             for suff in ["substrate", "ec4_sub", "org_sub"]
         }
-        params = {**hardcoded_params, **rng_params}
+        params = {**HARDCODED_PARAMS, **rng_params}
         model = CmdStanModel(stan_file=TRUE_MODEL_FILE)
         sim = model.sample(data=input_orig, inits=params, **SAMPLE_KWARGS_SIM)
         generated_y = sim.stan_variable("yrep").reshape(-1)
