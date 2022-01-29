@@ -11,6 +11,8 @@ from scipy.stats.kde import gaussian_kde
 from xarray import DataArray
 from xarray.core.dataset import Dataset
 
+from src.data_preparation import check_is_df
+
 SUMMARY_CSV_FILE = os.path.join("results", "app_summary.csv")
 RUN_DIRS = {
     "BRENDA": os.path.join("results", "runs", "brenda-km-blk"),
@@ -83,11 +85,6 @@ def get_log_km_sabio(
         enz_sub = "unknown"
     a_enz_sub = posterior["a_enz_sub"].sel({"enz_sub": enz_sub})
     return get_log_km_brenda(posterior, ec4, organism, substrate) + a_enz_sub
-
-
-def check_is_df(maybe_df) -> pd.DataFrame:
-    assert isinstance(maybe_df, pd.DataFrame)
-    return maybe_df
 
 
 # Start of app

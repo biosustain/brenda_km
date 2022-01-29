@@ -88,6 +88,12 @@ class PrepareDataOutput:
         ]
 
 
+def check_is_df(maybe_df) -> pd.DataFrame:
+    """Shut up the type checker!"""
+    assert isinstance(maybe_df, pd.DataFrame)
+    return maybe_df
+
+
 def process_temperature_column(t: pd.Series) -> pd.Series:
     """Convert a series of string temperatures to floats.
 

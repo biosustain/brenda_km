@@ -34,8 +34,7 @@ def main():
             run_dir = os.path.join(RESULTS_DIR, mc.name)
             if not os.path.exists(run_dir):
                 os.mkdir(run_dir)
-            modes = ["posterior"]
-            # modes = ["posterior", "fake", "prior"]
+            modes = ["posterior", "fake", "prior"]
             for mode in modes:
                 input_json = os.path.join(
                     mc.data_dir, f"stan_input_{mode}.json"

@@ -10,6 +10,7 @@ from cmdstanpy import CmdStanModel, write_stan_json
 
 from src.data_preparation import (
     PrepareDataOutput,
+    check_is_df,
     prepare_data_brenda_km,
     prepare_data_sabio_km,
     prepare_hmdb_concs,
@@ -26,7 +27,11 @@ RAW_DATA_FILES = {
 
 PREPARED_DIR = os.path.join("data", "prepared")
 # Used to generate fake data
-TRUE_MODEL_FILE = os.path.join("src", "stan", "blk.stan")
+TRUE_MODEL_FILE = {
+    "brenda_km": os.path.join("src", "stan", "blk.stan"),
+    "sabio_km": os.path.join("src", "stan", "enz.stan"),
+}
+FAKE_DATA_SOURCE_DIR = os.path.join("data", "prepared", "sabio_km")
 HARDCODED_PARAMS = {
     "nu": 4,
     "mu": -2,
@@ -48,7 +53,8 @@ def generate_prepared_data():
     """Save prepared data in the PREPARED_DATA_DIR."""
     print("Reading raw data...")
     raw_data = {
-        k: pd.read_csv(v, index_col=0) for k, v in RAW_DATA_FILES.items()
+        k: check_is_df(pd.read_csv(v, index_col=0))
+        for k, v in RAW_DATA_FILES.items()
     }
 
     hmdb_output_file = os.path.join(PREPARED_DIR, "hmdb_concs.csv")
@@ -108,14 +114,14 @@ def generate_fake_data(pos: List[PrepareDataOutput]):
         fake_param_file = os.path.join(directory, "fake_data_params.json")
         with open(original_input_file, "r") as f:
             input_orig = json.load(f)
-        rng_params = {
-            f"a_{suff}": np.random.normal(
-                0, HARDCODED_PARAMS[f"tau_{suff}"], input_orig[f"N_{suff}"]
-            ).tolist()
-            for suff in ["substrate", "ec4_sub", "org_sub"]
-        }
+        rng_params = {}
+        for suff in ["substrate", "ec4_sub", "org_sub", "enz_sub"]:
+            if f"N_{suff}" in input_orig.keys():
+                rng_params[f"a_{suff}"] = np.random.normal(
+                    0, HARDCODED_PARAMS[f"tau_{suff}"], input_orig[f"N_{suff}"]
+                ).tolist()
         params = {**HARDCODED_PARAMS, **rng_params}
-        model = CmdStanModel(stan_file=TRUE_MODEL_FILE)
+        model = CmdStanModel(stan_file=TRUE_MODEL_FILE[po.name])
         sim = model.sample(data=input_orig, inits=params, **SAMPLE_KWARGS_SIM)
         generated_y = sim.stan_variable("yrep").reshape(-1)
         for param in rng_params.keys():
