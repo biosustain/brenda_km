@@ -1,15 +1,16 @@
-#+title: Statistical analysis of kinetic parameter data from online databases
+#+title: Statistical analysis of Michaelis constant data from online databases
 #+author: Teddy Groves and Areti Tsigkinopoulou
 #+filetags: :work:
 #+startup: overview
 #+cite_export: csl ieee.csl
 #+LATEX_HEADER: \usepackage{parskip}
+#+LATEX_HEADER: \usepackage{color,soul}
 
 #+begin_abstract
-We fit a range of Bayesian regression models to kinetic parameter data from the
-BRENDA and SABIO-RK databases, report the results and provide tools for
-reproducing the results and using them in a systems biology workflow. We
-illustrate the intended use of our results with case studies.
+We fit a range of Bayesian regression models to analyse data from the BRENDA and
+SABIO-RK databases pertaining to Michalis constants or Km parameters. We report
+the results and provide tools for reproducing them independently and using them
+in a systems biology workflow. We illustrate the intended use of our work with case studies.
 #+end_abstract
 
 * Notes                                                            :noexport:
@@ -120,6 +121,8 @@ database [cite:@duvaudExpasySwissBioinformatics2021]. In the project repository,
 see the script ~fetch_data.py~ and the library file ~fetching.py~ for code used
 to fetch data and the directory ~data/raw/~ for the results.
 
+In total we fetched \hl{EXACT NUMBER HERE} raw BRENDA Km reports, \hl{EXACT NUMBER HERE} SABIO-RK Km reports and \hl{EXACT NUMBER HERE} Expasy EC numbers.
+
 ** Data processing
 We made several significant data processing choices. See the library file
 ~data_preparation.py~ for code used to implement these choices.
@@ -157,9 +160,9 @@ treating each report as an observation, especially since we chose not to
 attempt to model the effects of experimental conditions.
 
 ** Statistical model
-We used a Bayesian hierarchical regression model to describe all data. Since
-both Km and Kcat parameters are constrained to be positive, we modelled them on
-natural logarithmic scale, using the same approach taken in
+We used a Bayesian hierarchical regression model to describe all data. Since Km
+parameters are constrained to be positive, we modelled them on natural
+logarithmic scale, using the same approach taken in
 [cite:@borgerPredictionEnzymeKinetic2006]. Our model includes a global mean
 parameter $\mu$, hierarchical substrate-specific intercept parameters $a^{sub}$
 and hierarchical intercept parameters $a^{enz:sub}$, $a^{ec4:sub}$ and
@@ -174,93 +177,30 @@ distribution degrees of freedom parameter $\nu$ follows the recommendation in
 one, reflecting our view that the measurement distribution should not be
 excessively heavy-tailed.
 
-The full model specification in tilde notation is as follows:
+The full model specification in tilde notation is shown below. In these lines the symbol $\tilde$ should be understood as meaning "has the distribution". $ST$, $N$ and $\Gamma$ represent the student-t, normal and gamma distributions respectively. Square brackets represent truncated probability distributions. For example $X \tilde N(0,1)[0, \infty]$ means that the variable $X$ has a normal distribution truncated below at zero, also known as a "half-normal" distribution.
 
 \begin{align*}
-\ln y &\sim ST(\nu,
-               \mu + a^{sub} + a^{enz:sub} + a^{ec4:sub} + a^{org:sub},
-               \sigma) \\
+\ln{y} &\sim ST(\nu, \hat{\ln{y}}, \sigma) \\
+\hat{\ln{y}} &= \begin{cases}
+\textbf{enz available : } \mu + a^{sub} + a^{org:sub} + a^{ec4:sub} + a^{enz:sub} \\
+\textbf{otherwise : } \mu + a^{sub} + a^{org:sub} + a^{ec4:sub} \\
+\end{cases} \\
+a^{sub} &\sim N(0, \tau^{sub}) \\
+a^{org:sub} &\sim N(0, \tau^{org:sub}) \\
+a^{ec4:sub} &\sim N(0, \tau^{ec4:sub}) \\
+a^{enz:sub} &\sim N(0, \tau^{enz:sub}) \\ 
+\mu &\sim N(-1, 2) \\
 \nu &\sim \Gamma(2, 0.1)[1, \infty] \\
 \sigma &\sim N(0, 2)[0, \infty] \\
-\mu &\sim N(-1, 2) \\
-a^{sub} &\sim N(0, \tau^{sub}) \\
-a^{enz:sub} &\sim N(0, \tau^{enz:sub}) \\
-a^{ec4:sub} &\sim N(0, \tau^{ec4:sub}) \\
-a^{org:sub} &\sim N(0, \tau^{org:sub}) \\
-\tau^{sub} &\sim N(0, 1) \\
-\tau^{enz:sub} &\sim N(0, 1) \\
-\tau^{ec4:sub} &\sim N(0, 1) \\
-\tau^{org:sub} &\sim N(0, 1) \\
+\tau^{sub} &\sim N(0, 1)[0, \infty] \\
+\tau^{org:sub} &\sim N(0, 1)[0, \infty] \\
+\tau^{ec4:sub} &\sim N(0, 1)[0, \infty] \\
+\tau^{enz:sub} &\sim N(0, 1)[0, \infty] \\
 \end{align*}
 
-This model can be expressed as the following Stan program (see
-[cite:@carpenterStanProbabilisticProgramming2017]):
+This model can be expressed as the following program in the probabilistic programming language Stan program [cite:@carpenterStanProbabilisticProgramming2017]:
 
-#+begin_src stan :eval no
-data {
-  int<lower=1> N;
-  int<lower=1> N_train;
-  int<lower=1> N_test;
-  int<lower=1> N_biology;
-  int<lower=1> N_substrate;
-  int<lower=1> N_ec4_sub;
-  int<lower=1> N_enz_sub;
-  int<lower=1> N_org_sub;
-  int<lower=1,upper=N_ec4_sub> ec4_sub[N_biology];
-  int<lower=1,upper=N_org_sub> org_sub[N_biology];
-  int<lower=0,upper=N_enz_sub> enz_sub[N_biology];
-  int<lower=1,upper=N_substrate> substrate[N_biology];
-  array[N_train] int<lower=1,upper=N_biology> biology_train;
-  array[N_train] int<lower=1,upper=N> ix_train;
-  array[N_test] int<lower=1,upper=N_biology> biology_test;
-  array[N_test] int<lower=1,upper=N> ix_test;
-  vector[N] y;
-  int<lower=0,upper=1> likelihood;
-}
-parameters {
-  real<lower=1> nu;
-  real mu;
-  real<lower=0> sigma;
-  real<lower=0> tau_substrate;
-  real<lower=0> tau_ec4_sub;
-  real<lower=0> tau_enz_sub;
-  real<lower=0> tau_org_sub;
-  vector<multiplier=tau_substrate>[N_substrate] a_substrate;
-  vector<multiplier=tau_ec4_sub>[N_ec4_sub] a_ec4_sub;
-  vector<multiplier=tau_enz_sub>[N_enz_sub] a_enz_sub;
-  vector<multiplier=tau_org_sub>[N_org_sub] a_org_sub;
-}
-transformed parameters {
-  vector[N_biology] log_km = mu + a_substrate[substrate] + a_ec4_sub[ec4_sub] + a_org_sub[org_sub];
-  for (b in 1:N_biology){
-    log_km[b] += enz_sub[b] > 0 ? a_enz_sub[enz_sub[b]] : 0;
-  }
-}
-model {
-  if (likelihood){
-    y[ix_train] ~ student_t(nu, log_km[biology_train], sigma);
-  }
-  nu ~ gamma(2, 0.1);
-  sigma ~ normal(0, 2);
-  mu ~ normal(-1, 2);
-  a_substrate ~ normal(0, tau_substrate);
-  a_ec4_sub ~ normal(0, tau_ec4_sub);
-  a_enz_sub ~ normal(0, tau_enz_sub);
-  a_org_sub ~ normal(0, tau_org_sub);
-  tau_org_sub ~ normal(0, 1);
-  tau_ec4_sub ~ normal(0, 1);
-  tau_enz_sub ~ normal(0, 1);
-  tau_substrate ~ normal(0, 1);
-}
-generated quantities {
-  vector[N_test] llik;
-  vector[N_test] yrep;
-  for (n in 1:N_test){
-    llik[n] = student_t_lpdf(y[ix_test[n]] | nu, log_km[biology_test[n]], sigma);
-    yrep[n] = student_t_rng(nu, log_km[biology_test[n]], sigma);
-  }
-}
-#+end_src
+#+include: "src/stan/enz.stan" src stan
 
 For the BRENDA data, we used the same model but removed the enzyme-substrate
 interaction parameters as BRENDA does not provide enzyme-specific information.
@@ -383,7 +323,7 @@ input dataset.
 ** Comparison of estimated Kms with physiological metabolite concentrations
 Several sources suggest that the Km parameter for a particular organism,
 substrate and enzyme should have the same order of magnitude as the typical
-physiological concentration of that substrate. [ANOTHER REFERENCE HERE?] For example
+physiological concentration of that substrate. \hl{ANOTHER REFERENCE HERE?} For example
 [cite:@borgerPredictionEnzymeKinetic2006] write
 
 #+begin_quote
@@ -410,7 +350,7 @@ to have higher Km values, this relationship is fairly weak.
 
 This is reflected in our model's marginal posterior distribution for the
 parameter $\tau^{org:sub}$, which concentrates closer to zero than any of the
-other hierarchical standard deviation parameters [CHECK THIS IS TRUE], as can be
+other hierarchical standard deviation parameters \hl{CHECK THIS IS TRUE}, as can be
 seen in figure [[fig:taus]]
 
 ** NADH vs NADPH
@@ -428,9 +368,7 @@ distributions.
 
 ** Cofactor vs substrate
 We tested whether there tended to be a systematic difference between the km of
-an enzyme's main substrate and that of a cofactor.
-
-We XXX as 
+an enzyme's main substrate and that of a cofactor. 
 
 ** Which results to use?
 
@@ -453,9 +391,9 @@ some potential sources of bias, such as reports from non-wildtype strains and
 atypical conditions that are not accounted for in the BRENDA model.
 
 The SABIO dataset is worse than the BRENDA dataset in one respect, however: at
-the time of writing there are far more reports in the BRENDA dataset. [EXACT
-NUMBERS HERE]. The model fit to the BRENDA dataset is therefore able to take
-into account more information than is available to the SABIO-RK model.
+the time of writing there are far more reports in the BRENDA dataset. The model
+fit to the BRENDA dataset is therefore able to take into account more
+information than is available to the SABIO-RK model.
 
 There are therefore potentially conflicting factors to take into account when
 deciding which dataset to use in a given case. A further complication is that,
