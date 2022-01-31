@@ -17,6 +17,8 @@ in a systems biology workflow. We illustrate the intended use of our work with c
 This is a draft of the paper for the [[id:0329A0AE-E75A-4BF5-A8C0-F9669E9EC68F][BRENDA project]] that I am working on with
 Areti.
 
+To write comments, use the latex envrionment ~hl~, for example write ~\hl{this is  a comment}~.
+
 * Introduction
 The choice of appropriate parameters for biological models has been a recurring
 issue for computational biologists in the recent years. As computational models
