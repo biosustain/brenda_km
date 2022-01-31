@@ -132,18 +132,20 @@ def get_natural_ligands_col(r: pd.DataFrame, nat: pd.DataFrame):
 
 
 def correct_brenda_colnames(raw: pd.DataFrame) -> pd.DataFrame:
-    return raw.rename(
-        columns={
-            "ecNumber": "ec4",
-            "kmValue": "km",
-            "turnoverNumber": "kcat",
-            "ligandStructureId": "ligand_structure_id",
-        }
+    return check_is_df(
+        raw.rename(
+            columns={
+                "ecNumber": "ec4",
+                "kmValue": "km",
+                "turnoverNumber": "kcat",
+                "ligandStructureId": "ligand_structure_id",
+            }
+        )
     ).pipe(make_columns_lower_case)
 
 
 def correct_brenda_nulls(reports: pd.DataFrame) -> pd.DataFrame:
-    return reports.replace(["more", -999], np.nan)
+    return check_is_df(reports.replace(["more", -999], np.nan))
 
 
 def add_columns_to_brenda_reports(
@@ -361,8 +363,21 @@ def prepare_hmdb_concs(raw: pd.DataFrame) -> pd.DataFrame:
     return raw.loc[cond].copy().assign(concentration_uM=conc)
 
 
-def _contains(s1: pd.Series, s2: pd.Series) -> pd.Series:
-    return pd.Series([t in v for t, v in zip(s2, s1)])
+def prepare_sabio_concentrations(raw: pd.DataFrame) -> pd.DataFrame:
+    cond = (
+        raw["parameter.type"].eq("concentration")
+        & raw["parameter.startValue"].notnull()
+        & raw["parameter.startValue"].gt(0)
+        & ~raw["parameter.associatedSpecies"].eq("Enzyme")
+        & raw["parameter.unit"].eq("M")
+    )
+    out = raw.loc[cond].copy()
+    out["concentration_mM"] = np.exp(
+        np.log(
+            out[["parameter.startValue", "parameter.endValue"]].multiply(1000)
+        ).mean(axis=1)
+    )
+    return out
 
 
 def prepare_data_sabio_km(
@@ -371,25 +386,28 @@ def prepare_data_sabio_km(
     number_of_cv_folds: int = 10,
 ) -> PrepareDataOutput:
     assert isinstance(raw_reports, pd.DataFrame)
-    reports = raw_reports.rename(
-        columns={
-            "Substrate": "reaction_substrates",
-            "EnzymeType": "enzyme_type",
-            "PubMedID": "literature",
-            "Organism": "organism",
-            "UniprotID": "uniprot_id",
-            "ECNumber": "ec4",
-            "parameter.type": "parameter_type",
-            "parameter.associatedSpecies": "substrate",
-            "parameter.startValue": "start_value",
-            "parameter.endValue": "end_value",
-            "parameter.standardDeviation": "sd",
-            "parameter.unit": "unit",
-            "Temperature": "temperature",
-            "pH": "ph",
-        }
-    ).replace("-", np.nan)
-    assert isinstance(reports, pd.DataFrame)
+    reports = check_is_df(
+        check_is_df(
+            raw_reports.rename(
+                columns={
+                    "Substrate": "reaction_substrates",
+                    "EnzymeType": "enzyme_type",
+                    "PubMedID": "literature",
+                    "Organism": "organism",
+                    "UniprotID": "uniprot_id",
+                    "ECNumber": "ec4",
+                    "parameter.type": "parameter_type",
+                    "parameter.associatedSpecies": "substrate",
+                    "parameter.startValue": "start_value",
+                    "parameter.endValue": "end_value",
+                    "parameter.standardDeviation": "sd",
+                    "parameter.unit": "unit",
+                    "Temperature": "temperature",
+                    "pH": "ph",
+                }
+            )
+        ).replace("-", np.nan)
+    )
     biology_cols = ["organism", "ec4", "uniprot_id", "substrate"]
     lit_cols = biology_cols + ["literature"]
     cond = (

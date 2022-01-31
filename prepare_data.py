@@ -13,14 +13,13 @@ from src.data_preparation import (
     check_is_df,
     prepare_data_brenda_km,
     prepare_data_sabio_km,
-    prepare_hmdb_concs,
+    prepare_sabio_concentrations,
 )
 
 RAW_DIR = os.path.join("data", "raw")
 RAW_DATA_FILES = {
     "brenda_kcats": os.path.join(RAW_DIR, "brenda_kcat_reports.csv"),
     "brenda_kms": os.path.join(RAW_DIR, "brenda_km_reports.csv"),
-    "hmdb_concs": os.path.join(RAW_DIR, "hmdb_metabolite_concentrations.csv"),
     "sabio_reports": os.path.join(RAW_DIR, "sabio_reports.csv"),
     "brenda_nat_subs": os.path.join(RAW_DIR, "brenda_natural_substrates.csv"),
 }
@@ -57,10 +56,12 @@ def generate_prepared_data():
         for k, v in RAW_DATA_FILES.items()
     }
 
-    hmdb_output_file = os.path.join(PREPARED_DIR, "hmdb_concs.csv")
-    hmdb_concs = prepare_hmdb_concs(raw_data["hmdb_concs"])
-    hmdb_concs.to_csv(hmdb_output_file)
-    print(f"Saved hmdb metabolite concentrations to {hmdb_output_file}")
+    sabio_conc_output_file = os.path.join(PREPARED_DIR, "sabio_concs.csv")
+    sabio_concs = prepare_sabio_concentrations(raw_data["sabio_reports"])
+    sabio_concs.to_csv(sabio_conc_output_file)
+    print(
+        f"Saved SABIO-RK metabolite concentrations to {sabio_conc_output_file}."
+    )
 
     print("Preparing data...")
     brenda_km_data = prepare_data_brenda_km(
@@ -117,8 +118,12 @@ def generate_fake_data(pos: List[PrepareDataOutput]):
         rng_params = {}
         for suff in ["substrate", "ec4_sub", "org_sub", "enz_sub"]:
             if f"N_{suff}" in input_orig.keys():
-                rng_params[f"a_{suff}"] = np.random.normal(
-                    0, HARDCODED_PARAMS[f"tau_{suff}"], input_orig[f"N_{suff}"]
+                rng_params[f"a_{suff}"] = np.array(
+                    np.random.normal(
+                        0,
+                        HARDCODED_PARAMS[f"tau_{suff}"],
+                        input_orig[f"N_{suff}"],
+                    )
                 ).tolist()
         params = {**HARDCODED_PARAMS, **rng_params}
         model = CmdStanModel(stan_file=TRUE_MODEL_FILE[po.name])
