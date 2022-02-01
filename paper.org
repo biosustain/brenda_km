@@ -267,23 +267,37 @@ $\tau^{enz:sub}$ from our final model. We included this extra test in order to
 verify whether including enzyme-specific parameters was worthwhile.
 
 *** Graphical posterior predictive checks
-Figure [[fig:ppckmsabio]] below shows our main model's marginal posterior
+Figure [[fig:ppc_km_sabio_enz]] below shows our main model's marginal posterior
 predictive 1%-99% interval for each observation, alongside the observed
 value. Ideally exactly 98% of observations should be covered, and whether or not
 an observation is covered should not be systematically predictable.
 
 #+CAPTION: Marginal posterior predictive distributions for main model fit to SABIO Km data
-#+NAME: fig:ppckmsabio
-[[./results/plots/ppc_km_sabio_enz.png]]
+#+NAME: fig:ppc_km_sabio_enz
+[[./results/plots/ppc_sabio-km-enz.png]]
 
-In contrast figure [[fig:ppc_km_sabio_comp]] are graphical posterior predictive checks for the really simple
-and simple models.
+Figures [[fig:ppc_km_sabio_simple]] and [[fig:ppc_km_sabio_really_simple]] show
+graphical posterior predictive checks for the really simple and simple models
+fit to the same dataset.
 
-#+CAPTION: Marginal posterior predictive distributions for simple and really simple models fit to SABIO Km data
-#+NAME: fig:ppc_km_sabio_comp
-[[./results/plots/ppc_km_sabio_enz_simple.png]]
+#+CAPTION: Marginal posterior predictive distributions for simple model fit to SABIO Km data
+#+NAME: fig:ppc_km_sabio_simple
+[[./results/plots/ppc_sabio-km-simple.png]]
 
-*** Cross validation
+#+CAPTION: Marginal posterior predictive distributions for really simple model fit to SABIO Km data
+#+NAME: fig:ppc_km_sabio_really_simple
+[[./results/plots/ppc_sabio-km-really-simple.png]]
+
+From the continuous line of black dots in figure [[fig:ppc_km_sabio_simple]] we can
+see that the posterior predictive intervals have approximately the same order as
+the observed data, suggesting that the model is likely overfitting, or at least
+not using any structural information from the data.
+
+In contrast figure [[fig:ppc_km_sabio_really_simple]] shows that the really simple
+model is clearly underfitting the observed data - there is no relationship
+between the order of the black dots and the blue lines.
+
+*** TODO Cross validation
 For a quantitative compliment to the graphical posterior predictive checks, we
 used cross-validation to assess our models' out-of-sample predictive
 performance. For exploratory comparison we calculated each model's approximate
@@ -295,7 +309,24 @@ unreliable we also carried out exact tenfold cross-validation.
 
 The results were as follows:
 
-** Web app
+\hl{RESULTS OF CROSS VALIDATION COMPARISON}
+
+** DONE Web app
+In order to make our results accessible to the systems biology community, we wrote a web app that presents them in an easy to use and actionable format. This can be found at \hl{URL}.
+
+The user can choose a dataset, organism, substrate and enzyme and is then
+presented with a KDE summary of the corresponding marginal posterior
+distribution and some summary statistics describing it, which can be used to
+inform a choice of priors.
+
+For each biological category there is an option to choose "Unknown" - in this
+case the relevant marginal posterior is calculated dynamically.
+
+The app also provides links from which tables summarising all the marginal
+posteriors can be downloaded.
+
+The app was written using Streamlit [cite:@StreamlitFastestWay].
+
 * Results
 ** Marginal distributions of interesting parameters
 We begin by looking at the marginal distributions of the model's standard
@@ -303,9 +334,10 @@ deviation parameters. Comparing these indicates which effects varied the
 most. The comparison in figure [[fig:taus]] shows that the most important
 hierarchical parameter is the substrate effect, followed by the ec4/substrate
 interaction, the enzyme/substrate interaction and finally the organism/substrate
-interaction. The three larger taus are all clearly greater than the estimated
-measurement error ~sigma~, whereas there is overlap between the marginal
-distributions for ~sigma~ and ~tau_org_sub~.
+interaction. All of the distributions tend to be greater than that of the
+estimated measurement error ~sigma~, suggesting that our model is able to
+distinguish all the effects from measurement noise. The substrate and
+ec4:substrate taus tend to be the greatest, suggesting that these are the most important predictors.
 
 #+CAPTION: Comparison of hierarchical standard deviation parameters
 #+LABEL: fig:taus
@@ -322,6 +354,7 @@ input dataset.
 #+ATTR_ORG: :width 600
 [[./results/plots/log_km_comparison.png]]
 
+\hl{What else to put here? Distributions of $\ln$ kms?}
 ** Comparison of estimated Kms with physiological metabolite concentrations
 Several sources suggest that the Km parameter for a particular organism,
 substrate and enzyme should have the same order of magnitude as the typical
@@ -336,19 +369,18 @@ values should also tend to be increased.
 #+end_quote
 
 In order to test whether this is the case, we obtained data about some
-physiological metabolite concentrations and compared these with the
-corresponding Km measurements and marginal posterior distributions from our
+physiological metabolite concentrations from SABIO-RK and compared these with
+the corresponding Km measurements and marginal posterior distributions from our
 model. Figure [[fig:hmdb]] shows the results.
 
 #+CAPTION: Comparison of model predictions with physiological metabolite concentrations from HMDB
+#+ATTR_ORG: :width 600
 #+LABEL: fig:hmdb
-[[./results/plots/hmdb_comparison.png]]
+[[./results/plots/concentration_comparison.png]]
 
-From the graph it is clear that the first part of the hypothesis is correct, at
-least for the metabolites for which we were able to obtain both physiological
-concentrations and Km measurements: both are generally in the same order of
-magnitude. However, while enzymes with higher physiological concentrations tend
-to have higher Km values, this relationship is fairly weak.
+The graph on the left shows that our data somewhat support the first part of the
+hypothesis: the physiological concentrations are distributed similarly to the
+posterior Km samples. The graph on the right suggests that $\ln$ scale Kms tend to be 1-2 $\ln$ mM lower than their corresponding physiological concentration reports, give or take about 5 $\ln$ mM. In other words, there is only a fairly weak relationship between a particular Km and its corresonding physiological concentration.
 
 This is reflected in our model's marginal posterior distribution for the
 parameter $\tau^{org:sub}$, which concentrates closer to zero than any of the
@@ -368,7 +400,7 @@ distributions.
 #+ATTR_ORG: :width 600
 [[./results/plots/nadh.png]]
 
-** Cofactor vs substrate
+** TODO Cofactor vs substrate
 We tested whether there tended to be a systematic difference between the km of
 an enzyme's main substrate and that of a cofactor. 
 
@@ -419,8 +451,8 @@ specific SABIO results. Finally, in order to assess the likelihood of bias in
 the BRENDA data, our webapp provides links to the source documents for any
 parameter measurement.
 
-* Case studies
-* Discussion
+* TODO Case studies
+* TODO Discussion
 * References
 
 #+PRINT_BIBLIOGRAPHY:
