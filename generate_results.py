@@ -7,6 +7,7 @@ import arviz as az
 import pandas as pd
 import toml
 import xarray
+from xarray.core.dataset import Dataset
 
 from src.analysis import generate_summary_df
 from src.model_configuration import ModelConfiguration
@@ -36,6 +37,9 @@ def main():
                 os.mkdir(run_dir)
             modes = ["posterior", "fake", "prior"]
             for mode in modes:
+                idata_file = os.path.join(run_dir, f"{mode}.nc")
+                if os.path.exists(idata_file):
+                    continue
                 input_json = os.path.join(
                     mc.data_dir, f"stan_input_{mode}.json"
                 )
@@ -49,18 +53,21 @@ def main():
                     diagnose=True,
                     biology_maps=biology_maps,
                 )
-                idata_file = os.path.join(run_dir, f"{mode}.nc")
                 print(f"\n***Writing inference data to {idata_file}***\n")
                 idata.to_netcdf(idata_file)
                 # Generate summary table
                 lits = pd.read_csv(os.path.join(mc.data_dir, "lits.csv"))
                 assert isinstance(lits, pd.DataFrame)
-                summary_file = os.path.join(run_dir, f"{mode}_summary.csv")
-                summary = generate_summary_df(idata)
-                print(f"\n***Writing summary table to {summary_file}***\n")
-                summary.to_csv(summary_file)
+                posterior = idata.get("posterior")
+                assert isinstance(posterior, Dataset)
+                if "log_km" in posterior.data_vars:
+                    summary_file = os.path.join(run_dir, f"{mode}_summary.csv")
+                    summary = generate_summary_df(posterior)
+                    print(f"\n***Writing summary table to {summary_file}***\n")
+                    summary.to_csv(summary_file)
 
-            if mc.run_cross_validation:
+            idata_file_cv = os.path.join(run_dir, "cv.nc")
+            if mc.run_cross_validation and not os.path.exists(idata_file_cv):
                 if mc.sample_kwargs_cross_validation is None:
                     sample_kwargs = mc.sample_kwargs
                 else:
@@ -84,10 +91,11 @@ def main():
                     lliks.append(llik)
                 full_llik = xarray.concat(lliks, dim="ix_test")
                 cv_idata = az.InferenceData(log_likelihood=full_llik)
-                idata_file = os.path.join(run_dir, "cv.nc")
-                print(f"\n***Writing inference data to {idata_file}***\n")
-                cv_idata.to_netcdf(idata_file)
+                print(f"\n***Writing inference data to {idata_file_cv}***\n")
+                cv_idata.to_netcdf(idata_file_cv)
 
 
 if __name__ == "__main__":
     main()
+
+x = 1
