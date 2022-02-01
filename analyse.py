@@ -11,6 +11,7 @@ from src.analysis import (
     plot_concentration_comparison,
     plot_log_km_comparison,
     plot_nadh_comparison,
+    plot_ppc,
     plot_vars,
 )
 
@@ -70,6 +71,11 @@ def main():
     # Ensure that posterior_km has the right type (mainly to shut up the checker...)
     assert isinstance(posterior_km, Dataset)
     assert isinstance(posterior_km_brenda, Dataset)
+
+    # Draw ppc plots
+    for run_name, posterior in posteriors.items():
+        f = plot_ppc(posterior)
+        f.savefig(os.path.join("results", "plots", f"ppc_{run_name}.png"))
 
     # compare the sd parameters
     f = plot_vars(posterior_km, vars=["tau", "sigma"])

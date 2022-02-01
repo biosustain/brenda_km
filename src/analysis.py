@@ -5,6 +5,7 @@ from typing import List
 import arviz as az
 import numpy as np
 import pandas as pd
+from arviz.data.inference_data import InferenceData
 from arviz.plots.forestplot import plot_forest
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
@@ -114,6 +115,50 @@ def plot_log_km_comparison(
     return f
 
 
+def plot_ppc(idata: InferenceData) -> Figure:
+    posterior = idata.get("posterior")
+    observed_data = idata.get("observed_data")
+    assert isinstance(posterior, Dataset)
+    assert isinstance(observed_data, Dataset)
+    df = check_is_df(
+        posterior["yrep"]
+        .quantile([0.01, 0.1, 0.5, 0.9, 0.99], dim=["chain", "draw"])
+        .to_series()
+        .unstack("quantile")
+        .add_prefix("q_")
+    )
+    df["obs"] = observed_data["y"].values
+    df = check_is_df(df.sort_values("q_0.5"))
+    f, ax = plt.subplots(figsize=[12, 5])
+    x = np.linspace(*ax.get_xlim(), num=len(df))
+    ax.vlines(
+        x,
+        df["q_0.01"],
+        df["q_0.99"],
+        alpha=0.6,
+        zorder=-1,
+        linewidth=0.1,
+        label="1%-99% posterior predictive interval",
+    )
+    ax.vlines(
+        x,
+        df["q_0.1"],
+        df["q_0.9"],
+        zorder=1,
+        linewidth=0.1,
+        label="10%-90% posterior predictive interval",
+    )
+    ax.scatter(x, df["obs"], color="black", s=1, zorder=2)
+    ax.set_ylabel("Km value ($\\ln$ scale)")
+    ax.set_xlabel("Measurement (ordered by posterior predictive median)")
+    ax.set_yticks(
+        ax.get_yticks(), ["%.2g" % t for t in np.exp(ax.get_yticks())]
+    )
+    ax.set_xticklabels([])
+    ax.set_xticklabels([])
+    return f
+
+
 def plot_concentration_comparison(
     posterior: Dataset, conc: pd.DataFrame
 ) -> Figure:
@@ -170,8 +215,7 @@ def plot_concentration_comparison(
     return f
 
 
-def generate_summary_df(idata: az.InferenceData):
-    posterior = idata.get("posterior")
+def generate_summary_df(posterior: Dataset):
     cd = ["chain", "draw"]
     assert isinstance(posterior, Dataset)
     quantiles = (
@@ -189,51 +233,3 @@ def generate_summary_df(idata: az.InferenceData):
     )
     assert isinstance(mean, pd.DataFrame)
     return mean.join(quantiles).reset_index()
-
-
-import arviz as az
-import numpy as np
-import pandas as pd
-from matplotlib import pyplot as plt
-from xarray.core.dataset import Dataset
-
-
-def normalise_zero_one(x):
-    min_val, max_val = np.min(x), np.max(x)
-    return (x - min_val) / (max_val - min_val)
-
-
-# log_km_low = (
-#     posterior["log_km"]
-#     .rename("log_km_low")
-#     .quantile(0.01, dim=cd)
-#     .to_dataframe()
-# )
-# log_km_high = (
-#     posterior["log_km"].rename("log_km_high").quantile(0.99, dim=cd).to_series()
-# )
-# km = log_km_low.join(log_km_high).join(
-#     conc_mean,
-#     on=[
-#         "biology_organism",
-#         "biology_substrate",
-#         "biology_ec4",
-#         "biology_uniprot_id",
-#     ],
-#     how="inner",
-# )
-# km["posterior_precision"] = 1 - normalise_zero_one(
-#     km["log_km_high"] - km["log_km_low"]
-# )
-# reports = check_is_df(pd.read_csv("data/prepared/sabio_km/reports.csv"))
-
-# y = reports.join(km[["sabio_mean_conc"]], on="biology", how="inner")
-# f, ax = plt.subplots(figsize=[12, 8])
-# ax.vlines(
-#     km["sabio_mean_conc"],
-#     km["log_km_low"],
-#     km["log_km_high"],
-#     alpha=km["posterior_precision"],
-# )
-# ax.plot(km["sabio_mean_conc"], km["sabio_mean_conc"])
-# ax.scatter(y["sabio_mean_conc"], y["y"], s=3)
