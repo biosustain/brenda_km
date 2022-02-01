@@ -415,6 +415,7 @@ def prepare_data_sabio_km(
         & reports["enzyme_type"].str.contains("wildtype")
         & reports["start_value"].notnull()
         & reports["start_value"].gt(0)
+        & reports["start_value"].lt(2000)
         & reports["unit"].eq("M")
         & (
             reports["temperature"].isnull()

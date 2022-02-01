@@ -60,7 +60,7 @@ def generate_prepared_data():
     sabio_concs = prepare_sabio_concentrations(raw_data["sabio_reports"])
     sabio_concs.to_csv(sabio_conc_output_file)
     print(
-        f"Saved SABIO-RK metabolite concentrations to {sabio_conc_output_file}."
+        f"Saved {len(sabio_concs)} SABIO-RK metabolite concentrations to {sabio_conc_output_file}."
     )
 
     print("Preparing data...")
@@ -81,8 +81,13 @@ def generate_prepared_data():
             os.path.join(output_dir, f"stan_input_{s}.json")
             for s in ["prior", "posterior"]
         )
-        po.lits.to_csv(os.path.join(output_dir, "lits.csv"))
-        po.reports.to_csv(os.path.join(output_dir, "reports.csv"))
+        lit_file = os.path.join(output_dir, "lits.csv")
+        po.lits.to_csv(lit_file)
+        print(f"Saved {len(po.lits)} study/biology combinations to {lit_file}")
+        report_file = os.path.join(output_dir, "reports.csv")
+        po.reports.to_csv(report_file)
+        print(f"Saved {len(po.reports)} reports to {report_file}")
+        print("Saving handy jsons...")
         write_stan_json(input_file_posterior, po.standict_posterior)
         write_stan_json(input_file_prior, po.standict_prior)
         for i, si in enumerate(po.standicts_cv):
