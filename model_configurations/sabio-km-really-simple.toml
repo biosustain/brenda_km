@@ -1,5 +1,5 @@
-name = "sabio-km-enz"
-stan_file = "src/stan/enz.stan"
+name = "sabio-km-really-simple"
+stan_file = "src/stan/really_simple.stan"
 data_dir = "data/prepared/sabio_km"
 run_cross_validation = false
 
