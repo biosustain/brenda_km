@@ -1,7 +1,7 @@
 name = "sabio-km-simple"
 stan_file = "src/stan/simple.stan"
 data_dir = "data/prepared/sabio_km"
-run_cross_validation = false
+run_cross_validation = true
 
 [sample_kwargs]
 show_progress = true
