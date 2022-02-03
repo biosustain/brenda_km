@@ -68,8 +68,11 @@ def generate_prepared_data():
         name="brenda_km",
         raw_reports=raw_data["brenda_kms"],
         natural_ligands=raw_data["brenda_nat_subs"],
+        number_of_cv_folds=5,
     )
-    sabio_km_data = prepare_data_sabio_km("sabio_km", raw_data["sabio_reports"])
+    sabio_km_data = prepare_data_sabio_km(
+        "sabio_km", raw_data["sabio_reports"], number_of_cv_folds=5
+    )
     prepare_data_outputs = [brenda_km_data, sabio_km_data]
     for po in prepare_data_outputs:
         output_dir = os.path.join(PREPARED_DIR, po.name)

@@ -185,7 +185,7 @@ def prepare_data_brenda_km(
     name: str,
     raw_reports: pd.DataFrame,
     natural_ligands: pd.DataFrame,
-    number_of_cv_folds: int = 10,
+    number_of_cv_folds,
 ) -> PrepareDataOutput:
     """get dataframe of study/km combinations ("lits")
 
@@ -383,7 +383,7 @@ def prepare_sabio_concentrations(raw: pd.DataFrame) -> pd.DataFrame:
 def prepare_data_sabio_km(
     name: str,
     raw_reports: pd.DataFrame,
-    number_of_cv_folds: int = 10,
+    number_of_cv_folds,
 ) -> PrepareDataOutput:
     assert isinstance(raw_reports, pd.DataFrame)
     reports = check_is_df(
