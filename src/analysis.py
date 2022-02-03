@@ -1,6 +1,6 @@
 """Functions for analysis some results."""
 
-from typing import List
+from typing import Dict, List
 
 import arviz as az
 import numpy as np
@@ -18,12 +18,14 @@ def plot_vars(posterior: Dataset, vars: List[str]) -> Figure:
     var_regex = "|".join(vars)
     plot_forest(
         posterior,
+        kind="ridgeplot",
         filter_vars="regex",
         var_names=var_regex,
-        ridgeplot_kind="hist",
+        ridgeplot_quantiles=None,
+        ridgeplot_truncate=False,
         combined=True,
-        kind="ridgeplot",
         hdi_prob=0.999,
+        figsize=[12, 8],
     )
     f = plt.gcf()
     ax = plt.gca()
@@ -68,11 +70,9 @@ def plot_nadh_comparison(posterior: Dataset, lits: pd.DataFrame) -> Figure:
     return f
 
 
-def plot_log_km_comparison(
-    posterior_sabio: Dataset, posterior_brenda: Dataset
-) -> Figure:
-    posteriors = posterior_sabio, posterior_brenda
-    names = ["SABIO-RK", "BRENDA"]
+def plot_log_km_comparison(ds_dict: Dict[str, Dataset]) -> Figure:
+    posteriors = ds_dict.values()
+    names = ds_dict.keys()
     colors = ["tab:blue", "tab:orange"]
     f, axes = plt.subplots(1, 2, figsize=[15, 5])
     axes = axes.ravel()
@@ -99,9 +99,10 @@ def plot_log_km_comparison(
             qs["low"],
             qs["high"],
             color=color,
-            zorder=0,
+            zorder=-1,
             label=name,
             linewidths=0.05,
+            alpha=0.5,
         )
     axes[0].set_title(
         "Histograms of 1%-99% $\\ln$ scale marginal Km distribution widths"
@@ -233,3 +234,29 @@ def generate_summary_df(posterior: Dataset):
     )
     assert isinstance(mean, pd.DataFrame)
     return mean.join(quantiles).reset_index()
+
+
+def plot_oos_cv(idatas: Dict[str, InferenceData]) -> Figure:
+    f, ax = plt.subplots(figsize=[12, 6])
+    bins = np.linspace(-10, 0, 100)
+    for name, idata in idatas.items():
+        llik = idata.get("log_likelihood")
+        assert isinstance(llik, Dataset)
+        if "llik_oos" in llik.data_vars:
+            oos = az.extract_dataset(
+                idata, group="log_likelihood", var_names=["llik_oos"]
+            )
+            ax.hist(
+                oos["llik_oos"].to_series().dropna(),
+                bins=bins,
+                alpha=0.6,
+                density=True,
+                label=name,
+            )
+            ax.legend(frameon=False)
+    ax.set(
+        title="Comparison of out-of-sample log likelihoods",
+        xlabel="log likelihood",
+        ylabel="Relative frequency",
+    )
+    return f
