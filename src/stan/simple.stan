@@ -15,17 +15,17 @@ data {
 parameters {
   real<lower=0> sigma;
   real mu_log_km;
-  real<lower=1> nu;
+  real<lower=2> nu;
   real<lower=0> tau;
   vector[N_biology] log_km;
 }
 model {
   if (likelihood){y[ix_train] ~ student_t(nu, log_km[biology_train], sigma);}
   log_km ~ normal(mu_log_km, tau);
-  mu_log_km ~ normal(-1, 2);
+  mu_log_km ~ normal(-2, 2);
   nu ~ gamma(2, 0.1);
-  tau ~ normal(0, 2);
-  sigma ~ normal(0, 2);
+  tau ~ lognormal(0, 0.2);
+  sigma ~ lognormal(0, 0.2);
 }
 generated quantities {
   vector[N_test] llik;

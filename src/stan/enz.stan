@@ -21,23 +21,18 @@ data {
   int<lower=0,upper=1> likelihood;
 }
 parameters {
-  real<lower=1> nu;
+  real<lower=2> nu;
   real mu;
   real<lower=0> sigma;
-  real<lower=0> tau_substrate;
-  real<lower=0> tau_org_sub;
-  real<lower=0> tau_ec4_sub;
-  real<lower=0> tau_enz_sub;
+  real tau_substrate;
+  real tau_ec4_sub;
+  real tau_enz_sub;
   vector<multiplier=tau_substrate>[N_substrate] a_substrate;
-  vector<multiplier=tau_org_sub>[N_org_sub] a_org_sub;
   vector<multiplier=tau_ec4_sub>[N_ec4_sub] a_ec4_sub;
   vector<multiplier=tau_enz_sub>[N_enz_sub] a_enz_sub;
 }
 transformed parameters {
-  vector[N_biology] log_km = mu
-    + a_substrate[substrate]
-    + a_ec4_sub[ec4_sub]
-    + a_org_sub[org_sub];
+  vector[N_biology] log_km = mu + a_substrate[substrate] + a_ec4_sub[ec4_sub];
   for (b in 1:N_biology){
     if (enz_sub[b] > 1) log_km[b] += a_enz_sub[enz_sub[b]];
   }
@@ -47,16 +42,14 @@ model {
     y[ix_train] ~ student_t(nu, log_km[biology_train], sigma);
   }
   nu ~ gamma(2, 0.1);
-  sigma ~ normal(0, 2);
-  mu ~ normal(-1, 2);
+  mu ~ normal(-2, 2);
+  sigma ~ lognormal(0, 0.2);
+  tau_substrate ~ lognormal(0, 0.3);
+  tau_ec4_sub ~ lognormal(0, 0.2);
+  tau_enz_sub ~ lognormal(-2, 0.2);
   a_substrate ~ normal(0, tau_substrate);
   a_ec4_sub ~ normal(0, tau_ec4_sub);
   a_enz_sub ~ normal(0, tau_enz_sub);
-  a_org_sub ~ normal(0, tau_org_sub);
-  tau_org_sub ~ normal(0, 1);
-  tau_ec4_sub ~ normal(0, 1);
-  tau_enz_sub ~ normal(0, 1);
-  tau_substrate ~ normal(0, 1);
 }
 generated quantities {
   vector[N_test] llik;

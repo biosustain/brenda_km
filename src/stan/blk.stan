@@ -25,7 +25,7 @@ data {
   int<lower=0,upper=1> likelihood;
 }
 parameters {
-  real<lower=1> nu;
+  real<lower=2> nu;
   real mu;
   real<lower=0> sigma;
   real<lower=0> tau_substrate;
@@ -42,14 +42,14 @@ transformed parameters {
 model {
   if (likelihood){y[ix_train] ~ student_t(nu, log_km[biology_train], sigma);}
   nu ~ gamma(2, 0.1);
-  sigma ~ normal(0, 2);
-  mu ~ normal(-2, 1);
+  sigma ~ lognormal(0, 0.2);
+  mu ~ normal(-2, 2);
   a_substrate ~ normal(0, tau_substrate);
   a_ec4_sub ~ normal(0, tau_ec4_sub);
   a_org_sub ~ normal(0, tau_org_sub);
-  tau_org_sub ~ normal(0, 1);
-  tau_ec4_sub ~ normal(0, 1);
-  tau_substrate ~ normal(0, 1);
+  tau_substrate ~ lognormal(0, 0.3);
+  tau_ec4_sub ~ lognormal(0, 0.2);
+  tau_org_sub ~ lognormal(-2, 0.2);
 }
 generated quantities {
   vector[N_test] llik;
