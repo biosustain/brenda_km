@@ -78,7 +78,7 @@ $y_{ijk}$ of a Km value for substrate $i$, ec number $j$ and organism $k$ using
 the following ANOVA-style regression model:
 
 \begin{equation}
-y_ijk \sim N(\mu_i + \alpha_ij + \beta_ik, \sigma)
+y_{ijk} \sim N(\mu_i + \alpha_ij + \beta_ik, \sigma)
 \end{equation}
 
 In this expression the term $\mu$ represents substrate-specific effects, whereas
@@ -165,42 +165,57 @@ attempt to model the effects of experimental conditions.
 We used a Bayesian hierarchical regression model to describe all data. Since Km
 parameters are constrained to be positive, we modelled them on natural
 logarithmic scale, using the same approach taken in
-[cite:@borgerPredictionEnzymeKinetic2006]. Our model includes a global mean
-parameter $\mu$, hierarchical substrate-specific intercept parameters $a^{sub}$
-and hierarchical intercept parameters $a^{enz:sub}$, $a^{ec4:sub}$ and
-$a^{org:sub}$ specific to interactions of substrate and enzyme, ec4 number and
-organism respectively. In addition we used a student-T measurement model with
-latent standard deviation and degrees of freedom $\sigma$ and $\nu$.
+[cite:@borgerPredictionEnzymeKinetic2006], but replacing the organism:substrate
+interaction with enzyme:substrate, where this information is available.
+
+Our model includes a global mean parameter $\mu$, hierarchical
+substrate-specific intercept parameters $a^{sub}$ and hierarchical intercept
+parameters $a^{enz:sub}$, $a^{ec4:sub}$ and specific to interactions of
+substrate and enzyme and ec4 number respectively. In addition we used a
+student-T measurement model with latent standard deviation and degrees of
+freedom $\sigma$ and $\nu$.
 
 We chose assigned semi-informative prior distributions based on the
 pre-experimental information. In particular, the prior for the measurement
 distribution degrees of freedom parameter $\nu$ follows the recommendation in
 [cite:@juarezModelBasedClusteringNonGaussian2010] and is truncated below at
-one, reflecting our view that the measurement distribution should not be
+2, reflecting our view that the measurement distribution should not be
 excessively heavy-tailed.
 
-The full model specification in tilde notation is shown below. In these lines the symbol $\tilde$ should be understood as meaning "has the distribution". $ST$, $N$ and $\Gamma$ represent the student-t, normal and gamma distributions respectively. Square brackets represent truncated probability distributions. For example $X \tilde N(0,1)[0, \infty]$ means that the variable $X$ has a normal distribution truncated below at zero, also known as a "half-normal" distribution.
+The full model specification in tilde notation is shown below. In these lines
+the symbol $\tilde$ should be understood as meaning "has the
+distribution". $ST$, $N$, $LN$ and $\Gamma$ represent the student-t, normal,
+log-normal and gamma distributions respectively. Square brackets represent
+truncated probability distributions. For example $X \tilde N(0,1)[0, \infty]$
+means that the variable $X$ has a normal distribution truncated below at zero,
+also known as a "half-normal" distribution.
 
 \begin{align*}
 \ln{y} &\sim ST(\nu, \hat{\ln{y}}, \sigma) \\
 \hat{\ln{y}} &= \begin{cases}
-\textbf{enz available : } \mu + a^{sub} + a^{org:sub} + a^{ec4:sub} + a^{enz:sub} \\
-\textbf{otherwise : } \mu + a^{sub} + a^{org:sub} + a^{ec4:sub} \\
+\textbf{enz available : } \mu + a^{sub} + a^{ec4:sub} + a^{enz:sub} \\
+\textbf{otherwise : } \mu + a^{sub} + a^{ec4:sub} \\
 \end{cases} \\
 a^{sub} &\sim N(0, \tau^{sub}) \\
-a^{org:sub} &\sim N(0, \tau^{org:sub}) \\
 a^{ec4:sub} &\sim N(0, \tau^{ec4:sub}) \\
 a^{enz:sub} &\sim N(0, \tau^{enz:sub}) \\ 
-\mu &\sim N(-1, 2) \\
-\nu &\sim \Gamma(2, 0.1)[1, \infty] \\
-\sigma &\sim N(0, 2)[0, \infty] \\
-\tau^{sub} &\sim N(0, 1)[0, \infty] \\
-\tau^{org:sub} &\sim N(0, 1)[0, \infty] \\
-\tau^{ec4:sub} &\sim N(0, 1)[0, \infty] \\
-\tau^{enz:sub} &\sim N(0, 1)[0, \infty] \\
+\mu &\sim N(-2, 2) \\
+\nu &\sim \Gamma(2, 0.1)[2, \infty] \\
+\sigma &\sim LN(0, 0.2) \\
+\tau^{sub} &\sim LN(0, 0.3) \\
+\tau^{ec4:sub} &\sim LN(0, 0.2) \\
+\tau^{enz:sub} &\sim LN(-2, 0.2) \\
 \end{align*}
 
-This model can be expressed as the following program in the probabilistic programming language Stan program [cite:@carpenterStanProbabilisticProgramming2017]:
+Prior distributions for parameters with log-normal priors are shown graphically
+in figure [[fig:sd_priors]].
+
+#+CAPTION: KDE plots of prior distributions for log-normal parameters
+#+ATTR_ORG: :width 600
+#+NAME: fig:sd_priors
+[[./results/plots/sd_priors_enz.png]]
+
+Our model can be expressed as the following program in the probabilistic programming language Stan program [cite:@carpenterStanProbabilisticProgramming2017]:
 
 #+include: "src/stan/enz.stan" src stan
 
@@ -297,21 +312,52 @@ In contrast figure [[fig:ppc_km_sabio_really_simple]] shows that the really simp
 model is clearly underfitting the observed data - there is no relationship
 between the order of the black dots and the blue lines.
 
-*** TODO Cross validation
+Overall these graphical posterior predictive checks made us confident that our model was achieving a qualitatively satisfactory balance between overfitting and underfitting. However, from graphical posterior predictive checks it was not easy to distinguish our final model from the BLK model. Figure [[fig:ppc_km_sabio_blk]]
+shows the posterior predictive check graph for this model: there is no clear sign of overfitting or under-fitting.
+
+#+CAPTION: Marginal posterior predictive distributions for BLK model fit to SABIO Km data
+#+NAME: fig:ppc_km_sabio_blk
+[[./results/plots/ppc_sabio-km-blk.png]]
+
+In order to evaluate the two models in more detail, we compared their out-of-sample predictive performance using a cross-validation approach.
+
+*** Cross validati
 For a quantitative compliment to the graphical posterior predictive checks, we
-used cross-validation to assess our models' out-of-sample predictive
+used cross validation to assess our models' out-of-sample predictive
 performance. For exploratory comparison we calculated each model's approximate
 leave-one-out expected log predictive density using the method set out in
 [cite:@vehtariPracticalBayesianModel2017] and implemented in
-[cite:@kumarArviZUnifiedLibrary2019]. To address cases where diagnostics
-suggested that the approximate leave-one-out algorithm was likely to be
-unreliable we also carried out exact tenfold cross-validation.
+[cite:@kumarArviZUnifiedLibrary2019]. Since the diagnostics suggested that the
+approximate leave-one-out algorithm was likely to be unreliable, we also performed
+exact five-fold cross validation.
 
 The results were as follows:
 
-\hl{RESULTS OF CROSS VALIDATION COMPARISON}
+#+CAPTION: Average out-of-sample log likelihoods for the SABIO-RK dataset
+|-------+--------------------------------------|
+| Model | Average out-of-sample log likelihood |
+|-------+--------------------------------------|
+| BLK   |                               -2.744 |
+| final |                               -2.693 |
+|-------+--------------------------------------|
 
-** DONE Web app
+The final model made slightly better out-of-sample predictions. The distribution of log likelihoods by posterior sample can be seen in figure [[fig:cv]] below.
+
+#+CAPTION: Histograms of out-of-sample log likelihoods
+#+LABEL: fig:cv
+#+ATTR_ORG: :width 600
+[[./results/plots/cv.png]]
+
+This leave-one-fold-out cross validation procedure is somewhat flawed because,
+unlike with leave-one-observation-out cross validation or in a real-life
+prediction scenario, the test dataset contains many unseen parameter
+combinations. However, this problem is likely to favour the BLK model over the
+final model, as there are tend to be more unseen enzyme/substrate combinations
+than unseen organism/substrate combinations. This test therefore satisfied us
+that the final model was an improvement on the BLK model for modelling the
+SABIO-RK dataset.
+
+** Web app
 In order to make our results accessible to the systems biology community, we wrote a web app that presents them in an easy to use and actionable format. This can be found at \hl{URL}.
 
 The user can choose a dataset, organism, substrate and enzyme and is then
@@ -342,7 +388,7 @@ ec4:substrate taus tend to be the greatest, suggesting that these are the most i
 #+CAPTION: Comparison of hierarchical standard deviation parameters
 #+LABEL: fig:taus
 #+ATTR_ORG: :width 600
-[[./results/plots/sd_posteriors.png]]
+[[./results/plots/sd_posteriors_enz.png]]
 
 Figure [[fig:brenda_sabio_comparison]] compares the marginal distributions of km
 parameters from our best SABIO-RK and BRENDA models. The marginal posterior
