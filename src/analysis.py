@@ -3,15 +3,18 @@
 from typing import Dict, List
 
 import arviz as az
+import matplotlib
 import numpy as np
 import pandas as pd
 from arviz.data.inference_data import InferenceData
 from arviz.plots.forestplot import plot_forest
+from matplotlib import patches
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
+from numpy.core.multiarray import inner
 from xarray.core.dataset import Dataset
 
-from src.data_preparation import check_is_df
+from src.data_preparation import COFACTORS, check_is_df
 
 
 def plot_vars(posterior: Dataset, vars: List[str]) -> Figure:
@@ -258,5 +261,94 @@ def plot_oos_cv(idatas: Dict[str, InferenceData]) -> Figure:
         title="Comparison of out-of-sample log likelihoods",
         xlabel="log likelihood",
         ylabel="Relative frequency",
+    )
+    return f
+
+
+def plot_cofactor_effects(posterior):
+    a_sub_qs = (
+        az.extract_dataset(posterior, var_names="a_substrate", combined=True)
+        .quantile([0.01, 0.5, 0.99], dim="sample")
+        .to_dataframe()
+        .unstack("quantile")["a_substrate"]
+        .drop("unknown", axis=0)
+        .sort_values(0.5)
+    )
+    f, ax = plt.subplots(figsize=[12, 5])
+    x = pd.Series(
+        np.linspace(*ax.get_xlim(), num=len(a_sub_qs)), index=a_sub_qs.index
+    )
+    ax.vlines(
+        x.values,
+        a_sub_qs[0.01],
+        a_sub_qs[0.99],
+        linewidth=0.1,
+        label="Other substrate",
+    )
+    ax.vlines(
+        x.loc[COFACTORS].values,
+        a_sub_qs.loc[COFACTORS, 0.01],
+        a_sub_qs.loc[COFACTORS, 0.99],
+        color="red",
+        label="Cofactor",
+    )
+    for c in COFACTORS:
+        ax.annotate(c, [x.loc[c], a_sub_qs.loc[c, 0.01]], fontsize=7)
+    ax.set_xticks([])
+    ax.legend(frameon=False)
+    ax.set(
+        title="1%-99% posterior intervals for substrate effects.",
+        ylabel="Parameter values",
+    )
+    return f
+
+
+def plot_cofactor_substrate_comparison(posterior, lits):
+    log_kms = az.extract_dataset(posterior, var_names="log_km", combined=True)
+    means = (
+        log_kms.mean(dim="sample")
+        .to_dataframe()
+        .reset_index()
+        .assign(
+            cofactor=lambda df: df["biology_substrate"].isin(COFACTORS),
+            bio_non_sub=lambda df: (
+                df["biology"].str.split("|").apply(lambda s: "|".join(s[:3]))
+            ),
+        )
+        .join(
+            lits.groupby("biology")["reaction_substrates"].first(), on="biology"
+        )
+    )
+    cofactor_means = (
+        means.query("cofactor")
+        .groupby(["bio_non_sub", "reaction_substrates"])[
+            ["log_km", "biology_substrate"]
+        ]
+        .first()
+        .rename(
+            columns={"log_km": "cofactor_mean", "biology_substrate": "cofactor"}
+        )
+        .pipe(pd.DataFrame)
+    )
+    other_means = (
+        means.query("~cofactor")
+        .groupby(["bio_non_sub", "reaction_substrates"])["log_km"]
+        .apply(list)
+        .explode()
+        .rename("other_mean")
+        .pipe(pd.DataFrame)
+    )
+    t = other_means.join(cofactor_means, how="inner")
+    f, ax = plt.subplots(figsize=[12, 8])
+    for cofactor, group in t.groupby("cofactor"):
+        ax.scatter(
+            group["cofactor_mean"], group["other_mean"], label=cofactor, s=5
+        )
+    ax.plot(t["cofactor_mean"], t["cofactor_mean"], c="red", label="x=y")
+    ax.legend(frameon=False)
+    ax.set(
+        title="Comparison of posterior means: cofactor vs substrate",
+        xlabel="$\\ln$ Km (Substrate)",
+        ylabel="$\\ln$ Km (Cofactor)",
     )
     return f

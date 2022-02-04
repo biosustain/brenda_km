@@ -9,6 +9,8 @@ from xarray.core.dataset import Dataset
 
 from prepare_data import PREPARED_DIR
 from src.analysis import (
+    plot_cofactor_effects,
+    plot_cofactor_substrate_comparison,
     plot_concentration_comparison,
     plot_log_km_comparison,
     plot_nadh_comparison,
@@ -148,6 +150,15 @@ def main():
     # concentration comparison
     f = plot_concentration_comparison(posterior_enz, dfs["sabio_concs"])
     f.savefig(os.path.join("results", "plots", "concentration_comparison.png"))
+
+    # cofactors
+    f = plot_cofactor_effects(posterior_enz)
+    f.savefig(os.path.join("results", "plots", "cofactor_effects.png"))
+
+    f = plot_cofactor_substrate_comparison(posterior_enz, dfs["sabio"])
+    f.savefig(
+        os.path.join("results", "plots", "cofactor_substrate_comparison.png")
+    )
 
 
 if __name__ == "__main__":

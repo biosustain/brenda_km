@@ -178,9 +178,11 @@ freedom $\sigma$ and $\nu$.
 We chose assigned semi-informative prior distributions based on the
 pre-experimental information. In particular, the prior for the measurement
 distribution degrees of freedom parameter $\nu$ follows the recommendation in
-[cite:@juarezModelBasedClusteringNonGaussian2010] and is truncated below at
-2, reflecting our view that the measurement distribution should not be
-excessively heavy-tailed.
+[cite:@juarezModelBasedClusteringNonGaussian2010] and is truncated below at 2,
+reflecting our view that the measurement distribution should not be excessively
+heavy-tailed. The prior for the enzyme:substrate interaction effect is also put
+close to zero, reflecting our view that, though non-negligible, this effect is
+likely to be smaller than the others.
 
 The full model specification in tilde notation is shown below. In these lines
 the symbol $\tilde$ should be understood as meaning "has the
@@ -446,9 +448,26 @@ distributions.
 #+ATTR_ORG: :width 600
 [[./results/plots/nadh.png]]
 
-** TODO Cofactor vs substrate
+** Cofactor vs substrate
 We tested whether there tended to be a systematic difference between the km of
 an enzyme's main substrate and that of a cofactor. 
+
+Figure [[fig:cofactor_effects]] shows the 1%-99% posterior intervals for substrate
+effects of cofactors superimposed on those of all substrates. There does not
+seem to be a particular pattern
+
+#+CAPTION: Comparison of modelled and measured Km parameters for NADH and NADPH
+#+LABEL: fig:cofactor_effects
+#+ATTR_ORG: :width 600
+[[./results/plots/cofactor_effects.png]]
+
+Figure [[fig:cofactor_comparison]] shows, for each reaction for which both a
+cofactor and substrates were measured in the SABIO-RK dataset, the posterior mean of the cofactor and that of the substrate. Again there is no particular pattern
+
+#+CAPTION: Comparison of modelled and measured Km parameters for NADH and NADPH
+#+LABEL: fig:cofactor_comparison
+#+ATTR_ORG: :width 600
+[[./results/plots/cofactor_substrate_comparison.png]]
 
 ** Which results to use?
 

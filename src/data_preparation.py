@@ -21,7 +21,7 @@ COFACTORS = [
     "NADH",
     "NAD+",
     "NADPH",
-    "acetyl-CoA",
+    "O2",
     "NADP+",
     "ADP",
 ]
@@ -442,7 +442,9 @@ def prepare_data_sabio_km(
     lits = (
         reports.loc[cond]
         .groupby(lit_cols, dropna=False)
-        .agg({"y": "median", "biology": "first"})
+        .agg(
+            {"y": "median", "biology": "first", "reaction_substrates": "first"}
+        )
         .reset_index()
         .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
         .reset_index()
