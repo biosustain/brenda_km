@@ -1,4 +1,4 @@
-% Created 2022-02-04 Fri 13:27
+% Created 2022-02-07 Mon 11:55
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -36,13 +36,13 @@
 
 \begin{abstract}
 We fit a range of Bayesian regression models to analyse data from the BRENDA and
-SABIO-RK databases pertaining to Michalis constants or Km parameters. We report
+SABIO-RK databases pertaining to Michaelis constants or Km parameters. We report
 the results and provide tools for reproducing them independently and using them
 in a systems biology workflow. We illustrate the intended use of our work with case studies.
 \end{abstract}
 
 \section{Introduction}
-\label{sec:org5ea4afe}
+\label{sec:org38b72aa}
 The choice of appropriate parameters for biological models has been a recurring
 issue for computational biologists in the recent years. As computational models
 become increasingly prominent in the current research
@@ -51,7 +51,7 @@ and lead the way to biological breakthroughs, the use of high quality parameter
 values is becoming essential. In view of these developments, there have been
 various efforts to address this issue by employing different
 strategies. Although the most popular approach is the estimation of parameters
-through optimization methods
+through optimisation methods
 \citeprocitem{4}{[4]}, \citeprocitem{5}{[5]},
 ensemble modelling strategies are rapidly gaining ground in the field of systems
 biology
@@ -66,8 +66,8 @@ values) in biological models
 \citeprocitem{15}{[15]}–\citeprocitem{17}{[17]}.
 
 By taking into the account the existing issues with model parameterisation and
-in an effort to address them, we have previously developed a standardized
-protocol for the definition of appropriate parameter lognormal distributions
+in an effort to address them, we have previously developed a standardised
+protocol for the definition of appropriate parameter log-normal distributions
 based on information retrieved from different sources and in accordance with the
 modeller’s beliefs about the reliability of each experimental value
 \citeprocitem{18}{[18]}. This protocol was a
@@ -93,12 +93,12 @@ the information in BRENDA, we also provided an online interface through which
 our model’s results can easily be reviewed and extracted.
 
 \section{State of the art}
-\label{sec:org9c93615}
+\label{sec:orgd7d1f52}
 The problem of modelling kinetic parameter data from online databases has
 previously been addressed in several studies.
 
 \citeprocitem{19}{[19]} models logarithmic-scale measurements
-\(y_{ijk}\) of a Km value for substrate \(i\), ec number \(j\) and organism \(k\) using
+\(y_{ijk}\) of a Km value for substrate \(i\), EC number \(j\) and organism \(k\) using
 the following ANOVA-style regression model:
 
 \begin{equation}
@@ -106,7 +106,7 @@ y_{ijk} \sim N(\mu_i + \alpha_ij + \beta_ik, \sigma)
 \end{equation}
 
 In this expression the term \(\mu\) represents substrate-specific effects, whereas
-the terms \(\alpha\) and \(\beta\) respectively represent substrate-ec number and
+the terms \(\alpha\) and \(\beta\) respectively represent substrate-EC number and
 substrate-organism interaction effects. \(\sigma\) represents the accuracy of the
 measurement apparatus.
 
@@ -139,9 +139,9 @@ distributions, this is a severe problem as coverage is at least as important a
 consideration for this application as precision.
 
 \section{Method}
-\label{sec:org605976c}
+\label{sec:org81472b6}
 \subsection{Data fetching}
-\label{sec:org3d25f90}
+\label{sec:org2d7f969}
 We fetched data from the SABIO-RK \citeprocitem{21}{[21]}
 and BRENDA \citeprocitem{22}{[22]} databases using their publicly
 available APIs. We also fetched a list of all EC numbers from the Expasy
@@ -149,15 +149,16 @@ database \citeprocitem{23}{[23]}. In the project repository,
 see the script \texttt{fetch\_data.py} and the library file \texttt{fetching.py} for code used
 to fetch data and the directory \texttt{data/raw/} for the results.
 
-In total we fetched \hl{EXACT NUMBER HERE} raw BRENDA Km reports, \hl{EXACT NUMBER HERE} SABIO-RK Km reports and \hl{EXACT NUMBER HERE} Expasy EC numbers.
+In total we fetched \hl{EXACT NUMBER HERE} raw BRENDA Km reports, \hl\{EXACT
+NUMBER HERE\} SABIO-RK Km reports and \hl{EXACT NUMBER HERE} Expasy EC numbers.
 
 \subsection{Data processing}
-\label{sec:org8c373ca}
+\label{sec:orgac5968f}
 We made several significant data processing choices. See the library file
 \texttt{data\_preparation.py} for code used to implement these choices.
 
 \subsubsection{Filtering}
-\label{sec:org0465d20}
+\label{sec:org63b906c}
 For each dataset and kinetic parameter, we removed all reports which failed to
 satisfy any of the following conditions:
 
@@ -169,12 +170,12 @@ satisfy any of the following conditions:
 \item The temperature, if recorded, must be between 10 and 45 degrees C
 \item The pH, if recorded, must be between 5 and 9
 \item The organism must be have data from at least 50 separate study/biology
-(i.e. organism:substrate:ec4 for BRENDA or organism:substrate:enzyme for
+(i.e. organism:substrate:EC4 for BRENDA or organism:substrate:enzyme for
 SABIO-RK) combinations that satisfy all the other conditions.
 \end{itemize}
 
 \subsubsection{Grouping}
-\label{sec:org29a793a}
+\label{sec:orgceac13d}
 Instead of modelling reports directly, we chose to group together reports with
 the same biology and study, treating the median log-scale km as a single
 observation. We took this decision because of the presence in both datasets of
@@ -193,7 +194,7 @@ treating each report as an observation, especially since we chose not to
 attempt to model the effects of experimental conditions.
 
 \subsection{Statistical model}
-\label{sec:orgb315466}
+\label{sec:org3fdde61}
 We used a Bayesian hierarchical regression model to describe all data. Since Km
 parameters are constrained to be positive, we modelled them on natural
 logarithmic scale, using the same approach taken in
@@ -203,7 +204,7 @@ interaction with enzyme:substrate, where this information is available.
 Our model includes a global mean parameter \(\mu\), hierarchical
 substrate-specific intercept parameters \(a^{sub}\) and hierarchical intercept
 parameters \(a^{enz:sub}\), \(a^{ec4:sub}\) and specific to interactions of
-substrate and enzyme and ec4 number respectively. In addition we used a
+substrate and enzyme and EC4 number respectively. In addition we used a
 student-T measurement model with latent standard deviation and degrees of
 freedom \(\sigma\) and \(\nu\).
 
@@ -242,12 +243,12 @@ a^{enz:sub} &\sim N(0, \tau^{enz:sub}) \\
 \end{align*}
 
 Prior distributions for parameters with log-normal priors are shown graphically
-in figure \ref{fig:org304b949}.
+in figure \ref{fig:org81dd790}.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/sd_priors_enz.png}
-\caption{\label{fig:org304b949}KDE plots of prior distributions for log-normal parameters}
+\caption{\label{fig:org81dd790}KDE plots of prior distributions for log-normal parameters}
 \end{figure}
 
 Our model can be expressed as the following program in the probabilistic programming language Stan program \citeprocitem{25}{[25]}:
@@ -320,7 +321,7 @@ For the BRENDA data, we used the same model but removed the enzyme-substrate
 interaction parameters as BRENDA does not provide enzyme-specific information.
 
 \subsection{Model validation}
-\label{sec:orgbeeba56}
+\label{sec:orgb8bb985}
 We used a number of standard methods to test our models' validity, aiming to
 follow the method described in \citeprocitem{26}{[26]}. To verify the
 computation we used standard MCMC convergence metrics and fit our model to fake
@@ -329,7 +330,7 @@ predictive checks and both approximate and exact cross validation, using some
 simple test models for comparison.
 
 \subsubsection{Computation}
-\label{sec:org79f7617}
+\label{sec:org68e15d6}
 For each MCMC run we used arviz \citeprocitem{27}{[27]} to
 calculate the improved \hat{R} statistic following the method in
 \citeprocitem{28}{[28]} and to check for
@@ -345,7 +346,7 @@ approximately recovered in the posterior distribution. See supplementary
 material for graphical posterior predictive checks with fake data.
 
 \subsubsection{Comparison models}
-\label{sec:org8ee97f9}
+\label{sec:orgc0f36f6}
 Ideally we would compare the results of our models with previously published
 attempts to model the same data. However this was not practical in our case for
 two reasons. First, other results are typically derived from different raw
@@ -366,13 +367,13 @@ our main model. The first model, which we called the "really simple" model,
 removes all latent random variables from the main model's predictor, except for
 the global mean parameter \(\mu\). The second model, which we called the "simple"
 model, includes a single vector of hierarchical parameters at the finest
-available granularity, i.e. organism:substrate:ec4 for BRENDA data and
+available granularity, i.e. organism:substrate:EC4 for BRENDA data and
 organism:substrate:enzyme for SABIO-RK data. See supplemental information for
 full model specifications in the form of tilde notation and Stan programs.
 
 Our thinking was that the really simple model and simple models represent
-relative extremes of underfitting and overfitting. A well-specified model should
-be able to make better predictions than both, unless the data are very
+relative extremes of under-fitting and over-fitting. A well-specified model
+should be able to make better predictions than both, unless the data are very
 surprisingly uninformative.
 
 In addition to these comparison models, we also compared our final model with a
@@ -382,8 +383,8 @@ which we obtained simply by removing the parameters \(a^{enz:sub}\) and
 verify whether including enzyme-specific parameters was worthwhile.
 
 \subsubsection{Graphical posterior predictive checks}
-\label{sec:org4a04c1f}
-Figure \ref{fig:org626fb1d} below shows our main model's marginal posterior
+\label{sec:orgd9d5534}
+Figure \ref{fig:org9c97ea3} below shows our main model's marginal posterior
 predictive 1\%-99\% interval for each observation, alongside the observed
 value. Ideally exactly 98\% of observations should be covered, and whether or not
 an observation is covered should not be systematically predictable.
@@ -391,47 +392,51 @@ an observation is covered should not be systematically predictable.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/ppc_sabio-km-enz.png}
-\caption{\label{fig:org626fb1d}Marginal posterior predictive distributions for main model fit to SABIO Km data}
+\caption{\label{fig:org9c97ea3}Marginal posterior predictive distributions for main model fit to SABIO Km data}
 \end{figure}
 
-Figures \ref{fig:org570e7fb} and \ref{fig:orgbfddfe3} show
+Figures \ref{fig:orgb7e73ec} and \ref{fig:orgcd7bb6c} show
 graphical posterior predictive checks for the really simple and simple models
 fit to the same dataset.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/ppc_sabio-km-simple.png}
-\caption{\label{fig:org570e7fb}Marginal posterior predictive distributions for simple model fit to SABIO Km data}
+\caption{\label{fig:orgb7e73ec}Marginal posterior predictive distributions for simple model fit to SABIO Km data}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/ppc_sabio-km-really-simple.png}
-\caption{\label{fig:orgbfddfe3}Marginal posterior predictive distributions for really simple model fit to SABIO Km data}
+\caption{\label{fig:orgcd7bb6c}Marginal posterior predictive distributions for really simple model fit to SABIO Km data}
 \end{figure}
 
-From the continuous line of black dots in figure \ref{fig:org570e7fb} we can
+From the continuous line of black dots in figure \ref{fig:orgb7e73ec} we can
 see that the posterior predictive intervals have approximately the same order as
-the observed data, suggesting that the model is likely overfitting, or at least
+the observed data, suggesting that the model is likely over-fitting, or at least
 not using any structural information from the data.
 
-In contrast figure \ref{fig:orgbfddfe3} shows that the really simple
-model is clearly underfitting the observed data - there is no relationship
+In contrast figure \ref{fig:orgcd7bb6c} shows that the really simple
+model is clearly under-fitting the observed data - there is no relationship
 between the order of the black dots and the blue lines.
 
-Overall these graphical posterior predictive checks made us confident that our model was achieving a qualitatively satisfactory balance between overfitting and underfitting. However, from graphical posterior predictive checks it was not easy to distinguish our final model from the BLK model. Figure \ref{fig:orge1490d5}
-shows the posterior predictive check graph for this model: there is no clear sign of overfitting or under-fitting.
+Overall these graphical posterior predictive checks made us confident that our
+model was achieving a qualitatively satisfactory balance between over-fitting
+and under-fitting. However, from graphical posterior predictive checks it was not
+easy to distinguish our final model from the BLK model. Figure
+\ref{fig:orgd10c016} shows the posterior predictive check graph for this model:
+there is no clear sign of over-fitting or under-fitting.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/ppc_sabio-km-blk.png}
-\caption{\label{fig:orge1490d5}Marginal posterior predictive distributions for BLK model fit to SABIO Km data}
+\caption{\label{fig:orgd10c016}Marginal posterior predictive distributions for BLK model fit to SABIO Km data}
 \end{figure}
 
 In order to evaluate the two models in more detail, we compared their out-of-sample predictive performance using a cross-validation approach.
 
-\subsubsection{Cross validati}
-\label{sec:org666e20c}
+\subsubsection{Cross validation}
+\label{sec:org0929268}
 For a quantitative compliment to the graphical posterior predictive checks, we
 used cross validation to assess our models' out-of-sample predictive
 performance. For exploratory comparison we calculated each model's approximate
@@ -456,12 +461,12 @@ final & -2.693\\
 \end{tabular}
 \end{table}
 
-The final model made slightly better out-of-sample predictions. The distribution of log likelihoods by posterior sample can be seen in figure \ref{fig:orgdbd4e2d} below.
+The final model made slightly better out-of-sample predictions. The distribution of log likelihoods by posterior sample can be seen in figure \ref{fig:orgbb23632} below.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/cv.png}
-\caption{\label{fig:orgdbd4e2d}Histograms of out-of-sample log likelihoods}
+\caption{\label{fig:orgbb23632}Histograms of out-of-sample log likelihoods}
 \end{figure}
 
 This leave-one-fold-out cross validation procedure is somewhat flawed because,
@@ -474,7 +479,7 @@ that the final model was an improvement on the BLK model for modelling the
 SABIO-RK dataset.
 
 \subsection{Web app}
-\label{sec:org358097e}
+\label{sec:orga9bdb7f}
 In order to make our results accessible to the systems biology community, we wrote a web app that presents them in an easy to use and actionable format. This can be found at \hl{URL}.
 
 The user can choose a dataset, organism, substrate and enzyme and is then
@@ -491,26 +496,26 @@ posteriors can be downloaded.
 The app was written using Streamlit \citeprocitem{30}{[30]}.
 
 \section{Results}
-\label{sec:org8931a47}
+\label{sec:orgc2e91c0}
 \subsection{Marginal distributions of interesting parameters}
-\label{sec:orgc03ca64}
+\label{sec:orgbb5d0dd}
 We begin by looking at the marginal distributions of the model's standard
 deviation parameters. Comparing these indicates which effects varied the
-most. The comparison in figure \ref{fig:orgc30fb62} shows that the most important
-hierarchical parameter is the substrate effect, followed by the ec4/substrate
+most. The comparison in figure \ref{fig:orgb7bd88b} shows that the most important
+hierarchical parameter is the substrate effect, followed by the EC4/substrate
 interaction, the enzyme/substrate interaction and finally the organism/substrate
 interaction. All of the distributions tend to be greater than that of the
 estimated measurement error \texttt{sigma}, suggesting that our model is able to
 distinguish all the effects from measurement noise. The substrate and
-ec4:substrate taus tend to be the greatest, suggesting that these are the most important predictors.
+EC4:substrate taus tend to be the greatest, suggesting that these are the most important predictors.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/sd_posteriors_enz.png}
-\caption{\label{fig:orgc30fb62}Comparison of hierarchical standard deviation parameters}
+\caption{\label{fig:orgb7bd88b}Comparison of hierarchical standard deviation parameters}
 \end{figure}
 
-Figure \ref{fig:org8ebf498} compares the marginal distributions of km
+Figure \ref{fig:orgdad634e} compares the marginal distributions of km
 parameters from our best SABIO-RK and BRENDA models. The marginal posterior
 distributions in the BRENDA model tend to be narrower, reflecting the larger
 input dataset.
@@ -518,12 +523,12 @@ input dataset.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/log_km_comparison.png}
-\caption{\label{fig:org8ebf498}Comparison of measured and modelled Km parameter distributions in BRENDA and SABIO-RK}
+\caption{\label{fig:orgdad634e}Comparison of measured and modelled Km parameter distributions in BRENDA and SABIO-RK}
 \end{figure}
 
 \hl{What else to put here? Distributions of $\ln$ kms?}
 \subsection{Comparison of estimated Kms with physiological metabolite concentrations}
-\label{sec:org5bbe315}
+\label{sec:org2cc136e}
 Several sources suggest that the Km parameter for a particular organism,
 substrate and enzyme should have the same order of magnitude as the typical
 physiological concentration of that substrate. \hl{ANOTHER REFERENCE HERE?} For example
@@ -539,27 +544,31 @@ values should also tend to be increased.
 In order to test whether this is the case, we obtained data about some
 physiological metabolite concentrations from SABIO-RK and compared these with
 the corresponding Km measurements and marginal posterior distributions from our
-model. Figure \ref{fig:org59254d8} shows the results.
+model. Figure \ref{fig:org651e45f} shows the results.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/concentration_comparison.png}
-\caption{\label{fig:org59254d8}Comparison of model predictions with physiological metabolite concentrations from HMDB}
+\caption{\label{fig:org651e45f}Comparison of model predictions with physiological metabolite concentrations from HMDB}
 \end{figure}
 
 The graph on the left shows that our data somewhat support the first part of the
 hypothesis: the physiological concentrations are distributed similarly to the
-posterior Km samples. The graph on the right suggests that \(\ln\) scale Kms tend to be 1-2 \(\ln\) mM lower than their corresponding physiological concentration reports, give or take about 5 \(\ln\) mM. In other words, there is only a fairly weak relationship between a particular Km and its corresonding physiological concentration.
+posterior Km samples. The graph on the right suggests that \(\ln\) scale Kms tend
+to be 1-2 \(\ln\) mM lower than their corresponding physiological concentration
+reports, give or take about 5 \(\ln\) mM. In other words, there is only a fairly
+weak relationship between a particular Km and its corresponding physiological
+concentration.
 
 This is reflected in our model's marginal posterior distribution for the
 parameter \(\tau^{org:sub}\), which concentrates closer to zero than any of the
 other hierarchical standard deviation parameters \hl{CHECK THIS IS TRUE}, as can be
-seen in figure \ref{fig:orgc30fb62}
+seen in figure \ref{fig:orgb7bd88b}
 
 \subsection{NADH vs NADPH}
-\label{sec:orgb9021ce}
+\label{sec:org9fbc199}
 
-Figure \ref{fig:orgb28d979} shows histograms of measured Km parameters from the SABIO-RK
+Figure \ref{fig:orgba3d2b1} shows histograms of measured Km parameters from the SABIO-RK
 dataset for NADH and NADPH binding enzymes alongside histograms of our final
 model's posterior samples for these parameters. We can see that the measurements
 for NADPH tended to be higher, and this difference is also present in the posterior
@@ -568,51 +577,53 @@ distributions.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/nadh.png}
-\caption{\label{fig:orgb28d979}Comparison of modelled and measured Km parameters for NADH and NADPH}
+\caption{\label{fig:orgba3d2b1}Comparison of modelled and measured Km parameters for NADH and NADPH}
 \end{figure}
 
 \subsection{Cofactor vs substrate}
-\label{sec:org26c3ec5}
+\label{sec:org212ae00}
 We tested whether there tended to be a systematic difference between the km of
 an enzyme's main substrate and that of a cofactor. 
 
-Figure \ref{fig:org30a85d3} shows the 1\%-99\% posterior intervals for substrate
+Figure \ref{fig:orgec5d6be} shows the 1\%-99\% posterior intervals for substrate
 effects of cofactors superimposed on those of all substrates. There does not
 seem to be a particular pattern
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/cofactor_effects.png}
-\caption{\label{fig:org30a85d3}Comparison of modelled and measured Km parameters for NADH and NADPH}
+\caption{\label{fig:orgec5d6be}Comparison of modelled and measured Km parameters for NADH and NADPH}
 \end{figure}
 
-Figure \ref{fig:org875fc6c} shows, for each reaction for which both a
-cofactor and substrates were measured in the SABIO-RK dataset, the posterior mean of the cofactor and that of the substrate. Again there is no particular pattern
+Figure \ref{fig:org804e529} shows, for each reaction for which both a
+cofactor and substrates were measured in the SABIO-RK dataset, the posterior
+mean of the cofactor and that of the substrate. Again there is no particular
+pattern
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./results/plots/cofactor_substrate_comparison.png}
-\caption{\label{fig:org875fc6c}Comparison of modelled and measured Km parameters for NADH and NADPH}
+\caption{\label{fig:org804e529}Comparison of modelled and measured Km parameters for NADH and NADPH}
 \end{figure}
 
 \subsection{Which results to use?}
-\label{sec:orge9e6b7f}
+\label{sec:orgabb80dc}
 
 Our results make it possible to compare the SABIO-RK and BRENDA datasets,
 allowing practitioners to make more informed modelling decisions.
 
 The SABIO-RK dataset provides more specific information than the BRENDA
-datase. UNIPROT ids are available for many Km measurements, whereas the most
+dataset. UNIPROT ids are available for many Km measurements, whereas the most
 specific enzyme-level information in the BRENDA dataset is the EC4 number. In
 addition, in contrast to BRENDA, the SABIO-RK dataset provides information about
 substrate, literature reference, enzyme, temperature, pH and strain type in
-interoperable formats and without the need for potentially error-prone string
+inter-operable formats and without the need for potentially error-prone string
 operations.
 
 As a result of this extra information, the model fit to the SABIO-RK data is
 more specific, allowing modellers to obtain priors that reflect measurements of
 the exact enzyme they wish to model while still appropriately taking into
-account measurements of related enyzmes. In addition, the SABIO model excludes
+account measurements of related enzymes. In addition, the SABIO model excludes
 some potential sources of bias, such as reports from non-wildtype strains and
 atypical conditions that are not accounted for in the BRENDA model.
 
@@ -623,10 +634,10 @@ information than is available to the SABIO-RK model.
 
 There are therefore potentially conflicting factors to take into account when
 deciding which dataset to use in a given case. A further complication is that,
-due to the lack of interoperable identifiers in the BRENDA dataset, it is
-difficult to directly compare the which yields better predctions.
+due to the lack of inter-operable identifiers in the BRENDA dataset, it is
+difficult to directly compare the which yields better predictions.
 
-In our judgment the best approach given these circumstances is to favour the
+In our judgement the best approach given these circumstances is to favour the
 SABIO-RK results in cases where they provides a lot of information for a given
 parameter or when the information in BRENDA is too coarse or likely to be
 biased. In other cases the BRENDA results should be preferred.
@@ -636,19 +647,19 @@ information available for a given km is captured by the marginal posterior
 distribution for that parameter - if the marginal posterior distribution for a
 parameter in the SABIO model is very narrow, this means that the SABIO dataset
 contains a lot of information about that parameter. In order to assess the
-liklihood of the BRENDA dataset being too coarse for a parameter whose enzyme
+likelihood of the BRENDA dataset being too coarse for a parameter whose enzyme
 shares an EC number, the marginal prior distributions of the common parameters
 can be compared. If they are very different, it is likely better to use the more
 specific SABIO results. Finally, in order to assess the likelihood of bias in
-the BRENDA data, our webapp provides links to the source documents for any
+the BRENDA data, our web app provides links to the source documents for any
 parameter measurement.
 
 \section{{\bfseries\sffamily TODO} Case studies}
-\label{sec:org39443a4}
+\label{sec:org64cbb0a}
 \section{{\bfseries\sffamily TODO} Discussion}
-\label{sec:org987bc3d}
+\label{sec:org1a5ed20}
 \section{References}
-\label{sec:orgdd8d6ae}
+\label{sec:org59ecc75}
 
 \hypertarget{citeproc_bib_item_1}{[1] A. J. Lopatkin and J. J. Collins, “Predictive biology: Modelling, understanding and harnessing microbial complexity,” \textit{Nature reviews. microbiology}, vol. 18, no. 9, pp. 507–520, Sep. 2020, doi: \href{https://doi.org/10.1038/s41579-020-0372-5}{10.1038/s41579-020-0372-5}.}
 
