@@ -213,9 +213,9 @@ def prepare_data_brenda_km(
     reports["biology"] = (
         reports[biology_cols].fillna("").apply("|".join, axis=1)
     )
+    reports = reports.loc[cond].copy()
     lits = (
-        reports.loc[cond]
-        .groupby(lit_cols)
+        reports.groupby(lit_cols)
         .agg({"y": "median", "biology": "first"})
         .reset_index()
         .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
