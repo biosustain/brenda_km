@@ -5,6 +5,7 @@
 #+cite_export: csl ieee.csl
 #+LATEX_HEADER: \usepackage{parskip}
 #+LATEX_HEADER: \usepackage{color,soul}
+#+BIBLIOGRAPHY: bibliography.bib
 
 #+begin_abstract
 We fit a range of Bayesian regression models to analyse data from the BRENDA and
