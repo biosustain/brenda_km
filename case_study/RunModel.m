@@ -211,7 +211,7 @@ figure (2)
     
  %% Plot everything
  
- for k=1:length(normal{j,3})
+ for k=1:length(normal{1,3})
  figure ()
     for j=1:countNormal
         plot(normal{j,2},normal{j,3}(:,k));
