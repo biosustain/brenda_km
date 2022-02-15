@@ -37,7 +37,7 @@ disable = "C0330, C0326"
 max-line-length = "80"
 
 [tool.pyright]
-# include = ["src"]
+include = ["src", "case_study"]
 ignore = [".venv_km"]
 reportMissingImports = true
 reportMissingTypeStubs = false
