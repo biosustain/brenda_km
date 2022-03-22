@@ -1,0 +1,61 @@
+Name;ECnumber;Substrate;Organism
+6PGDH;1.1.1.44;6-phospho-D-gluconate;Trypanosoma brucei
+6PGDH;1.1.1.44;NADP+;
+6PGDH;1.1.1.44;D-ribulose 5-phosphate;
+6PGDH;1.1.1.44;NADPH;
+AK;2.7.4.3;ADP;
+AK;2.7.4.3;AMP;
+ALD;4.1.2.13;D-fructose 1,6-bisphosphate;
+ALD;4.1.2.13;D-glyceraldehyde 3-phosphate;
+ALD;4.1.2.13;dihydroxyacetone;
+ENO;4.2.1.11;2-phospho-D-glycerate;
+ENO;4.2.1.11;phosphoenolpyruvate;
+G3PDH;1.1.1.8;NADH;
+G3PDH;1.1.1.8;NAD+;
+G3PDH;1.1.1.8;dihydroxyacetone phosphate;glycerone phosphate
+G3PDH;1.1.1.8;sn-glycerol 3-phosphate;
+G6PDH;1.1.1.49;NADP+;
+G6PDH;1.1.1.49;NADPH;
+G6PDH;1.1.1.49;D-glucose 6-phosphate;
+G6PDH;1.1.1.49;6-phosphonogluconate;
+G6PP;5.4.2.2;alpha-D-glucose 1-phosphate;
+G6PP;5.4.2.2;D-glucose 6-phosphate;
+GAPDH;1.2.1.12;NAD+;
+GAPDH;1.2.1.12;NADH;
+GAPDH;1.2.1.12;D-glyceraldehyde 3-phosphate;
+GAPDH;1.2.1.12;3-phospho-D-glyceroyl phosphate;
+GK;2.7.1.30;ATP;
+GK;2.7.1.30;ADP;
+GK;2.7.1.30;glycerol;
+GK;2.7.1.30;sn-glycerol 3-phosphate;
+GPO;1.1.5.3;sn-glycerol 3-phosphate;
+GPO;1.1.5.3;dihydroxyacetone phosphate;glycerone phosphate
+HXK;2.7.1.1;ATP;
+HXK;2.7.1.1;ADP;
+HXK;2.7.1.1;D-glucose;
+HXK;2.7.1.1;D-glucose 6-phosphate;
+PFK;2.7.1.11;ATP;
+PFK;2.7.1.11;ADP;
+PFK;2.7.1.11;D-fructose 6-phosphate;
+PGAM;5.4.2.11;2-phospho-D-glycerate;
+PGAM;5.4.2.11;3-phospho-D-glycerate;
+PGI;5.3.1.9;D-Glucose 6-phosphate;
+PGI;5.3.1.9;D-fructose 6-phosphate;
+PGK;2.7.2.3;ATP;
+PGK;2.7.2.3;ADP;
+PGK;2.7.2.3;3-phospho-D-glycerate;
+PGK;2.7.2.3;3-phospho-D-glyceroyl phosphate;
+PGL;3.1.1.31;6-phospho-D-glucono-1,5-lactone;
+PGL;3.1.1.31;6-phospho-D-gluconate;
+PPI;5.3.1.6;D-Ribose 5-phosphate;
+PPI;5.3.1.6;D-ribulose 5-phosphate;
+PYK;2.7.1.40;ATP;
+PYK;2.7.1.40;ADP;
+PYK;2.7.1.40;phosphoenolpyruvate;
+PYK;2.7.1.40;pyruvate;
+TPI;5.3.1.1;D-Glyceraldehyde 3-phosphate;
+TPI;5.3.1.1;dihydroxyacetone phosphate;glycerone phosphate
+TR;1.8.1.12;NADP+;
+TR;1.8.1.12;NADPH;
+TR;1.8.1.12;trypanothione disulfide;
+TR;1.8.1.12;trypanothione;
