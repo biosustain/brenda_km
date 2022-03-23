@@ -55,8 +55,8 @@ def main():
         kerkhoven = json.load(f)
     posterior_summary = check_is_df(
         pd.read_csv(POSTERIOR_SUMMARY_PATH, index_col=0)
+        .loc[lambda df: df["biology_organism"].str.contains("brucei")]
     )
-    .loc[lambda df: df["biology_organism"].str.contains("brucei")]
     posterior_substrates = posterior_summary["biology_substrate"].unique()
     kms = [
         p
