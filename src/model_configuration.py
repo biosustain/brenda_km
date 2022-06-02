@@ -37,6 +37,6 @@ class ModelConfiguration:
     sample_kwargs_cross_validation: Optional[Dict] = None
 
     def __post_init__(self) -> None:
-        """Handle windows paths correctly"""
+        """Handle windows paths correctly."""
         self.stan_file = os.path.join(*self.stan_file.split("/"))
         self.data_dir = os.path.join(*self.data_dir.split("/"))

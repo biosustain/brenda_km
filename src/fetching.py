@@ -1,3 +1,5 @@
+"""Functions for fetching data."""
+
 import time
 import zipfile
 from io import BytesIO, StringIO
@@ -38,8 +40,8 @@ def fetch_expasy_ec_numbers() -> List[str]:
     response = requests.get(EXPASY_URL)
     response.raise_for_status()
     ec_lines = filter(lambda l: l.startswith("ID"), response.text.split("\n"))
-    for l in ec_lines:
-        ec_number = l.strip().split("   ")[1]
+    for line in ec_lines:
+        ec_number = line.strip().split("   ")[1]
         out.append(ec_number)
     return out
 
@@ -79,6 +81,10 @@ def fetch_brenda_natural_substrates(
 def fetch_brenda_reports(
     var: str, email: str, password_hex: str, ec_numbers: List[str]
 ):
+    """Fetch brenda reports for a variable and some ec numbers.
+
+    Note that a valid email and password hex are required.
+    """
     client = ZeepClient(BRENDA_WSDL)
     fetch_func = (
         client.service.getKmValue
@@ -115,10 +121,14 @@ def fetch_brenda_reports(
 
 
 def fetch_sabio_data_for_ec_number(ec_number: str) -> pd.DataFrame:
+    """Get data from the sabio-rk database for an EC number."""
+    query_conditions = [
+        'EnzymeType:"wildtype"', "IsRecombinant:false", f"ECNumber:{ec_number}",
+    ]
     query = {
         "format": "tsv",
         "fields[]": SABIO_FIELDS,
-        "q": f'EnzymeType:"wildtype" AND IsRecombinant:false AND ECNumber:{ec_number}',
+        "q": " AND ".join(query_conditions),
     }
     s = requests.Session()
     with s.get(SABIO_URL, params=query, stream=True) as r:

@@ -3,21 +3,19 @@
 from typing import Dict, List
 
 import arviz as az
-import matplotlib
 import numpy as np
 import pandas as pd
 from arviz.data.inference_data import InferenceData
 from arviz.plots.forestplot import plot_forest
-from matplotlib import patches
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
-from numpy.core.multiarray import inner
 from xarray.core.dataset import Dataset
 
-from src.data_preparation import COFACTORS, check_is_df
+from src.data_preparation import COFACTORS  # type: ignore
 
 
 def plot_vars(posterior: Dataset, vars: List[str]) -> Figure:
+    """Plot some variables."""
     var_regex = "|".join(vars)
     plot_forest(
         posterior,
@@ -41,14 +39,19 @@ def plot_vars(posterior: Dataset, vars: List[str]) -> Figure:
 
 
 def plot_nadh_comparison(posterior: Dataset, lits: pd.DataFrame) -> Figure:
+    """Compare nadh and nadph kms."""
+    def is_nadh(df):
+        return df["substrate"] == "NADH"
+
+    def is_nadph(df):
+        return df["substrate"] == "NADPH"
+
     samples = (
         posterior["log_km"]
         .to_dataframe()
         .rename(columns={"biology_substrate": "substrate"})
     )
     assert isinstance(samples, pd.DataFrame)
-    is_nadh = lambda df: df["substrate"] == "NADH"
-    is_nadph = lambda df: df["substrate"] == "NADPH"
     f, axes = plt.subplots(1, 2, figsize=[12, 6], sharex=True)
     axes = axes.ravel()
     f.suptitle(
@@ -74,6 +77,7 @@ def plot_nadh_comparison(posterior: Dataset, lits: pd.DataFrame) -> Figure:
 
 
 def plot_log_km_comparison(ds_dict: Dict[str, Dataset]) -> Figure:
+    """Compare log kms."""
     posteriors = ds_dict.values()
     names = ds_dict.keys()
     colors = ["tab:blue", "tab:orange"]
@@ -82,14 +86,12 @@ def plot_log_km_comparison(ds_dict: Dict[str, Dataset]) -> Figure:
     bins = np.linspace(0, 20, 50)
     xlow, xhigh = axes[1].get_xlim()
     for posterior, name, color in zip(posteriors, names, colors):
-        qs = check_is_df(
-            check_is_df(
-                posterior["log_km"]
-                .quantile([0.01, 0.5, 0.99], dim=["chain", "draw"])
-                .to_series()
-                .unstack("quantile")
-                .rename(columns={0.01: "low", 0.5: "med", 0.99: "high"})
-            )
+        qs = (
+            posterior["log_km"]
+            .quantile([0.01, 0.5, 0.99], dim=["chain", "draw"])
+            .to_series()
+            .unstack("quantile")
+            .rename(columns={0.01: "low", 0.5: "med", 0.99: "high"})
             .assign(width=lambda df: df["high"].subtract(df["low"]))
             .sort_values("med")
         )
@@ -120,21 +122,24 @@ def plot_log_km_comparison(ds_dict: Dict[str, Dataset]) -> Figure:
 
 
 def plot_ppc(idata: InferenceData) -> Figure:
+    """Do a posterior predictive check plot."""
     posterior = idata.get("posterior")
     observed_data = idata.get("observed_data")
     assert isinstance(posterior, Dataset)
     assert isinstance(observed_data, Dataset)
-    df = check_is_df(
+    df = (
         posterior["yrep"]
         .quantile([0.01, 0.1, 0.5, 0.9, 0.99], dim=["chain", "draw"])
         .to_series()
         .unstack("quantile")
         .add_prefix("q_")
     )
+    assert isinstance(df, pd.DataFrame)
     df["obs"] = observed_data["y"].values
-    df = check_is_df(df.sort_values("q_0.5"))
+    df = df.sort_values("q_0.5")
     f, ax = plt.subplots(figsize=[12, 5])
-    x = np.linspace(*ax.get_xlim(), num=len(df))
+    x_low, x_high = ax.get_xlim()
+    x = np.linspace(x_low, x_high, num=len(df))
     ax.vlines(
         x,
         df["q_0.01"],
@@ -166,6 +171,7 @@ def plot_ppc(idata: InferenceData) -> Figure:
 def plot_concentration_comparison(
     posterior: Dataset, conc: pd.DataFrame
 ) -> Figure:
+    """Compare physiological concentrations with kms."""
     biology_cols = [
         "Organism",
         "ECNumber",
@@ -220,6 +226,7 @@ def plot_concentration_comparison(
 
 
 def generate_summary_df(posterior: Dataset):
+    """Get a log km summary dataframe from a Dataset."""
     cd = ["chain", "draw"]
     assert isinstance(posterior, Dataset)
     quantiles = (
@@ -240,6 +247,7 @@ def generate_summary_df(posterior: Dataset):
 
 
 def plot_oos_cv(idatas: Dict[str, InferenceData]) -> Figure:
+    """Show out-of-sample cross-validation results."""
     f, ax = plt.subplots(figsize=[12, 6])
     bins = np.linspace(-10, 0, 100)
     for name, idata in idatas.items():
@@ -266,6 +274,7 @@ def plot_oos_cv(idatas: Dict[str, InferenceData]) -> Figure:
 
 
 def plot_cofactor_effects(posterior):
+    """Visualise cofactor effects."""
     a_sub_qs = (
         az.extract_dataset(posterior, var_names="a_substrate", combined=True)
         .quantile([0.01, 0.5, 0.99], dim="sample")
@@ -304,6 +313,7 @@ def plot_cofactor_effects(posterior):
 
 
 def plot_cofactor_substrate_comparison(posterior, lits):
+    """Compare posterior means of cofactors and substrates."""
     log_kms = az.extract_dataset(posterior, var_names="log_km", combined=True)
     means = (
         log_kms.mean(dim="sample")
