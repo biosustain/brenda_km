@@ -1,5 +1,6 @@
 """Run all the configs in the model_configurations folder."""
 
+import argparse
 import json
 import os
 from typing import Tuple
@@ -16,6 +17,9 @@ from src.model_configuration import ModelConfiguration
 from src.sampling import sample
 
 MODEL_CONFIGURATION_DIR = "model_configurations"
+FINAL_MODEL_CONFIGURATION = os.path.join(
+    MODEL_CONFIGURATION_DIR, "brenda-blk.toml"
+)
 RESULTS_DIR = os.path.join("results", "runs")
 MODES = ["posterior", "fake", "prior"]
 
@@ -104,7 +108,14 @@ def run_oos_cv(mc: ModelConfiguration) -> None:
 
 
 def main():
-    config_files = [
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--final-only",
+        action="store_true",
+        help="Only run the final model configuration.",
+    )
+    final_only = parser.parse_args().final_only
+    config_files = [FINAL_MODEL_CONFIGURATION] if final_only else [
         os.path.join(MODEL_CONFIGURATION_DIR, f)
         for f in os.listdir(MODEL_CONFIGURATION_DIR)
         if f.endswith(".toml")
