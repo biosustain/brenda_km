@@ -62,7 +62,7 @@ cytosol = 5.4549; glycosome = 0.2451;
 %Chemical Reactions and rate laws:
 
 % 3PGA_g = 3PGA_c
-r1 = PGAT3_g_k*y(44)-PGAT3_g_k*y(8)/cytosol;
+r1 = (PGAT3_g_k*y(44)-PGAT3_g_k*y(8))/cytosol;
 
 % NADP_c + 6PG_c = CO2_c + NADPH_c + Rul5P_c
 r2 = v2sub2prod(PGDH6_c_Vmax,PGDH6_c_Keq,y(18),PGDH6_c_Km6PG,y(12),PGDH6_c_KmNADP,y(17),PGDH6_c_KmRul5P,y(28),PGDH6_c_KmNADPH);
@@ -74,10 +74,10 @@ r3 = v2sub2prod(PGDH6_g_Vmax,PGDH6_g_Keq,y(15),PGDH6_g_Km6PG,y(14),PGDH6_g_KmNAD
 r4 = vAK(y(7),y(45),y(13),AK_c_k1,AK_c_k2);
 
 % 2 * ADP_g = AMP_g + ATP_g
-r5 = vAK(y(5),y(43),y(3),AK_g_k1,AK_g_k2);
+r5 = vAK(y(5),y(43),y(3),AK_g_k1,AK_g_k2)/glycosome;
 
 % Fru16BP_g = GA3P_g + DHAP_g;  ATP_g ADP_g AMP_g
-r6 = ALD_g_Vmax.*y(32).*(1-y(33).*y(4)./(y(32).*ALD_g_Keq))./(ALD_g_KmFru16BP.*(1+y(3)./ALD_g_KiATP+y(5)./ALD_g_KiADP+y(43)./ALD_g_KiAMP).*(1+y(33)./ALD_g_KmGA3P+y(4)./ALD_g_KmDHAP+y(32)./(ALD_g_KmFru16BP.*(1+y(3)./ALD_g_KiATP+y(5)./ALD_g_KiADP+y(43)./ALD_g_KiAMP))+y(33).*y(4)./(ALD_g_KmGA3P.*ALD_g_KmDHAP)+y(32).*y(33)./(ALD_g_KmFru16BP.*ALD_g_KiGA3P.*(1+y(3)./ALD_g_KiATP+y(5)./ALD_g_KiADP+y(43)./ALD_g_KiAMP))));
+r6 = ALD_g_Vmax.*y(32).*(1-y(33).*y(4)./(y(32).*ALD_g_Keq))./(ALD_g_KmFru16BP.*(1+y(3)./ALD_g_KiATP+y(5)./ALD_g_KiADP+y(43)./ALD_g_KiAMP).*(1+y(33)./ALD_g_KmGA3P+y(4)./ALD_g_KmDHAP+y(32)./(ALD_g_KmFru16BP.*(1+y(3)./ALD_g_KiATP+y(5)./ALD_g_KiADP+y(43)./ALD_g_KiAMP))+y(33).*y(4)./(ALD_g_KmGA3P.*ALD_g_KmDHAP)+y(32).*y(33)./(ALD_g_KmFru16BP.*ALD_g_KiGA3P.*(1+y(3)./ALD_g_KiATP+y(5)./ALD_g_KiADP+y(43)./ALD_g_KiAMP))))/glycosome;
 
 % ATP_c -> ADP_c
 r7 = ATPu_c_k*y(13)/y(7);
@@ -128,10 +128,10 @@ r21 = NADPHu_c_k*y(28);
 r22 = NADPHu_g_k*y(27);
 
 % ATP_g + Fru6P_g = Fru16BP_g + ADP_g
-r23 = (PFK_g_Vmax.*PFK_g_Ki1.*y(9).*y(3).*(1-y(32).*y(5)./(PFK_g_Keq.*y(9).*y(3)))./(PFK_g_KmFru6P.*PFK_g_KmATP.*(y(32)+PFK_g_Ki1).*(PFK_g_KsATP./PFK_g_KmATP+y(9)./PFK_g_KmFru6P+y(3)./PFK_g_KmATP+y(5)./PFK_g_KmADP+y(32).*y(5)./(PFK_g_KmADP.*PFK_g_Ki2)+y(9).*y(3)./(PFK_g_KmFru6P.*PFK_g_KmATP))));
+r23 = (PFK_g_Vmax.*PFK_g_Ki1.*y(9).*y(3).*(1-y(32).*y(5)./(PFK_g_Keq.*y(9).*y(3)))./(PFK_g_KmFru6P.*PFK_g_KmATP.*(y(32)+PFK_g_Ki1).*(PFK_g_KsATP./PFK_g_KmATP+y(9)./PFK_g_KmFru6P+y(3)./PFK_g_KmATP+y(5)./PFK_g_KmADP+y(32).*y(5)./(PFK_g_KmADP.*PFK_g_Ki2)+y(9).*y(3)./(PFK_g_KmFru6P.*PFK_g_KmATP))))/glycosome;
 
 % 3PGA_c = 2PGA_c
-r24 = v1sub1prod(PGAM_c_Vmax,PGAM_c_Keq,y(8),PGAM_c_Km3PGA,y(1),PGAM_c_Km2PGA)/cytosol;
+r24 = v1sub1prod(PGAM_c_Vmax,PGAM_c_Keq,y(8),PGAM_c_Km3PGA,y(1),PGAM_c_Km2PGA);
 
 % Glc6P_g = Fru6P_g;  6PG_g
 r25 = PGI_g_Vmax*y(6)*(1-y(9)/(PGI_g_Keq*y(6)))/(PGI_g_KmGlc6P*(1+y(6)/PGI_g_KmGlc6P+y(9)/PGI_g_KmFru6P+y(15)/PGI_g_Ki6PG)); 
@@ -155,7 +155,7 @@ r30 = v1sub1prod(PPI_g_Vmax,PPI_g_Keq,y(19),PPI_g_KmRul5P,y(24),PPI_g_KmRib5P);
 r31 = PYK_c_Vmax*y(7)*(1-y(29)*y(13)/(PYK_c_Keq*y(42)*y(7)))*(y(42)/(PYK_c_KmPEP*(1+y(7)/PYK_c_KiADP+y(13)/PYK_c_KiATP))).^PYK_c_n/(PYK_c_KmADP*(1+(y(42)/(PYK_c_KmPEP*(1+y(7)/PYK_c_KiADP+y(13)/PYK_c_KiATP))).^PYK_c_n+y(29)/PYK_c_KmPyr)*(1+y(7)/PYK_c_KmADP+y(13)/PYK_c_KmATP));
 
 % Pyr_c -> Pyr_e
-r32 = (PyrT_c_Vmax*y(29)/(PyrT_c_KmPyr*(1+y(29)/PyrT_c_KmPyr)))/cytosol;
+r32 = (PyrT_c_Vmax*y(29)/(PyrT_c_KmPyr*(1+y(29)/PyrT_c_KmPyr)));
 
 % TSH2_c -> TS2_c
 r33 = TOX_c_k*y(35);
@@ -167,7 +167,7 @@ r34 = v1sub1prod(TPI_g_Vmax,TPI_g_Keq,y(4),TPI_g_KmDHAP,y(33),TPI_g_KmGA3P);
 r35 = v2sub2prod(TR_c_Vmax,TR_c_Keq,y(40),TR_c_KmTS2,y(28),TR_c_KmNADPH,y(35),TR_c_KmTSH2,y(12),TR_c_KmNADP);
 
 % Differential equations:
-dydt=[r24-r8;... %2PGA_c 
+dydt=[r24/cytosol-r8/cytosol;... %2PGA_c 
 r18-r14;... % DHAP_c 
 r5+r15-r20-r23+r26;... % ATP_g 
 r6-r9+r14-r34;... % DHAP_g 
@@ -175,10 +175,10 @@ r20-2*r5-r26-r15+r23;... % ADP_g
 r20-r25-r11;... % Glc6P_g 
 r7-2*r4+r19-r31;... % ADP_c
 r1-r24;... % 3PGA_c
-r25-r23;... % Fru6P_g 
+(r25*glycosome)/glycosome-(r23*glycosome)/glycosome;... % Fru6P_g 
 0;... % Pi_g
 0;... % O2_c
-r35-r2-r10+r21;... % NADP_c
+(r35-r2-r10+r21)/cytosol;... % NADP_c
 r4-r7-r19+r31;... % ATP_c
 r22-r3-r11;... % NADP_g
 r28-r3;... % 6PG_g
@@ -186,7 +186,7 @@ r28-r3;... % 6PG_g
 r2-r29;... % Rul5P_c 
 r27-r2;... % 6PG_c
 r3-r30;... %Rul5P_g
-r19-r10-r12;... %Glc6P_c
+(r19-r10-r12)/cytosol;... %Glc6P_c
 0;... %Rib5P_c
 r13-r26;... %13BPGA_g
 r12+r16-(r17/cytosol)-r19;... %Glc_c
@@ -194,11 +194,11 @@ r12+r16-(r17/cytosol)-r19;... %Glc_c
 (r17/glycosome)-r20;... %Glc_g
 0;... %Glc_e
 r3+r11-r22;... %NADPH_g
-r2+r10-r21-r35;... %NADPH_c
-r31-r32;... %Pyr_c
+(r2+r10-r21-r35)/cytosol;... %NADPH_c
+r31/cytosol-r32/cytosol;... %Pyr_c
 0;... %Pyr_e
 r9-r13;... %NAD_g
-r23-r6;... %Fru16BP_g
+(r23*glycosome)/glycosome-(r6*glycosome)/glycosome;... %Fru16BP_g
 r6-r13+r34;... %GA3P_g
 0;... %Gly_e
 r35-r33;... %TSH2_c
@@ -215,6 +215,7 @@ r4;... %AMP_c
 r13-r9]; %NADH_g
 
 % disp(dydt(10))
+
 end
 
 
@@ -234,25 +235,15 @@ end
 
 function [v1sub1prod] = v1sub1prod(Vfmax,Keq,S, Ks, P, Kp)
 
-v1sub1prod = Vfmax.*S.*(1-P./(Keq.*S))./(Ks.*(1+S./Ks+P./Kp));
+v1sub1prod = Vfmax*S*(1-P/(Keq*S))/(Ks*(1+S/Ks+P/Kp));
 
 end
 
 function [v1sub] = v1sub(Vfmax,S, Ks)
 
-v1sub = Vfmax.*S./(Ks.*(1+S./Ks));
+v1sub = Vfmax*S/(Ks*(1+S/Ks));
 
 end
-
-
-
-
-%45,44,43,42, (41),(38),37, (33), (32) right behaviour but must be
-%sooner),29, 28 (correct behaviour but must be sooner),
-%27,25,23,22,20,(18),(14),13,(12)correct but must be
-%slower,9,8,7,6,5,4,3,2,1
-
-
 
 
 
