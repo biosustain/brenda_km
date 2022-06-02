@@ -1,6 +1,6 @@
-name = "sabio-km-blk"
+name = "sabio-blk"
 stan_file = "src/stan/blk.stan"
-data_dir = "data/prepared/sabio_km"
+data_dir = "data/prepared/sabio"
 run_cross_validation = true
 
 [sample_kwargs]
