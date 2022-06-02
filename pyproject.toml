@@ -1,3 +1,14 @@
+[project]
+name = "km_stats"
+version = "0.0.1"
+dependencies = [
+    "requests",
+    'importlib-metadata; python_version<"3.8"',
+]
+
+[tool.setuptools]
+packages = ["src"]
+
 [tool.black]
 line-length = 80
 target-version = ['py38']
@@ -36,13 +47,17 @@ disable = "C0330, C0326"
 [tool.pylint.format]
 max-line-length = "80"
 
-[tool.pyright]
-include = ["src", "case_study"]
-ignore = [".venv_km"]
-reportMissingImports = true
-reportMissingTypeStubs = false
-disableOrganizeImports = false
-useLibraryCodeForTypes = true
-venvPath = "."
-venv = ".venv_km"
-pythonPlatform = "Darwin"
+[tool.mypy]
+plugins = ["numpy.typing.mypy_plugin"]
+
+[[tool.mypy.overrides]]
+module = [
+  "scipy.*",
+  "sklearn.*",
+  "cmdstanpy.*",
+  "pandas.*",
+  "matplotlib.*",
+  "tqdm.*",
+  "requests.*"
+]
+ignore_missing_imports = true
