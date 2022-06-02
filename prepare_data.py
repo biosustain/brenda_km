@@ -10,16 +10,16 @@ from cmdstanpy import CmdStanModel, write_stan_json
 
 from src.data_preparation import (
     PrepareDataOutput,
-    check_is_df,
-    prepare_data_brenda_km,
-    prepare_data_sabio_km,
+    prepare_data_brenda,
+    prepare_data_sabio,
+    prepare_natural_substrates,
     prepare_sabio_concentrations,
 )
 
 RAW_DIR = os.path.join("data", "raw")
 RAW_DATA_FILES = {
     "brenda_kcats": os.path.join(RAW_DIR, "brenda_kcat_reports.csv"),
-    "brenda_kms": os.path.join(RAW_DIR, "brenda_km_reports.csv"),
+    "brenda_reports": os.path.join(RAW_DIR, "brenda_km_reports.csv"),
     "sabio_reports": os.path.join(RAW_DIR, "sabio_reports.csv"),
     "brenda_nat_subs": os.path.join(RAW_DIR, "brenda_natural_substrates.csv"),
 }
@@ -27,10 +27,10 @@ RAW_DATA_FILES = {
 PREPARED_DIR = os.path.join("data", "prepared")
 # Used to generate fake data
 TRUE_MODEL_FILE = {
-    "brenda_km": os.path.join("src", "stan", "blk.stan"),
-    "sabio_km": os.path.join("src", "stan", "enz.stan"),
+    "brenda": os.path.join("src", "stan", "blk.stan"),
+    "sabio": os.path.join("src", "stan", "enz.stan"),
 }
-FAKE_DATA_SOURCE_DIR = os.path.join("data", "prepared", "sabio_km")
+FAKE_DATA_SOURCE_DIR = os.path.join("data", "prepared", "sabio")
 HARDCODED_PARAMS = {
     "nu": 4,
     "mu": -2,
@@ -51,29 +51,29 @@ SAMPLE_KWARGS_SIM = {
 def generate_prepared_data():
     """Save prepared data in the PREPARED_DATA_DIR."""
     print("Reading raw data...")
-    raw_data = {
-        k: check_is_df(pd.read_csv(v, index_col=0))
+    raw = {
+        k: pd.read_csv(v, index_col=0)
         for k, v in RAW_DATA_FILES.items()
     }
 
     sabio_conc_output_file = os.path.join(PREPARED_DIR, "sabio_concs.csv")
-    sabio_concs = prepare_sabio_concentrations(raw_data["sabio_reports"])
+    sabio_concs = prepare_sabio_concentrations(raw["sabio_reports"])
     sabio_concs.to_csv(sabio_conc_output_file)
     print(
-        f"Saved {len(sabio_concs)} SABIO-RK metabolite concentrations to {sabio_conc_output_file}."
+        f"Saved {len(sabio_concs)} SABIO-RK metabolite concentrations to "
+        f"{sabio_conc_output_file}."
     )
 
     print("Preparing data...")
-    brenda_km_data = prepare_data_brenda_km(
-        name="brenda_km",
-        raw_reports=raw_data["brenda_kms"],
-        natural_ligands=raw_data["brenda_nat_subs"],
-        number_of_cv_folds=5,
+    nat = prepare_natural_substrates(raw["brenda_nat_subs"])
+    brenda_data = prepare_data_brenda("brenda", raw["brenda_reports"], nat, 5)
+    sabio_data = prepare_data_sabio("sabio", raw["sabio_reports"], 5)
+    natural_substrates_file = os.path.join(
+        PREPARED_DIR, "natural_substrates.csv"
     )
-    sabio_km_data = prepare_data_sabio_km(
-        "sabio_km", raw_data["sabio_reports"], number_of_cv_folds=5
-    )
-    prepare_data_outputs = [brenda_km_data, sabio_km_data]
+    print(f"Saving natural substrates to {natural_substrates_file}")
+    nat.to_csv(natural_substrates_file)
+    prepare_data_outputs = [brenda_data, sabio_data]
     for po in prepare_data_outputs:
         output_dir = os.path.join(PREPARED_DIR, po.name)
         cv_dir = os.path.join(output_dir, "stan_inputs_cv")
@@ -112,7 +112,6 @@ def generate_fake_data(pos: List[PrepareDataOutput]):
     make sure to run it afterwards!
 
     """
-
     for po in pos:
         directory = os.path.join(PREPARED_DIR, po.name)
         print(f"Generating fake data for {directory}...")
