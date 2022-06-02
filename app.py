@@ -1,3 +1,5 @@
+"""Code for a streamlit webapp investigating our results."""
+
 import base64
 import os
 from typing import Any
@@ -11,16 +13,16 @@ from scipy.stats.kde import gaussian_kde
 from xarray import DataArray
 from xarray.core.dataset import Dataset
 
-from src.data_preparation import check_is_df
 
-SUMMARY_CSV_FILE = os.path.join("results", "app_summary.csv")
+SUMMARY_CSV_FILE = os.path.join("results", "final_summary.csv")
+IDATA_FILE = os.path.join("results", "final_idata.nc")
 RUN_DIRS = {
-    "BRENDA": os.path.join("results", "runs", "brenda-km-blk"),
-    "SABIO-RK": os.path.join("results", "runs", "sabio-km-enz"),
+    "BRENDA": os.path.join("results", "runs", "brenda-blk"),
+    "SABIO-RK": os.path.join("results", "runs", "sabio-enz"),
 }
 DATA_DIRS = {
-    "BRENDA": os.path.join("data", "prepared", "brenda_km"),
-    "SABIO-RK": os.path.join("data", "prepared", "sabio_km"),
+    "BRENDA": os.path.join("data", "prepared", "brenda"),
+    "SABIO-RK": os.path.join("data", "prepared", "sabio"),
 }
 BIOLOGY_COLS = {
     "BRENDA": ["organism", "substrate", "ec4"],
@@ -28,13 +30,15 @@ BIOLOGY_COLS = {
 }
 
 
-def get_lit_link(e: Any, l: Any) -> str:
-    lit = str(l).replace("[", "").replace("]", "")
+def get_lit_link(e: Any, lit_in_brackets: Any) -> str:
+    """Get a brenda url from a value of the 'literature' column."""
+    lit = str(lit_in_brackets).replace("[", "").replace("]", "")
     url = f"https://www.brenda-enzymes.org/literature.php?e={str(e)}&r={lit}"
     return f'<a href = "{url}">{lit}</a>'
 
 
 def get_obs(reports: pd.DataFrame, biology: str) -> pd.DataFrame:
+    """Get a dataframe of observations."""
     obs = reports.query(f"biology == '{biology}'")
     assert isinstance(obs, pd.DataFrame)
     obs = obs.rename(columns={"log_km": "log km"})
@@ -50,7 +54,7 @@ def get_obs(reports: pd.DataFrame, biology: str) -> pd.DataFrame:
 
 
 def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
-    """Generates a link allowing a csv of a dataframe to be downloaded."""
+    """Generate a link allowing a csv of a dataframe to be downloaded."""
     csv = df.to_csv(index=False)
     assert isinstance(csv, str)
     b64 = base64.b64encode(csv.encode()).decode()
@@ -59,9 +63,10 @@ def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
     )
 
 
-def get_log_km_brenda(
+def get_log_km_brenda_blk(
     posterior: Dataset, ec4: str, organism: str, substrate: str
 ) -> DataArray:
+    """Get a DataArray of log kms for the brenda-blk model."""
     # if substrate not in posterior.coords["substrate"]:
     # substrate = "unknown substrate"
     ec4_sub = f"{ec4}|{substrate}"
@@ -77,14 +82,18 @@ def get_log_km_brenda(
     return mu + a_substrate + a_ec_sub + a_org_sub
 
 
-def get_log_km_sabio(
+def get_log_km_sabio_enz(
     posterior: Dataset, ec4: str, organism: str, substrate: str, uniprot_id: str
-):
+) -> DataArray:
+    """Get a DataArray of log kms for the sabio-enz model."""
     enz_sub = f"{uniprot_id}|{substrate}"
     if enz_sub not in posterior.coords["enz_sub"]:
         enz_sub = "unknown"
     a_enz_sub = posterior["a_enz_sub"].sel({"enz_sub": enz_sub})
-    return get_log_km_brenda(posterior, ec4, organism, substrate) + a_enz_sub
+    return (
+        get_log_km_brenda_blk(posterior, ec4, organism, substrate)
+        + a_enz_sub
+    )
 
 
 # Start of app
@@ -106,16 +115,14 @@ st.sidebar.write(
 
 
 # Get required data
-db = st.sidebar.selectbox("Dataset", ["SABIO-RK", "BRENDA"])
+db = st.sidebar.selectbox("Dataset", ["BRENDA"])
 posterior = az.from_netcdf(os.path.join(RUN_DIRS[db], "posterior.nc")).get(
     "posterior"
 )
 assert isinstance(posterior, Dataset)
-lits = check_is_df(pd.read_csv(os.path.join(DATA_DIRS[db], "lits.csv")))
-reports = check_is_df(pd.read_csv(os.path.join(DATA_DIRS[db], "reports.csv")))
-summary_df = check_is_df(
-    pd.read_csv(os.path.join(RUN_DIRS[db], "posterior_summary.csv"))
-)
+lits = pd.read_csv(os.path.join(DATA_DIRS[db], "lits.csv"))
+reports = pd.read_csv(os.path.join(DATA_DIRS[db], "reports.csv"))
+summary_df = pd.read_csv(os.path.join(RUN_DIRS[db], "posterior_summary.csv"))
 
 # map biologies to meaningful categories
 biology_maps = {
@@ -124,16 +131,22 @@ biology_maps = {
 options = {
     col: ["unknown"] + s.unique().tolist() for col, s in biology_maps.items()
 }
-
-organism = st.sidebar.selectbox("Organism", options["organism"])
-ec4 = st.sidebar.selectbox("EC4", options["ec4"])
-substrate = st.sidebar.selectbox("Substrate", options["substrate"])
+organism_options = ["unknown"] + lits["organism"].unique().tolist()
+organism = st.sidebar.selectbox("Organism", organism_options)
+ec4_options = ["unknown"] + lits.query(f"organism == '{organism}'")["ec4"].unique().tolist()
+ec4 = st.sidebar.selectbox("EC4", ec4_options)
+substrate_options = ["unknown"] + (
+    lits.query(f"organism == '{organism}' and ec4 == '{ec4}'")["substrate"].unique().tolist()
+)
+substrate = st.sidebar.selectbox("Substrate", substrate_options)
 if db == "SABIO-RK":
     uniprot_id = st.sidebar.selectbox("Uniprot id", options["uniprot_id"])
-    log_km = get_log_km_sabio(posterior, ec4, organism, substrate, uniprot_id)
+    log_km = get_log_km_sabio_enz(
+        posterior, ec4, organism, substrate, uniprot_id
+    )
     biology = "|".join([organism, ec4, uniprot_id, substrate])
 else:
-    log_km = get_log_km_brenda(posterior, ec4, organism, substrate)
+    log_km = get_log_km_brenda_blk(posterior, ec4, organism, substrate)
     biology = "|".join([organism, ec4, substrate])
 log_km = log_km.stack(dim=["chain", "draw"])
 st.sidebar.markdown(
@@ -205,7 +218,8 @@ col2.write(
 )
 st.write("Below is a table of all the measurements.")
 st.write(
-    check_is_df(obs.pipe(check_is_df).sort_values("log km"))
+    obs
+    .sort_values("log km")
     .reset_index()[["reference", "km", "log km"]]
     .to_html(escape=False),
     unsafe_allow_html=True,
