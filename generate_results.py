@@ -17,9 +17,10 @@ from src.model_configuration import ModelConfiguration
 from src.sampling import sample
 
 MODEL_CONFIGURATION_DIR = "model_configurations"
-FINAL_MODEL_CONFIGURATION = os.path.join(
-    MODEL_CONFIGURATION_DIR, "brenda-blk.toml"
-)
+FINAL_MODEL_CONFIGURATIONS = [
+    os.path.join(MODEL_CONFIGURATION_DIR, "brenda-blk.toml"),
+    os.path.join(MODEL_CONFIGURATION_DIR, "sabio-enz.toml"),
+]
 RESULTS_DIR = os.path.join("results", "runs")
 MODES = ["posterior", "fake", "prior"]
 
@@ -115,7 +116,7 @@ def main():
         help="Only run the final model configuration.",
     )
     final_only = parser.parse_args().final_only
-    config_files = [FINAL_MODEL_CONFIGURATION] if final_only else [
+    config_files = FINAL_MODEL_CONFIGURATIONS if final_only else [
         os.path.join(MODEL_CONFIGURATION_DIR, f)
         for f in os.listdir(MODEL_CONFIGURATION_DIR)
         if f.endswith(".toml")
@@ -129,8 +130,11 @@ def main():
             nc_file = os.path.join(RESULTS_DIR, mc.name, f"{mode}.nc")
             if not os.path.exists(nc_file) and not mc.do_not_run:
                 run_in_mode(mc, mode)
-        if mc.run_cross_validation:
-            run_oos_cv(mc)
+        posterior_file = os.path.join(RESULTS_DIR, mc.name, "posterior.nc")
+        if mc.run_cross_validation and os.path.exists(posterior_file):
+            idata_posterior = az.from_netcdf(posterior_file)
+            if "llik_oos" not in idata_posterior.log_likelihood.data_vars:
+                run_oos_cv(mc)
 
 
 if __name__ == "__main__":

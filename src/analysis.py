@@ -40,6 +40,7 @@ def plot_vars(posterior: Dataset, vars: List[str]) -> Figure:
 
 def plot_nadh_comparison(posterior: Dataset, lits: pd.DataFrame) -> Figure:
     """Compare nadh and nadph kms."""
+
     def is_nadh(df):
         return df["substrate"] == "NADH"
 
@@ -273,7 +274,7 @@ def plot_oos_cv(idatas: Dict[str, InferenceData]) -> Figure:
     return f
 
 
-def plot_cofactor_effects(posterior):
+def plot_cofactor_effects(posterior: InferenceData) -> Figure:
     """Visualise cofactor effects."""
     a_sub_qs = (
         az.extract_dataset(posterior, var_names="a_substrate", combined=True)
@@ -284,8 +285,10 @@ def plot_cofactor_effects(posterior):
         .sort_values(0.5)
     )
     f, ax = plt.subplots(figsize=[12, 5])
+    xlim_low, xlim_high = ax.get_xlim()
     x = pd.Series(
-        np.linspace(*ax.get_xlim(), num=len(a_sub_qs)), index=a_sub_qs.index
+        np.linspace(xlim_low, xlim_high, num=len(a_sub_qs)),
+        index=a_sub_qs.index,
     )
     ax.vlines(
         x.values,
@@ -312,7 +315,9 @@ def plot_cofactor_effects(posterior):
     return f
 
 
-def plot_cofactor_substrate_comparison(posterior, lits):
+def plot_cofactor_substrate_comparison(
+    posterior: InferenceData, lits: pd.DataFrame
+) -> Figure:
     """Compare posterior means of cofactors and substrates."""
     log_kms = az.extract_dataset(posterior, var_names="log_km", combined=True)
     means = (
