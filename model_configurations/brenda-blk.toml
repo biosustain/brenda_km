@@ -2,7 +2,7 @@ name = "brenda-blk"
 stan_file = "src/stan/blk.stan"
 data_dir = "data/prepared/brenda"
 # do_not_run = true
-run_cross_validation = false
+run_cross_validation = true
 
 [sample_kwargs]
 show_progress = true
