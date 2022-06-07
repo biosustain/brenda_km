@@ -113,7 +113,7 @@ def fetch_brenda_reports(
                 map(lambda x: x.__dict__["__values__"], result)
             )
             out = pd.concat([out, result_df], ignore_index=True)
-        except:
+        except BaseException:
             print("\nError fetching ec number " + ec_number)
             time.sleep(2)
             client = ZeepClient(BRENDA_WSDL)
@@ -177,7 +177,7 @@ def fetch_hmdb_metabolite_concentrations():
                     cd = {"metabolite": metabolite_name, "inchikey": inchikey}
                     for k in conc:
                         if len(k) == 0:
-                            cd[k.tag[len(pref) :]] = k.text
+                            cd[k.tag[len(pref):]] = k.text
                     out.append(cd)
                 elem.clear()
         return out
