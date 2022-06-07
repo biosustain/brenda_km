@@ -180,7 +180,7 @@ def prepare_data_brenda(
     cond = (
         reports[biology_cols].notnull().all(axis=1).astype(bool)
         & reports["km"].notnull()
-        & reports["km"].ge(0)
+        & reports["km"].gt(1e-10)
         & ~reports["ligand_structure_id"].eq(0)
         & (
             reports["temperature"].isnull()
