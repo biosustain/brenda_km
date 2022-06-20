@@ -1640,7 +1640,7 @@ ax2.YColor = 'k';
 yyaxis left
 title('Probability Distribution for TR-KmNADP values'), xlabel('TR-KmNADP (mM)'),ylabel('Frequency')
 TR_c_KmNADP=random(pd2,1000,1);
-%%
+%% Create new dataset
 DatasetN=DatasetS2;
 DatasetN{:,'PGDH6_c_Km6PG'}=PGDH6_c_Km6PG;
 DatasetN{:,'PGDH6_c_KmNADP'}=PGDH6_c_KmNADP;
@@ -1719,4 +1719,13 @@ DatasetN{:,'TR_c_KmNADPH'}=TR_c_KmNADPH;
 DatasetN{:,'TR_c_KmTSH2'}=TR_c_KmTSH2;
 DatasetN{:,'TR_c_KmNADP'}=TR_c_KmNADP;
 
-writetable(DatasetN,'DatasetN.csv','Delimiter',',','QuoteStrings',true)
+%save dataset in csv file
+%writetable(DatasetN,'DatasetN.csv','Delimiter',',','QuoteStrings',true)
+
+FigList = findobj(allchild(0), 'flat', 'Type', 'figure');
+for iFig = 1:length(FigList)
+  FigHandle = FigList(iFig);
+  FigName   = num2str(get(FigHandle, 'Number'));
+  set(0, 'CurrentFigure', FigHandle);
+  saveas(FigHandle, fullfile(strcat(FigName, '.png'))); 
+ end
