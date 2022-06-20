@@ -16,7 +16,7 @@ tspan=0:0.1:time;
 y0=[0.1 2.23 0.2405 8.483 1.519 0.5 1.3165 0.1 0.5 0 1 0.1 0.3417 0.1 0.084 0 0.413 0.0842 0.413 0.5 0.01 0.5 0.1 0.01 0.1 5 3.9 3.9 10 0 2 10 2.5 0 0.01 0 2.769 10.52 0.0795 0.37 0.0795 1 4.241 0.1 2.242 2];
 
 options = odeset('RelTol',1e-9,'AbsTol',1e-16,'NormControl','on');
-iter = 10;
+iter = 1000;
 
 failed = cell(iter, 3);
 normal =  cell(iter, 3);
@@ -363,44 +363,954 @@ end
 toc;
 
 %% Plot ensemble selected species
-
-figure (1)
-    for j=1:countNormal
-        plot(normal{j,2},normal{j,3}(:,29));
-        title('Pyr_c vs time'), xlabel('Time'),ylabel('Pyr_c');
-        hold on;
-    end
-    hold off;
-
-    
-figure (2)
-    for j=1:countNormal
-        plot(normal{j,2},normal{j,3}(:,23));
-        title('Glc_c vs time'), xlabel('Time'),ylabel('Glc_c');
-        hold on;
-    end
-    hold off;
+% 
+% figure (1)
+%     for j=1:countNormal
+%         plot(normal{j,2},normal{j,3}(:,29));
+%         title('Pyr_c vs time'), xlabel('Time'),ylabel('Pyr_c');
+%         hold on;
+%     end
+%     hold off;
+% 
+%     
+% figure (2)
+%     for j=1:countNormal
+%         plot(normal{j,2},normal{j,3}(:,23));
+%         title('Glc_c vs time'), xlabel('Time'),ylabel('Glc_c');
+%         hold on;
+%     end
+%     hold off;
     
     
  %% Plot everything
  
- a=size(normal{1,3});
- h=a(2);
- for k=1:h
- figure ()
-    for j=1:countNormal
-        plot(normal{j,2},normal{j,3}(:,k));
-        title(['y',sprintf('%d',k),' vs time']), xlabel('Time'),ylabel(['y',sprintf('%d',k)]);
-        hold on;
-    end
-    hold off;
- end
+%  a=size(normal{1,3});
+%  h=a(2);
+%  for k=1:h
+%  figure ()
+%     for j=1:countNormal
+%         plot(normal{j,2},normal{j,3}(:,k));
+%         title(['y',sprintf('%d',k),' vs time']), xlabel('Time'),ylabel(['y',sprintf('%d',k)]);
+%         hold on;
+%     end
+%     hold off;
+%  end
 %%
-figure (1)
-    for j=1:countNormal
-        plot(normal{j,2},normal{j,3}(:,1));
-        hold on;
+% figure (1)
+%     for j=1:countNormal
+%         plot(normal{j,2},normal{j,3}(:,1));
+%         hold on;
+%     end
+%     hold off;
+
+%% Plot ensemble
+y29=[]; %Pyr_c
+y23=[]; %Glc_c
+
+for t=1:length(normal{1,3}) % time
+    for ii=1:countNormal % iteration
+        NewRow29(ii)=(normal{ii,3}(t,29));  %Pyr_c
+        NewRow23(ii)=(normal{ii,3}(t,23));  %Glc_c
     end
-    hold off;
+    
+    y29=[y29;NewRow29];
+    y23=[y23;NewRow23];
+    
+end
+
+uppercent=0.75;
+lowpercent=0.25;
+
+median_29=[]; 
+SEM_29=[]; 
+hi_29=[]; 
+lo_29=[]; 
+for ii=1:size(y29,1)
+    Hour=y29(ii,:); 
+    NewCol29=median(Hour);
+
+    median_29=[median_29, NewCol29]; 
+    
+    Hi=quantile(Hour,uppercent);
+    Lo=quantile(Hour,lowpercent);
+    
+    hi_29=[hi_29, Hi];  
+    lo_29=[lo_29, Lo]; 
+    
+end
+
+% This will plot the metabolite individually
+figure
+x=tspan;
+plot(x, median_29,'b', 'linewidth', 2); 
+hold on;
+patch([x fliplr(x)],[hi_29 fliplr(lo_29)],[0.7 0.7 0.7], 'FaceColor','blue','FaceAlpha',.2, 'EdgeColor', 'None'); 
+hold off
+
+% to make plot prettier
+title('Change in Pyr_c over time')
+ylabel('Concentration (nM)'); xlabel('Time (min)');
+set(gca, 'Color', 'None', 'box', 'off', 'FontSize', 18, 'FontWeight', 'bold', 'linewidth',2)
+
+median_23=[]; 
+SEM_23=[]; 
+hi_23=[]; 
+lo_23=[]; 
+for ii=1:size(y23,1)
+    Hour=y23(ii,:); 
+    NewCol23=median(Hour);
+
+    median_23=[median_23, NewCol23]; 
+    
+    Hi=quantile(Hour,uppercent);
+    Lo=quantile(Hour,lowpercent);
+    
+    hi_23=[hi_23, Hi];  
+    lo_23=[lo_23, Lo]; 
+    
+end
+
+% This will plot the metabolite individually
+figure
+x=tspan;
+plot(x, median_23,'b', 'linewidth', 2); 
+hold on;
+patch([x fliplr(x)],[hi_23 fliplr(lo_23)],[0.7 0.7 0.7], 'FaceColor','blue','FaceAlpha',.2, 'EdgeColor', 'None'); 
+hold off
+
+% to make plot prettier
+title('Change in Glc_c over time')
+ylabel('Concentration (nM)'); xlabel('Time (min)');
+set(gca, 'Color', 'None', 'box', 'off', 'FontSize', 18, 'FontWeight', 'bold', 'linewidth',2)
+
+%%
+y29b=[]; %Pyr_c
+y23b=[]; %Glc_c
+
+for t=1:length(normalB{1,3}) % time
+    for ii=1:countNormalB % iteration
+        NewRow29b(ii)=(normalB{ii,3}(t,29));  %Pyr_c
+        NewRow23b(ii)=(normalB{ii,3}(t,23));  %Glc_c
+    end
+    
+    y29b=[y29b;NewRow29b];
+    y23b=[y23b;NewRow23b];
+    
+end
+
+uppercent=0.75;
+lowpercent=0.25;
+
+median_29b=[]; 
+SEM_29b=[]; 
+hi_29b=[]; 
+lo_29b=[]; 
+for ii=1:size(y29b,1)
+    Hour=y29b(ii,:); 
+    NewCol29b=median(Hour);
+
+    median_29b=[median_29b, NewCol29b]; 
+    
+    Hi=quantile(Hour,uppercent);
+    Lo=quantile(Hour,lowpercent);
+    
+    hi_29b=[hi_29b, Hi];  
+    lo_29b=[lo_29b, Lo]; 
+    
+end
+
+% This will plot the metabolite individually
+figure
+x=tspan;
+plot(x, median_29b,'b', 'linewidth', 2); 
+hold on;
+patch([x fliplr(x)],[hi_29b fliplr(lo_29b)],[0.7 0.7 0.7], 'FaceColor','blue','FaceAlpha',.2, 'EdgeColor', 'None'); 
+hold off
+
+% to make plot prettier
+title('Change in Pyr_c over time')
+ylabel('Concentration (nM)'); xlabel('Time (min)');
+set(gca, 'Color', 'None', 'box', 'off', 'FontSize', 18, 'FontWeight', 'bold', 'linewidth',2)
+
+median_23b=[]; 
+SEM_23b=[]; 
+hi_23b=[]; 
+lo_23b=[]; 
+for ii=1:size(y23b,1)
+    Hour=y23b(ii,:); 
+    NewCol23b=median(Hour);
+
+    median_23b=[median_23b, NewCol23b]; 
+    
+    Hi=quantile(Hour,uppercent);
+    Lo=quantile(Hour,lowpercent);
+    
+    hi_23b=[hi_23b, Hi];  
+    lo_23b=[lo_23b, Lo]; 
+    
+end
+
+% This will plot the metabolite individually
+figure
+x=tspan;
+plot(x, median_23b,'b', 'linewidth', 2); 
+hold on;
+patch([x fliplr(x)],[hi_23b fliplr(lo_23b)],[0.7 0.7 0.7], 'FaceColor','blue','FaceAlpha',.2, 'EdgeColor', 'None'); 
+hold off
+
+% to make plot prettier
+title('Change in Glc_c over time')
+ylabel('Concentration (nM)'); xlabel('Time (min)');
+set(gca, 'Color', 'None', 'box', 'off', 'FontSize', 18, 'FontWeight', 'bold', 'linewidth',2)
+
+%%
+FinalRes=[];
+for j=1:countNormal
+        Temp=normal{j,3}(end,:);
+        FinalRes=[FinalRes;Temp];
+end
+
+FinalResB=[];
+for j=1:countNormalB
+        TempB=normalB{j,3}(end,:);
+        FinalResB=[FinalResB;TempB];
+end
+
+%%
+pd = fitdist(FinalRes(:,1),'Kernel');
+pd2 = fitdist(FinalResB(:,1),'Kernel');
+x1 = 0.0000001:0.0000001:0.01;
+x2 = 0.0000001:0.0000001:0.004;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+figure()
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('2PGA_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for 2PGA_c concentrations');
+hold off;
+
+%%
+pd = fitdist(FinalRes(:,2),'Kernel');
+pd2 = fitdist(FinalResB(:,2),'Kernel');
+x = 4.998:0.0001:5.001;
+x2 = 4.998:0.0001:5.001;
+y = pdf(pd,x);
+y2 = pdf(pd2,x2);
+figure()
+plot(x,y,'LineWidth',2,'Color',[0.49 0.18 0.56]);
+ax1 = gca;
+ax1.YColor = 'k';
+hold on;
+yyaxis right
+plot(x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]);
+ax2 = gca;
+ax2.YColor = 'k';
+yyaxis left
+title('Kernel density for 2PGA_c concentrations'), xlabel('2PGA_c (mM)'),ylabel('Frequency'); 
+hold off;
+
+%%
+pd = fitdist(FinalRes(:,3),'Kernel');
+pd2 = fitdist(FinalResB(:,3),'Kernel');
+x1 = 1e-11:1e-12:5e-9;
+x2 = 1e-10:1e-12:1e-7;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+figure()
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('ATP_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for ATP_g concentrations');
+hold off;
  
- 
+%%
+pd = fitdist(FinalRes(:,4),'Kernel');
+pd2 = fitdist(FinalResB(:,4),'Kernel');
+figure()
+x1 = 1e-13:1e-13:5e-11;
+x2 = 1e-13:1e-13:5e-10;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('DHAP_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for DHAP_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,5),'Kernel');
+pd2 = fitdist(FinalResB(:,5),'Kernel');
+figure()
+x1 = 1e-6:1e-6:0.001;
+x2 = 1e-5:1e-6:7e-2;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('ADP_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for ADP_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,6),'Kernel');
+pd2 = fitdist(FinalResB(:,6),'Kernel');
+figure()
+x1 = 1e-9:1e-10:2e-7;
+x2 = 1e-9:1e-10:8e-6;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('Glc6P_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for Glc6P_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,7),'Kernel');
+pd2 = fitdist(FinalResB(:,7),'Kernel');
+figure()
+x1 = 1e-6:1e-6:2e-3;
+x2 = 1e-5:1e-6:0.6;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('ADP_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for ADP_c concentrations');
+
+%%
+pd = fitdist(FinalRes(:,8),'Kernel');
+pd2 = fitdist(FinalResB(:,8),'Kernel');
+figure()
+x1 = 0.0001:1e-4:0.05;
+x2 = 0.00001:1e-5:0.01;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('3PGA_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for 3PGA_c concentrations');
+
+%%
+pd = fitdist(FinalRes(:,9),'Kernel');
+pd2 = fitdist(FinalResB(:,9),'Kernel');
+figure()
+x1 = 1e-10:1e-11:1e-7;
+x2 = 1e-10:1e-11:3e-6;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('Fru6P_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for Fru6P_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,12),'Kernel');
+pd2 = fitdist(FinalResB(:,12),'Kernel');
+figure()
+x = 3:0.001:4.2;
+x2 = 3.8:0.001:4.2;
+y = pdf(pd,x);
+y2 = pdf(pd2,x2);
+plot(x,y,'LineWidth',2,'Color',[0.49 0.18 0.56]);
+ax1 = gca;
+ax1.YColor = 'k';
+hold on;
+yyaxis right
+plot(x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]);
+ax2 = gca;
+ax2.YColor = 'k';
+yyaxis left
+title('Kernel density for NADP_c concentrations'), xlabel('NADP_c (mM)'),ylabel('Frequency');
+
+%%
+pd = fitdist(FinalRes(:,13),'Kernel');
+pd2 = fitdist(FinalResB(:,13),'Kernel');
+figure()
+x1 = 1e-11:1e-11:1e-8;
+x2 = 1e-9:1e-10:5e-6;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('ATP_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for ATP_c concentrations');
+
+%%
+pd = fitdist(FinalRes(:,15),'Kernel');
+pd2 = fitdist(FinalResB(:,15),'Kernel');
+figure()
+x1 = 1e-11:1e-11:1e-8;
+x2 = 1e-11:1e-11:3e-6;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('6PG_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for 6PG_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,17),'Kernel');
+pd2 = fitdist(FinalResB(:,17),'Kernel');
+figure()
+x = 1e-4:1e-4:4e-2;
+x2 = 1e-4:1e-4:2e-2;
+y = pdf(pd,x);
+y2 = pdf(pd2,x2);
+plot(x,y,'LineWidth',2,'Color',[0.49 0.18 0.56]);
+ax1 = gca;
+ax1.YColor = 'k';
+hold on;
+yyaxis right
+plot(x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]);
+ax2 = gca;
+ax2.YColor = 'k';
+yyaxis left
+title('Kernel density for Rul5P_c concentrations'), xlabel('Rul5P_c (mM)'),ylabel('Frequency');
+
+%%
+pd = fitdist(FinalRes(:,18),'Kernel');
+pd2 = fitdist(FinalResB(:,18),'Kernel');
+figure()
+x = 1e-8:1e-9:1.4e-3;
+x2 = 1e-8:1e-9:1e-3;
+y = pdf(pd,x);
+y2 = pdf(pd2,x2);
+plot(x,y,'LineWidth',2,'Color',[0.49 0.18 0.56]);
+ax1 = gca;
+ax1.YColor = 'k';
+hold on;
+yyaxis right
+plot(x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]);
+ax2 = gca;
+ax2.YColor = 'k';
+yyaxis left
+title('Kernel density for 6PG_c concentrations'), xlabel('6PG_c (mM)'),ylabel('Frequency');
+
+%%
+pd = fitdist(FinalRes(:,19),'Kernel');
+pd2 = fitdist(FinalResB(:,19),'Kernel');
+figure()
+x = 1e-3:1e-5:8e-3;
+x2 = 1e-3:1e-5:8e-3;
+y = pdf(pd,x);
+y2 = pdf(pd2,x2);
+plot(x,y,'LineWidth',2,'Color',[0.49 0.18 0.56]);
+ax1 = gca;
+ax1.YColor = 'k';
+hold on;
+yyaxis right
+plot(x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]);
+ax2 = gca;
+ax2.YColor = 'k';
+yyaxis left
+title('Kernel density for Rul5P_g concentrations'), xlabel('Rul5P_g (mM)'),ylabel('Frequency');
+
+%%
+pd = fitdist(FinalRes(:,20),'Kernel');
+pd2 = fitdist(FinalResB(:,20),'Kernel');
+figure()
+x1 = 1e-2:1e-3:250;
+x2 = 1e-6:1e-6:2e-3;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('Glc6P_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for Glc6P_c concentrations');
+
+%%
+pd = fitdist(FinalRes(:,22),'Kernel');
+pd2 = fitdist(FinalResB(:,22),'Kernel');
+figure()
+x = 1e-14:1e-15:1e-10;
+x2 = 1e-14:1e-15:1e-10;
+y = pdf(pd,x);
+y2 = pdf(pd2,x2);
+plot(x,y,'LineWidth',2,'Color',[0.49 0.18 0.56]);
+ax1 = gca;
+ax1.YColor = 'k';
+hold on;
+yyaxis right
+plot(x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]);
+ax2 = gca;
+ax2.YColor = 'k';
+yyaxis left
+title('Kernel density for 13BPGA_g concentrations'), xlabel('13BPGA_g (mM)'),ylabel('Frequency');
+
+%%
+pd = fitdist(FinalRes(:,23),'Kernel');
+pd2 = fitdist(FinalResB(:,23),'Kernel');
+figure()
+x1 = 0.01:1e-3:300;
+x2 = 4.8:1e-2:5.3;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('Glc_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for Glc_c concentrations');
+
+%%
+pd = fitdist(FinalRes(:,25),'Kernel');
+pd2 = fitdist(FinalResB(:,25),'Kernel');
+figure()
+x1 = 0.01:1e-3:300;
+x2 = 4.8:1e-2:5.3;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('Glc_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for Glc_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,27),'Kernel');
+pd2 = fitdist(FinalResB(:,27),'Kernel');
+figure()
+x1 = 1e-7:1e-6:4e-5;
+x2 = 1e-6:1e-6:1e-3;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('NADPH_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for NADPH_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,28),'Kernel');
+pd2 = fitdist(FinalResB(:,28),'Kernel');
+figure()
+x1 = 0.1:1e-3:0.6;
+x2 = 1e-5:1e-6:0.004;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('NADPH_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for NADPH_c concentrations');
+
+%%
+pd = fitdist(FinalRes(:,29),'Kernel');
+pd2 = fitdist(FinalResB(:,29),'Kernel');
+figure()
+x = 0:0.0000000001:0.000006;
+x2 = 0:0.0000000001:0.000006;
+y = pdf(pd,x);
+y2 = pdf(pd2,x2);
+plot(x,y,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+ax1 = gca;
+ax1.YColor = 'k';
+hold on;
+yyaxis right
+plot(x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2 = gca;
+ax2.YColor = 'r';
+yyaxis left
+title('Kernel density for Pyr_c concentrations'), xlabel('Pyr_c (mM)'),ylabel('Frequency'); 
+
+%%
+pd = fitdist(FinalRes(:,32),'Kernel');
+pd2 = fitdist(FinalResB(:,32),'Kernel');
+figure()
+x1 = 1e-20:1e-20:1e-17;
+x2 = 1e-14:1e-15:1e-11;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('Fru16BP_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for Fru16BP_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,33),'Kernel');
+pd2 = fitdist(FinalResB(:,33),'Kernel');
+figure()
+x1 = 1e-14:1e-14:5e-12;
+x2 = 1e-14:1e-14:1e-10;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('GA3P_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for GA3P_g concentrations');
+
+%%
+pd = fitdist(FinalRes(:,35),'Kernel');
+pd2 = fitdist(FinalResB(:,35),'Kernel');
+figure()
+x = 1e-3:1e-4:0.45;
+x2 = 1e-4:1e-5:0.45;
+y = pdf(pd,x);
+y2 = pdf(pd2,x2);
+plot(x,y,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+ax1 = gca;
+ax1.YColor = 'k';
+hold on;
+yyaxis right
+plot(x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2 = gca;
+ax2.YColor = 'r';
+yyaxis left
+title('Kernel density for TSH2_c concentrations'), xlabel('TSH2_c (mM)'),ylabel('Frequency');
+
+%%
+pd = fitdist(FinalRes(:,37),'Kernel');
+pd2 = fitdist(FinalResB(:,37),'Kernel');
+figure()
+x1 = 1e-15:1e-15:4e-11;
+x2 = 1e-15:1e-15:4e-10;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('Gly3P_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for Gly3P_c concentrations');
+
+%%
+pd = fitdist(FinalRes(:,38),'Kernel');
+pd2 = fitdist(FinalResB(:,38),'Kernel');
+figure()
+x1 = 1e-15:1e-15:5e-12;
+x2 = 1e-15:1e-15:5e-11;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('Gly3P_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for Gly3P_g concentrations');
+
+%% 
+pd = fitdist(FinalRes(:,39),'Kernel');
+pd2 = fitdist(FinalResB(:,39),'Kernel');
+figure()
+x1 = 1e-6:1e-6:0.007;
+x2 = 1e-6:1e-6:0.001;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('6PGL_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for 6PGL_c concentrations');
+
+%%
+pd = fitdist(FinalRes(:,40),'Kernel');
+pd2 = fitdist(FinalResB(:,40),'Kernel');
+figure()
+x1 = 1e-3:1e-4:0.5;
+x2 = 1e-4:1e-4:0.1;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('TS2_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for TS2_c concentrations');
+
+%% 
+pd = fitdist(FinalRes(:,41),'Kernel');
+pd2 = fitdist(FinalResB(:,41),'Kernel');
+figure()
+x1 = 1e-9:1e-10:2e-7;
+x2 = 1e-8:1e-10:1e-5;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('6PGL_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for 6PGL_g concentrations');
+
+%% 
+pd = fitdist(FinalRes(:,42),'Kernel');
+pd2 = fitdist(FinalResB(:,42),'Kernel');
+figure()
+x1 = 1e-4:1e-5:0.05;
+x2 = 1e-5:1e-5:0.007;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('PEP_c (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for PEP_c concentrations');
+
+%% 
+pd = fitdist(FinalRes(:,44),'Kernel');
+pd2 = fitdist(FinalResB(:,44),'Kernel');
+figure()
+x1 = 1e-4:1e-5:0.05;
+x2 = 1e-5:1e-5:0.007;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('3PGA_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for 3PGA_g concentrations');
+
+%% 
+pd = fitdist(FinalRes(:,46),'Kernel');
+pd2 = fitdist(FinalResB(:,46),'Kernel');
+figure()
+x1 = 1e-4:1e-5:0.03;
+x2 = 1e-5:1e-5:1;
+y1 = pdf(pd,x1);
+y2 = pdf(pd2,x2);
+t = tiledlayout(1,1);
+ax1 = axes(t);
+plot(ax1,x1,y1,'LineWidth',2,'Color',[0.49 0.18 0.56]); %purple
+xlabel('NADH_g (mM)'),ylabel('Frequency');
+hold on;
+ax2 = axes(t);
+plot(ax2,x2,y2,'LineWidth',2,'Color',[1.00 0.41 0.16]); %orange
+ax2.XAxisLocation = 'top';
+ax2.YAxisLocation = 'right';
+ax2.Color = 'none';
+ax2.XColor = 'r';
+ax2.YColor = 'r';
+ax2.Box = 'off';
+title('Kernel density for NADH_g concentrations');
+
+%% Save figures
+FigList = findobj(allchild(0), 'flat', 'Type', 'figure');
+for iFig = 1:length(FigList)
+  FigHandle = FigList(iFig);
+  FigName   = num2str(get(FigHandle, 'Number'));
+  set(0, 'CurrentFigure', FigHandle);
+  saveas(FigHandle, fullfile(strcat(FigName, '.png'))); 
+ end
