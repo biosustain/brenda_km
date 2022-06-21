@@ -1,6 +1,14 @@
-"""Some handy python functions."""
+"""Some handy python functions"""
 
+import numpy as np
 import pandas as pd
+
+
+def increment_df_index(df: pd.DataFrame) -> pd.DataFrame:
+    """Add one to each element of a dataframe's index."""
+    assert df.index.dtype == "int64"
+    new_index = df.index + 1
+    return df.copy().set_index(new_index)
 
 
 def one_encode(s: pd.Series) -> pd.Series:
