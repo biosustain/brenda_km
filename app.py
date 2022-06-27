@@ -2,7 +2,6 @@
 
 import base64
 import os
-from typing import Any
 
 import altair as alt
 import arviz as az
@@ -12,7 +11,6 @@ import streamlit as st
 from scipy.stats.kde import gaussian_kde
 from xarray import DataArray
 from xarray.core.dataset import Dataset
-
 
 SUMMARY_CSV_FILE = os.path.join("results", "final_summary.csv")
 IDATA_FILE = os.path.join("results", "final_idata.nc")
@@ -30,27 +28,17 @@ BIOLOGY_COLS = {
 }
 
 
-def get_lit_link(e: Any, lit_in_brackets: Any) -> str:
-    """Get a brenda url from a value of the 'literature' column."""
-    lit = str(lit_in_brackets).replace("[", "").replace("]", "")
-    url = f"https://www.brenda-enzymes.org/literature.php?e={str(e)}&r={lit}"
-    return f'<a href = "{url}">{lit}</a>'
+def load_draws(db):
+    """Get posterior draws."""
+    return az.from_netcdf(
+        os.path.join(RUN_DIRS[db], "posterior.nc")
+    ).posterior.stack(dim=["chain", "draw"])
 
 
-def get_obs(reports: pd.DataFrame, biology: str) -> pd.DataFrame:
-    """Get a dataframe of observations."""
-    obs = reports.query(f"biology == '{biology}'")
-    assert isinstance(obs, pd.DataFrame)
-    obs = obs.rename(columns={"log_km": "log km"})
-    assert isinstance(obs, pd.DataFrame)
-    obs["Posterior density"] = 0
-    obs["reference"] = [
-        get_lit_link(row["ec4"], row["literature"])
-        for _, row in obs.reset_index().iterrows()
-    ]
-    obs["log km"] = obs["y"]
-    obs["km"] = np.exp(obs["y"])
-    return obs
+@st.cache
+def load_summary(db):
+    """Get summary dataframe."""
+    return pd.read_csv(os.path.join(RUN_DIRS[db], "posterior_summary.csv"))
 
 
 def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
@@ -91,8 +79,7 @@ def get_log_km_sabio_enz(
         enz_sub = "unknown"
     a_enz_sub = posterior["a_enz_sub"].sel({"enz_sub": enz_sub})
     return (
-        get_log_km_brenda_blk(posterior, ec4, organism, substrate)
-        + a_enz_sub
+        get_log_km_brenda_blk(posterior, ec4, organism, substrate) + a_enz_sub
     )
 
 
@@ -113,114 +100,118 @@ st.sidebar.write(
     "Choose which marginal posterior distribution you'd like to see!"
 )
 
+with st.form("my_form"):
+    with st.sidebar:
+        db = st.selectbox("Dataset", ["BRENDA"])
+        posterior = load_draws(db)
+        summary_df = load_summary(db)
+        # get selectbox options
+        organism_options = ["unknown"] + posterior.coords[
+            "biology_organism"
+        ].to_series().unique().tolist()
+        organism = st.selectbox("Organism", organism_options)
+        remaining_biologies = [
+            b
+            for b in posterior.coords["biology"].to_series().unique().tolist()
+            if b.split("|")[0] == organism
+        ]
+        remaining_ec4s = [s.split("|")[1] for s in remaining_biologies]
+        ec4_options = ["unknown"] + remaining_ec4s
+        ec4 = st.selectbox("EC4", ec4_options)
+        remaining_biologies = [
+            b for b in remaining_biologies if b.split("|")[1] == ec4
+        ]
+        ix_sub = 2 if db == "BRENDA" else 3
+        remaining_substrates = [
+            s.split("|")[ix_sub] for s in remaining_biologies
+        ]
+        substrate_options = ["unknown"] + remaining_substrates
+        substrate = st.selectbox("Substrate", substrate_options)
+        ec4_sub = (
+            f"{ec4}|{substrate}"
+            if not any("unknown" in s for s in [ec4, substrate])
+            else "unknown"
+        )
+        org_sub = (
+            f"{organism}|{substrate}"
+            if not any("unknown" in s for s in [organism, substrate])
+            else "unknown"
+        )
+        if db == "SABIO-RK":
+            remaining_biologies = [
+                b
+                for b in remaining_biologies
+                if b.split("|")[ix_sub] == substrate
+            ]
+            remaining_uniprots = [s.split("|")[2] for s in remaining_biologies]
+            uniprot_options = ["unknown"] + remaining_uniprots
+            uniprot = st.selectbox("Uniprot id", uniprot_options)
+            enz_sub = (
+                f"{uniprot}|{substrate}"
+                if not any("unknown" in s for s in [uniprot, substrate])
+                else "unknown"
+            )
+        biology_components = (
+            [organism, ec4, substrate]
+            if db == "BRENDA"
+            else ["organism", "ec4", "uniprot", "substrate"]
+        )
+        biology = "|".join(biology_components)
+        # get draws
+        log_km = (
+            posterior["mu"]
+            + posterior["a_substrate"].sel({"substrate": substrate})
+            + posterior["a_ec4_sub"].sel({"ec4_sub": ec4_sub})
+            + posterior["a_org_sub"].sel({"org_sub": org_sub})
+        )
+        submitted = st.form_submit_button("Update the graph!")
 
-# Get required data
-db = st.sidebar.selectbox("Dataset", ["BRENDA"])
-posterior = az.from_netcdf(os.path.join(RUN_DIRS[db], "posterior.nc")).get(
-    "posterior"
-)
-assert isinstance(posterior, Dataset)
-lits = pd.read_csv(os.path.join(DATA_DIRS[db], "lits.csv"))
-reports = pd.read_csv(os.path.join(DATA_DIRS[db], "reports.csv"))
-summary_df = pd.read_csv(os.path.join(RUN_DIRS[db], "posterior_summary.csv"))
+        # Download links
+        st.markdown(
+            get_table_download_link(
+                summary_df,
+                "Download a csv table of model results.",
+                "posterior_summary.csv",
+            ),
+            unsafe_allow_html=True,
+        )
+        st.write(
+            "See [here](https://github.com/biosustain/km-stats) for the "
+            "model's source code and for instructions to reproduce the "
+            "full posterior distribution."
+        )
+    if submitted:
+        low, median, high = log_km.quantile([0.01, 0.5, 0.99]).values
+        mean = float(log_km.mean())
+        sd = float(log_km.std())
 
-# map biologies to meaningful categories
-biology_maps = {
-    col: lits.groupby("biology")[col].first() for col in BIOLOGY_COLS[db]
-}
-options = {
-    col: ["unknown"] + s.unique().tolist() for col, s in biology_maps.items()
-}
-organism_options = ["unknown"] + lits["organism"].unique().tolist()
-organism = st.sidebar.selectbox("Organism", organism_options)
-ec4_options = ["unknown"] + lits.query(f"organism == '{organism}'")["ec4"].unique().tolist()
-ec4 = st.sidebar.selectbox("EC4", ec4_options)
-substrate_options = ["unknown"] + (
-    lits.query(f"organism == '{organism}' and ec4 == '{ec4}'")["substrate"].unique().tolist()
-)
-substrate = st.sidebar.selectbox("Substrate", substrate_options)
-if db == "SABIO-RK":
-    uniprot_id = st.sidebar.selectbox("Uniprot id", options["uniprot_id"])
-    log_km = get_log_km_sabio_enz(
-        posterior, ec4, organism, substrate, uniprot_id
-    )
-    biology = "|".join([organism, ec4, uniprot_id, substrate])
-else:
-    log_km = get_log_km_brenda_blk(posterior, ec4, organism, substrate)
-    biology = "|".join([organism, ec4, substrate])
-log_km = log_km.stack(dim=["chain", "draw"])
-st.sidebar.markdown(
-    get_table_download_link(
-        summary_df,
-        "Download a csv table of model results.",
-        "posterior_summary.csv",
-    ),
-    unsafe_allow_html=True,
-)
-st.sidebar.markdown(
-    get_table_download_link(
-        reports,
-        "Download a csv table of Km reports.",
-        "reports.csv",
-    ),
-    unsafe_allow_html=True,
-)
-st.sidebar.write(
-    "See [here](https://github.com/biosustain/km-stats) for the model's "
-    "source code and for instructions to reproduce the full posterior "
-    "distribution."
-)
-
-low, median, high = log_km.quantile([0.01, 0.5, 0.99]).values
-mean = float(log_km.mean())
-sd = float(log_km.std())
-obs = get_obs(reports, biology)
-
-kde = gaussian_kde(log_km)
-x = np.linspace(log_km.min() - 0.1, log_km.max() + 0.1, 100)
-is_bulk = (x > low) & (x < high)
-y = kde(x)
-kde_df = pd.DataFrame({"log km": x, "Posterior density": y})
-kde_df_bulk = kde_df.copy().assign(
-    **{"log km": kde_df["log km"].where(is_bulk)}
-)
-median_df = pd.DataFrame({"log km": median}, index=[0])
-
-kde_chart = (
-    alt.Chart(kde_df)
-    .mark_area(opacity=0.2)
-    .encode(x="log km", y="Posterior density")
-)
-kde_chart_bulk = (
-    alt.Chart(kde_df_bulk).mark_area().encode(x="log km", y="Posterior density")
-)
-dots = (
-    alt.Chart(obs)
-    .mark_point(color="red")
-    .encode(
-        x="log km",
-        y="Posterior density",
-        tooltip=["literature", "km", "log km"],
-    )
-)
-rule = alt.Chart(median_df).mark_rule(color="black").encode(x="log km")
-
-col1, col2 = st.columns([3, 2])
-
-col1.altair_chart(kde_chart + kde_chart_bulk + dots + rule)
-col2.write(
-    "Marginal posterior summary:"
-    f"\n\n\tMean: {mean}"
-    f"\n\n\tStandard deviation: {round(sd, 2)}"
-    f"\n\n\t1% quantile: {round(low, 2)}"
-    f"\n\n\tMedian: {median}"
-    f"\n\n\t99% quantile: {round(high, 2)}"
-)
-st.write("Below is a table of all the measurements.")
-st.write(
-    obs
-    .sort_values("log km")
-    .reset_index()[["reference", "km", "log km"]]
-    .to_html(escape=False),
-    unsafe_allow_html=True,
-)
+        kde = gaussian_kde(log_km)
+        x = np.linspace(log_km.min() - 0.1, log_km.max() + 0.1, 100)
+        is_bulk = (x > low) & (x < high)
+        y = kde(x)
+        kde_df = pd.DataFrame({"log km": x, "Posterior density": y})
+        kde_df_bulk = kde_df.copy().assign(
+            **{"log km": kde_df["log km"].where(is_bulk)}
+        )
+        median_df = pd.DataFrame({"log km": median}, index=[0])
+        kde_chart = (
+            alt.Chart(kde_df)
+            .mark_area(opacity=0.2)
+            .encode(x="log km", y="Posterior density")
+        )
+        kde_chart_bulk = (
+            alt.Chart(kde_df_bulk)
+            .mark_area()
+            .encode(x="log km", y="Posterior density")
+        )
+        rule = alt.Chart(median_df).mark_rule(color="black").encode(x="log km")
+        col1, col2 = st.columns([3, 2])
+        col1.altair_chart(kde_chart + kde_chart_bulk + rule)
+        col2.write(
+            "Marginal posterior summary:"
+            f"\n\n\tMean: {mean}"
+            f"\n\n\tStandard deviation: {round(sd, 2)}"
+            f"\n\n\t1% quantile: {round(low, 2)}"
+            f"\n\n\tMedian: {median}"
+            f"\n\n\t99% quantile: {round(high, 2)}"
+        )
