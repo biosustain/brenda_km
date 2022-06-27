@@ -1727,5 +1727,5 @@ for iFig = 1:length(FigList)
   FigHandle = FigList(iFig);
   FigName   = num2str(get(FigHandle, 'Number'));
   set(0, 'CurrentFigure', FigHandle);
-  saveas(FigHandle, fullfile('Results_plots', strcat(FigName, '.png')));
+  saveas(FigHandle, fullfile('Parameter_plots', strcat(FigName, '.png')));
 end

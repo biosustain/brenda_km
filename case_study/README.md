@@ -6,7 +6,7 @@
 
 ## Generate the required priors for the model
 - Run the Python script `KmProcessing.py`. This should generate a file called
-  `OUTPUT_FILE.csv` with the mu and sigma of the requested distributions.
+  `Pred_Priors.csv` with the mu and sigma of the requested distributions.
 
 ## Generate Plots comparing our priors and those in the comparison paper
 - Run the file `plotdists.m` with Matlab
