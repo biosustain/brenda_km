@@ -10,7 +10,7 @@ from scipy.stats import norm
 from tqdm import tqdm
 
 BRENDA_RESULTS_PATH = os.path.join(
-    "..", "results", "runs", "brenda-km-blk", "posterior.nc"
+    "..", "results", "runs", "brenda-blk", "posterior.nc"
 )
 INPUT_FILE = "modelquery.csv"
 OUTPUT_FILE = "Pred_Priors.csv"
