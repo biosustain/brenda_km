@@ -27,6 +27,7 @@ def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
     )
 
 
+assert os.path.exists(DRAWS_FILE)
 # Start of app
 st.title("Km distribution finder")
 
