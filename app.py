@@ -32,7 +32,7 @@ assert os.path.exists(DRAWS_FILE), os.listdir("results/runs/brenda-blk")
 st.title("Km distribution finder")
 
 db = "BRENDA"
-draws = xr.open_dataset(DRAWS_FILE, engine="netcdf4").stack(
+draws = xr.open_dataset(DRAWS_FILE, engine="h5netcdf").stack(
     sample=("chain", "draw")
 )
 summary_df = pd.read_csv(SUMMARY_FILE)
