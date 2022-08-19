@@ -23,6 +23,8 @@ FINAL_MODEL_CONFIGURATIONS = [
 ]
 RESULTS_DIR = os.path.join("results", "runs")
 MODES = ["posterior", "fake", "prior"]
+APP_DIR = os.path.join(RESULTS_DIR, "brenda-blk")
+APP_VARS = ["mu", "a_substrate", "a_ec4_sub", "a_org_sub"]
 
 
 def load_jsons(mc) -> Tuple[dict, dict, dict]:
@@ -135,6 +137,12 @@ def main():
             idata_posterior = az.from_netcdf(posterior_file)
             if "llik_oos" not in idata_posterior.log_likelihood.data_vars:
                 run_oos_cv(mc)
+    # Save a small version of the app posterior
+    if os.path.exists(os.path.join(APP_DIR, "posterior.nc")):
+        app_idata = az.from_netcdf(os.path.join(APP_DIR, "posterior.nc"))
+        app_draws = az.extract_dataset(app_idata, var_names=APP_VARS, combined=False)
+        app_draws.coords["biology"] = app_idata.posterior.coords["biology"]
+        app_draws.to_netcdf(os.path.join(APP_DIR, "app_draws.nc"))
 
 
 if __name__ == "__main__":

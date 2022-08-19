@@ -4,31 +4,17 @@ import base64
 import os
 
 import altair as alt
-import arviz as az
 import numpy as np
 import pandas as pd
 import streamlit as st
+import xarray as xr
 from scipy.stats import gaussian_kde
 
-SUMMARY_CSV_FILE = os.path.join("results", "runs", "posterior_summary.csv")
-IDATA_FILE = os.path.join("results", "runs", "posterior.nc")
+SUMMARY_FILE = os.path.join(
+    "results", "runs", "brenda-blk", "posterior_summary.csv"
+)
+DRAWS_FILE = os.path.join("results", "runs", "brenda-blk", "app_draws.nc")
 VARS = ["mu", "a_substrate", "a_ec4_sub", "a_org_sub"]
-
-
-@st.cache
-def load_draws():
-    """Get posterior draws."""
-    idata = az.from_netcdf(IDATA_FILE)
-    draws = az.extract_dataset(idata, var_names=VARS)
-    draws.coords["biology"] = idata.posterior.coords["biology"]
-    del idata
-    return draws
-
-
-@st.cache
-def load_summary():
-    """Get summary dataframe."""
-    return pd.read_csv(SUMMARY_CSV_FILE)
 
 
 def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
@@ -45,8 +31,8 @@ def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
 st.title("Km distribution finder")
 
 db = "BRENDA"
-draws = load_draws(db)
-summary_df = load_summary(db)
+draws = xr.open_dataset(DRAWS_FILE).stack(sample=("chain", "draw"))
+summary_df = pd.read_csv(SUMMARY_FILE)
 
 st.write(
     """
@@ -89,8 +75,7 @@ with st.sidebar:
     remaining_ec4s = [s.split("|")[1] for s in remaining_bios]
     ec4 = st.selectbox("EC4", ["unknown"] + remaining_ec4s)
     remaining_bios = [b for b in remaining_bios if b.split("|")[1] == ec4]
-    ix_sub = 2 if db == "BRENDA" else 3
-    remaining_subs = [s.split("|")[ix_sub] for s in remaining_bios]
+    remaining_subs = [s.split("|")[2] for s in remaining_bios]
     substrate = st.selectbox("Substrate", ["unknown"] + remaining_subs)
     ec4_sub, org_sub = (
         f"{thing}|{substrate}"
