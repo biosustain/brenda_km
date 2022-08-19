@@ -82,7 +82,6 @@ def main():
             & (df["biology_substrate"] == sub),
             "y",
         ]
-
         f, axes = plt.subplots(1, 4, figsize=[15, 5], sharex=True, sharey=True)
         bins = np.linspace(-10, 5, 50)
         for ax, draws, obs_y in zip(
