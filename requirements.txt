@@ -1,7 +1,5 @@
 arviz>=0.11.2
 cmdstanpy>=0.9.77
-h5netcdf
-netcdf4
 numpy
 pandas
 scipy

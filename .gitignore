@@ -4,8 +4,8 @@
 *.png
 *.hpp
 *.o
-*.nc
-!results/infd/app_infd.nc
+results/runs/*/*.json
+!results/runs/*/app_draws.json
 brenda_venv
 .DS_Store
 *pycache*

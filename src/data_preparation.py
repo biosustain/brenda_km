@@ -57,7 +57,6 @@ class PrepareDataOutput:
     dims: Dict[str, Any]
     number_of_cv_folds: int
     standict_function: Callable
-    biology_maps: Dict[str, List[str]]
     standict_prior: StanDict = field(init=False)
     standict_posterior: StanDict = field(init=False)
     standicts_cv: List[StanDict] = field(init=False)
@@ -218,10 +217,6 @@ def prepare_data_brenda(
         else:
             lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
             coords[fct] = pd.factorize(lits[fct])[1].tolist()
-    biology_maps = {
-        col: lits.groupby("biology")[col].first().tolist()
-        for col in biology_cols
-    }
     return PrepareDataOutput(
         name=name,
         lits=lits,
@@ -230,7 +225,6 @@ def prepare_data_brenda(
         dims=DIMS,
         number_of_cv_folds=number_of_cv_folds,
         standict_function=get_standict_brenda,
-        biology_maps=biology_maps,
     )
 
 
@@ -455,10 +449,6 @@ def prepare_data_sabio(
         else:
             lits[fct + "_stan"] = pd.factorize(lits[fct])[0] + 1
             coords[fct] = pd.factorize(lits[fct])[1].tolist()
-    biology_maps = {
-        col: lits.groupby("biology")[col].first().tolist()
-        for col in biology_cols
-    }
     return PrepareDataOutput(
         name=name,
         lits=lits,
@@ -467,7 +457,6 @@ def prepare_data_sabio(
         dims=DIMS,
         number_of_cv_folds=number_of_cv_folds,
         standict_function=get_standict_sabio,
-        biology_maps=biology_maps,
     )
 
 

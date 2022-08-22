@@ -1,9 +1,11 @@
 """Code for a streamlit webapp investigating our results."""
 
 import base64
+import json
 import os
 
 import altair as alt
+import arviz as az
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -13,7 +15,7 @@ from scipy.stats import gaussian_kde
 SUMMARY_FILE = os.path.join(
     "results", "runs", "brenda-blk", "posterior_summary.csv"
 )
-DRAWS_FILE = os.path.join("results", "runs", "brenda-blk", "app_draws.nc")
+DRAWS_FILE = os.path.join("results", "runs", "brenda-blk", "app_draws.json")
 VARS = ["mu", "a_substrate", "a_ec4_sub", "a_org_sub"]
 
 
@@ -27,14 +29,12 @@ def get_table_download_link(df: pd.DataFrame, text: str, filename: str):
     )
 
 
-assert os.path.exists(DRAWS_FILE), os.listdir("results/runs/brenda-blk")
 # Start of app
 st.title("Km distribution finder")
 
-db = "BRENDA"
-draws = xr.open_dataset(DRAWS_FILE, engine="h5netcdf").stack(
-    sample=("chain", "draw")
-)
+draws = az.from_json(DRAWS_FILE).posterior.stack(sample=["chain", "draw"])
+with open("data/prepared/brenda/coords.json", "r") as f:
+    draws.coords["biology"] = json.load(f)["biology"]
 summary_df = pd.read_csv(SUMMARY_FILE)
 
 st.write(
@@ -69,8 +69,8 @@ st.sidebar.write(
     "Choose which marginal posterior distribution you'd like to see!"
 )
 
-bios = draws.coords["biology"].to_series().unique().tolist()
-orgs = draws.coords["biology_organism"].to_series().unique().tolist()
+bios = list(set(draws.coords["biology"].values))
+orgs = list(set(s.split("|")[0] for s in draws.coords["biology"].values))
 
 with st.sidebar:
     organism = st.selectbox("Organism", ["unknown"] + orgs)

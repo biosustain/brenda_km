@@ -37,6 +37,4 @@ def sample(
         coords=coords,
         dims=dims,
     )
-    for k, v in biology_maps.items():
-        idata.assign_coords({"biology_" + k: ("biology", v)}, inplace=True)
     return idata
