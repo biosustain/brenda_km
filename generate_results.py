@@ -30,18 +30,16 @@ APP_BIG_JSON = os.path.join(APP_DIR, "posterior.json")
 APP_SMALL_JSON = os.path.join(APP_DIR, "app_draws.json")
 
 
-def load_jsons(mc) -> Tuple[dict, dict, dict]:
+def load_jsons(mc) -> Tuple[dict, dict]:
     with open(os.path.join(mc.data_dir, "coords.json"), "r") as f:
         coords = json.load(f)
     with open(os.path.join(mc.data_dir, "dims.json"), "r") as f:
         dims = json.load(f)
-    with open(os.path.join(mc.data_dir, "biology_maps.json"), "r") as f:
-        biology_maps = json.load(f)
-    return coords, dims, biology_maps
+    return coords, dims
 
 
 def run_in_mode(mc: ModelConfiguration, mode: str) -> None:
-    coords, dims, biology_maps = load_jsons(mc)
+    coords, dims = load_jsons(mc)
     run_dir = os.path.join(RESULTS_DIR, mc.name)
     idata_file = os.path.join(run_dir, f"{mode}.json")
     input_json = os.path.join(mc.data_dir, f"stan_input_{mode}.json")
@@ -53,7 +51,6 @@ def run_in_mode(mc: ModelConfiguration, mode: str) -> None:
         dims=dims,
         sample_kwargs=mc.sample_kwargs,
         diagnose=True,
-        biology_maps=biology_maps,
     )
     summary = az.summary(
         idata, filter_vars="regex", var_names="^(?!(a_.*|yrep|llik|log_.*)).*"
@@ -83,7 +80,7 @@ def run_oos_cv(mc: ModelConfiguration) -> None:
     llik = idata_posterior.get("log_likelihood")
     assert isinstance(llik, Dataset)
     assert isinstance(idata_posterior, InferenceData)
-    coords, dims, biology_maps = load_jsons(mc)
+    coords, dims = load_jsons(mc)
     if "llik_oos" in llik.data_vars:
         print(f"Found existing {oos_cv} results for model {mc.name}")
         return
@@ -102,7 +99,6 @@ def run_oos_cv(mc: ModelConfiguration) -> None:
             dims=dims,
             sample_kwargs=sample_kwargs,
             diagnose=False,
-            biology_maps=biology_maps,
         ).get("log_likelihood")
         ooss.append(oos)
     ooss_x = xarray.concat(ooss, dim="ix_test")
@@ -141,7 +137,7 @@ def main():
             if not os.path.exists(json_file) and not mc.do_not_run:
                 run_in_mode(mc, mode)
         if mode == "cross_validation":
-            coords, dims, biology_maps = load_jsons(mc)
+            coords, dims = load_jsons(mc)
             llik_file = os.path.join(run_dir, "llik_cv.json")
             lliks = []
             cv_input_dir = os.path.join(mc.data_dir, "stan_inputs_cv")

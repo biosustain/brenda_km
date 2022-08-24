@@ -10,6 +10,7 @@ from sklearn.model_selection import KFold
 
 from .util import make_columns_lower_case  # type: ignore
 
+N_STUDIES = 100  # only model organisms with this many unique studies
 NUMBER_REGEX = r"\d*\.?\d+"
 TEMP_REGEX = (
     rf"({NUMBER_REGEX}-{NUMBER_REGEX}|{NUMBER_REGEX}) ?(&ordm;|&deg;)[Cc]"
@@ -132,7 +133,8 @@ def add_columns_to_brenda_reports(
     out["is_natural"] = out.apply(
         lambda row: row["ligand_structure_id"]
         in ec4_to_natural_substrates[row["ec4"]]
-        if row["ec4"] in ec4_to_natural_substrates.keys() else False,
+        if row["ec4"] in ec4_to_natural_substrates.keys()
+        else False,
         axis=1,
     )
     out["ph"] = out["commentary"].str.extract(PH_REGEX)[0]
@@ -150,8 +152,7 @@ def preprocess_brenda_reports(
 ) -> pd.DataFrame:
     """Correct names, nulls and dtypes of Brenda reports table."""
     return (
-        raw_reports
-        .replace(["more", -999], np.nan)
+        raw_reports.replace(["more", -999], np.nan)
         .rename(
             columns={
                 "ecNumber": "ec4",
@@ -190,6 +191,12 @@ def prepare_data_brenda(
             | reports["ph"].astype(float).between(*PH_RANGE)
         )
         & reports["is_natural"]
+        & reports["organism"].isin(
+            reports.groupby("organism")["literature"]
+            .nunique()
+            .loc[lambda s: s > N_STUDIES]
+            .index
+        )
     )
     reports["y"] = np.log(reports["km"].values)  # type: ignore
     reports["biology"] = (
@@ -200,8 +207,8 @@ def prepare_data_brenda(
         reports.groupby(lit_cols)
         .agg({"y": "median", "biology": "first"})
         .reset_index()
-        .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
-        .reset_index()
+        # .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
+        # .reset_index()
     )
     coords = {}
     lits["literature"] = lits["literature"].astype(str)
@@ -402,6 +409,12 @@ def prepare_data_sabio(
             | reports["ph"].astype(float).between(*PH_RANGE)
         )
         & reports["literature"].notnull()
+        & reports["organism"].isin(
+            reports.groupby("organism")["literature"]
+            .nunique()
+            .loc[lambda s: s > N_STUDIES]
+            .index
+        )
     )
     reports = reports.loc[cond].copy()
     reports["y"] = np.log(
@@ -422,8 +435,8 @@ def prepare_data_sabio(
             {"y": "median", "biology": "first", "reaction_substrates": "first"}
         )
         .reset_index()
-        .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
-        .reset_index()
+        # .loc[lambda df: df.groupby("organism")["y"].transform("size") > 50]
+        # .reset_index()
     )
     lits["literature"] = lits["literature"].astype(int).astype(str)
     lits["ec4_sub"] = lits["ec4"].str.cat(lits["substrate"], sep="|")

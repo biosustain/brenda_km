@@ -19,7 +19,6 @@ def sample(
     dims: dict,
     diagnose: bool,
     sample_kwargs: dict,
-    biology_maps: dict,
 ) -> InferenceData:
     """Run cmdstanpy.CmdStanModel.sample and return an InferenceData."""
     model = CmdStanModel(stan_file=stan_file)

@@ -100,8 +100,6 @@ def generate_prepared_data():
             json.dump(po.coords, f)
         with open(os.path.join(output_dir, "dims.json"), "w") as f:
             json.dump(po.dims, f)
-        with open(os.path.join(output_dir, "biology_maps.json"), "w") as f:
-            json.dump(po.biology_maps, f)
     return prepare_data_outputs
 
 
