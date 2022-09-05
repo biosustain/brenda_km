@@ -20,6 +20,7 @@
 # How to generate priors for your model
 - Update the content of the file `modelquery.csv` according to the requirements of your model. 
 - In the Python script `KmProcessing.py` change the input "ORGANISM" to the organism you are modelling.
+- Make sure the entries in the `modelquery.csv` (especially for organism and substrate) are spelled correctly and match those in BRENDA.
 - Make sure the files `modelquery.csv` and `KmProcessing.py` are in the same directory.
 - Run the Python script `KmProcessing.py`. This will generate the `Pred_Priors.csv` file 
   with the mu and sigma of the requested distributions.
