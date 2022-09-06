@@ -32,47 +32,40 @@ def plot_vars(posterior: Dataset, vars: List[str]) -> Figure:
     ax = plt.gca()
     ax.set_xlabel("Parameter value")
     ax.set_ylabel("Posterior density")
-    f.suptitle(
-        "Comparison of marginal distributions for standard deviation parameters"
-    )
     return f
 
 
 def plot_nadh_comparison(posterior: Dataset, lits: pd.DataFrame) -> Figure:
     """Compare nadh and nadph kms."""
-
-    def is_nadh(df):
-        return df["substrate"] == "NADH"
-
-    def is_nadph(df):
-        return df["substrate"] == "NADPH"
-
     samples = (
         posterior["log_km"]
         .to_dataframe()
         .rename(columns={"biology_substrate": "substrate"})
+        .join(lits.groupby("biology")["substrate"].first(), on="biology")
     )
-    assert isinstance(samples, pd.DataFrame)
-    f, axes = plt.subplots(1, 2, figsize=[12, 6], sharex=True)
-    axes = axes.ravel()
-    f.suptitle(
-        "Comparison of measured and modelled Km parameters for NADH and NADPH"
-    )
-    axes[0].set_title("Measurements")
-    axes[1].set_title("Posterior samples")
-    for ax, df, bins, title, ycol in zip(
-        axes,
-        (lits, samples),
-        (25, 100),
-        ("Measurements", "Posterior samples"),
-        ("y", "log_km"),
-    ):
-        ax.set_title(title)
-        ax.hist(df.loc[is_nadh, ycol], alpha=0.6, label="nadh", bins=bins)
-        ax.hist(df.loc[is_nadph, ycol], alpha=0.6, label="nadph", bins=bins)
-        ax.set_xlabel("Km value ($\\ln$ scale)")
-        ax.set_ylabel("Frequency")
-        ax.legend(frameon=False)
+    f, axes = plt.subplots(2, 2, figsize=[12, 6], sharex=True)
+    for row, substrates in zip([0, 1], [("NADH", "NAD+"), ("NADPH", "NADP+")]):
+        axes[row, 0].set_title("Measurements")
+        axes[row, 1].set_title("Posterior samples")
+        for ax, df, bins, title, ycol in zip(
+            axes[row],
+            (lits, samples),
+            (25, 100),
+            ("Measurements", "Posterior samples"),
+            ("y", "log_km"),
+        ):
+            ax.set_title(title)
+            for s in substrates:
+                ax.hist(
+                    df.loc[lambda df: df["substrate"] == s, ycol],
+                    alpha=0.6,
+                    label=s,
+                    bins=bins,
+                    density=True,
+                )
+                ax.set_xlabel("Km value ($\\ln$ scale)")
+                ax.set_ylabel("Relative frequency")
+                ax.legend(frameon=False)
     plt.tight_layout()
     return f
 
@@ -308,10 +301,7 @@ def plot_cofactor_effects(posterior: InferenceData) -> Figure:
         ax.annotate(c, [x.loc[c], a_sub_qs.loc[c, 0.01]], fontsize=7)
     ax.set_xticks([])
     ax.legend(frameon=False)
-    ax.set(
-        title="1%-99% posterior intervals for substrate effects.",
-        ylabel="Parameter values",
-    )
+    ax.set(ylabel="Parameter values")
     return f
 
 
@@ -324,25 +314,26 @@ def plot_cofactor_substrate_comparison(
         log_kms.mean(dim="sample")
         .to_dataframe()
         .reset_index()
+        .join(
+            lits.rename(columns={"biology_substrate": "substrate"})
+            .groupby("biology")[["substrate", "reaction_substrates"]]
+            .first(),
+            on="biology",
+        )
         .assign(
-            cofactor=lambda df: df["biology_substrate"].isin(COFACTORS),
+            cofactor=lambda df: df["substrate"].isin(COFACTORS),
             bio_non_sub=lambda df: (
                 df["biology"].str.split("|").apply(lambda s: "|".join(s[:3]))
             ),
-        )
-        .join(
-            lits.groupby("biology")["reaction_substrates"].first(), on="biology"
         )
     )
     cofactor_means = (
         means.query("cofactor")
         .groupby(["bio_non_sub", "reaction_substrates"])[
-            ["log_km", "biology_substrate"]
+            ["log_km", "substrate"]
         ]
         .first()
-        .rename(
-            columns={"log_km": "cofactor_mean", "biology_substrate": "cofactor"}
-        )
+        .rename(columns={"log_km": "cofactor_mean", "substrate": "cofactor"})
         .pipe(pd.DataFrame)
     )
     other_means = (

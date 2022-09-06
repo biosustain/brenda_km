@@ -1,4 +1,4 @@
-brenda km
+km-stats
 ==============================
 
 Statistical models of kinetic parameter data from the BRENDA and SABIO-RK databases.
