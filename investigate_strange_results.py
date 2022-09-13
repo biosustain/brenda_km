@@ -41,7 +41,7 @@ def main():
         os.mkdir(OUTPUT_DIR)
     # load data
     idata = az.from_json(
-        os.path.join("results", "runs", "brenda-blk", "posterior.nc")
+        os.path.join("results", "runs", "brenda-blk", "posterior.json")
     )
     biologies = (
         idata.posterior.coords["biology"]
