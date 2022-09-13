@@ -262,7 +262,7 @@ sigma2=Priors{7,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.006:0.0001:0.013;
-x2 = 0.0003:0.00001:0.7;
+x2 = 0.001:0.0001:0.2;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -290,7 +290,7 @@ sigma2=Priors{8,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.04:0.0001:0.11;
-x2 = 0.00003:0.00001:1;
+x2 = 0.001:0.0001:5;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -372,7 +372,7 @@ sigma2=Priors{11,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.12:0.0001:0.4;
-x2 = 0.00001:0.00001:1;
+x2 = 0.01:0.001:2;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -398,7 +398,7 @@ sigma2=Priors{14,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.06:0.0001:0.16;
-x2 = 0.001:0.00001:1;
+x2 = 0.004:0.00001:0.4;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -423,7 +423,7 @@ sigma2=Priors{12,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.006:0.0001:0.017;
-x2 = 0.001:0.00001:1;
+x2 = 0.0015:0.00001:0.4;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -448,7 +448,7 @@ sigma2=Priors{15,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 1.2:0.00001:3.2;
-x2 = 0.000001:0.000001:3.5;
+x2 = 0.000001:0.000001:3.7;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -498,7 +498,7 @@ sigma2=Priors{18,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.053:0.0001:0.064;
-x2 = 0.006:0.000001:1.3;
+x2 = 0.006:0.000001:0.7;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -584,7 +584,7 @@ sigma2=Priors{16,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.0085:0.000001:0.0105;
-x2 = 0.001:0.000001:0.08;
+x2 = 0.001:0.000001:0.15;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -661,7 +661,7 @@ sigma2=Priors{24,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.08:0.0001:0.28;
-x2 = 0.02:0.000001:0.7;
+x2 = 0.03:0.000001:0.5;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -714,7 +714,7 @@ sigma2=Priors{25,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.032:0.0001:0.3;
-x2 = 0.00001:0.000001:1;
+x2 = 0.002:0.000001:1;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -740,7 +740,7 @@ sigma2=Priors{23,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.01:0.0001:0.04;
-x2 = 0.0001:0.000001:1;
+x2 = 0.001:0.0001:0.15;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -791,7 +791,7 @@ sigma2=Priors{27,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.52:0.0001:0.6;
-x2 = 0.00001:0.00001:3;
+x2 = 0.001:0.00001:3;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -818,7 +818,7 @@ sigma2=Priors{28,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.27:0.00001:0.7;
-x2 = 0.002:0.00001:10;
+x2 = 0.02:0.00001:1.5;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -845,7 +845,7 @@ sigma2=Priors{26,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.12:0.0001:0.45;
-x2 = 0.0002:0.00001:1;
+x2 = 0.001:0.00001:1;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -873,7 +873,7 @@ sigma2=Priors{31,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 1.5:0.00001:2;
-x2 = 0.00001:0.000001:5;
+x2 = 0.00005:0.000001:5;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -898,7 +898,7 @@ sigma2=Priors{34,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.06:0.000001:0.16;
-x2 = 0.0001:0.00001:5;
+x2 = 0.001:0.00001:5;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -925,7 +925,7 @@ sigma2=Priors{32,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.07:0.0001:0.18;
-x2 = 0.012:0.00001:0.8;
+x2 = 0.012:0.00001:0.4;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -980,7 +980,7 @@ sigma2=Priors{27,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.07:0.0001:0.2;
-x2 = 0.00001:0.00001:5;
+x2 = 0.001:0.0001:5;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1035,7 +1035,7 @@ sigma2=Priors{36,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.04:0.0001:0.11;
-x2 = 0.007:0.00001:0.4;
+x2 = 0.007:0.00001:0.15;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1089,7 +1089,7 @@ sigma2=Priors{39,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.12:0.000001:0.19;
-x2 = 0.00001:0.00001:1;
+x2 = 0.0001:0.00001:5;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1163,7 +1163,7 @@ sigma2=Priors{42,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.09:0.0001:0.17;
-x2 = 0.00001:0.000001:10;
+x2 = 0.001:0.0001:8;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1236,7 +1236,7 @@ sigma2=Priors{45,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.45:0.000001:5.1;
-x2 = 0.01:0.000001:4;
+x2 = 0.08:0.000001:4;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1290,7 +1290,7 @@ sigma2=Priors{47,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.03:0.00001:0.08;
-x2 = 0.0000001:0.0000001:1;
+x2 = 0.001:0.0001:14;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1389,7 +1389,7 @@ sigma2=Priors{53,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.2:0.00001:0.55;
-x2 = 0.001:0.00001:2;
+x2 = 0.01:0.00001:2;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1416,7 +1416,7 @@ sigma2=Priors{52,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.075:0.000001:0.17;
-x2 = 0.003:0.00001:8;
+x2 = 0.01:0.00001:2;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1489,7 +1489,7 @@ sigma2=Priors{56,'sigma'};
 pd=makedist('Lognormal',mu,sigma);
 pd2=makedist('Lognormal',mu2,sigma2);
 x = 0.95:0.001:1.5;
-x2 = 0.003:0.00001:20;
+x2 = 0.05:0.00001:10;
 figure()
 yyaxis left
 plot(x,pdf(pd,x),'Color',[0.6350 0.0780 0.1840],'LineWidth',2)
@@ -1720,12 +1720,12 @@ DatasetN{:,'TR_c_KmTSH2'}=TR_c_KmTSH2;
 DatasetN{:,'TR_c_KmNADP'}=TR_c_KmNADP;
 
 %save dataset in csv file
-%writetable(DatasetN,'DatasetN.csv','Delimiter',',','QuoteStrings',true)
+writetable(DatasetN,'DatasetN.csv','Delimiter',',','QuoteStrings',true)
 
 FigList = findobj(allchild(0), 'flat', 'Type', 'figure');
 for iFig = 1:length(FigList)
   FigHandle = FigList(iFig);
   FigName   = num2str(get(FigHandle, 'Number'));
   set(0, 'CurrentFigure', FigHandle);
-  saveas(FigHandle, fullfile('Parameter_plots', strcat(FigName, '.png')));
-end
+  saveas(FigHandle, fullfile(strcat(FigName, '.png'))); 
+ end
