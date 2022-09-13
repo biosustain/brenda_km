@@ -32,12 +32,16 @@ Note that this repository depends on [cmdstanpy](cmdstanpy.readthedocs.io/), whi
 Reproducing our results
 =======================
 
-Our results can be reproduced by running python scripts from the project's root directory. 
+Our results can be reproduced by running the command `make results` from the project's root directory.
+
+Individual components of the analysis can be reproduced by running the relevant
+python scripts:
 
 ```sh
+python fetch_data.py  # this takes a long time
 python prepare_data.py
-python generate_fake_data.py
-python sample.py
+python generate_results.py
+python analyse.py
 ```
 
 Investigating the results
