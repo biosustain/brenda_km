@@ -40,7 +40,7 @@ def main():
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
     # load data
-    idata = az.from_netcdf(
+    idata = az.from_json(
         os.path.join("results", "runs", "brenda-blk", "posterior.nc")
     )
     biologies = (

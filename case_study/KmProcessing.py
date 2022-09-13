@@ -42,7 +42,7 @@ def get_lognormal_params_from_qs(
 def main():
     modelquery = pd.read_csv(INPUT_FILE, delimiter=";")
     assert isinstance(modelquery, pd.DataFrame)
-    idata = az.from_netcdf(BRENDA_RESULTS_PATH)
+    idata = az.from_json(BRENDA_RESULTS_PATH)
     modelled_ec4_subs = idata.posterior.coords["ec4_sub"].values
     modelled_org_subs = idata.posterior.coords["org_sub"].values
     modelled_subs = idata.posterior.coords["substrate"].values
